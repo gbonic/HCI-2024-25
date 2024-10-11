@@ -1,40 +1,88 @@
-<<<<<<< HEAD
-# HCI-2024-25
-=======
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Korisnička sučelja <!-- omit in toc -->
 
-## Getting Started
+## FESB, 2024/25 <!-- omit in toc -->
 
-First, run the development server:
+- [Iterativni proces dizajna: Faze i smjernice](#iterativni-proces-dizajna-faze-i-smjernice)
+- [Zahtjevi i demonstracija projekta](#zahtjevi-i-demonstracija-projekta)
+  - [Zahtjevi web aplikacije](#zahtjevi-web-aplikacije)
+  - [Demonstracija projekta](#demonstracija-projekta)
+- [Praktične vježbe](#praktične-vježbe)
+  - [Projektni zadaci](#projektni-zadaci)
+  - [Za rad u laboratoriju](#za-rad-u-laboratoriju)
+  - [Za samostalan rad](#za-samostalan-rad)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+**Cilj kolegija** je upoznati studente s važnim aspektima procesa dizajna sučelja usmjerenog krajnjim korisnicima. Studenti će realizirati praktičan projekt u kojem će primijeniti odgovarajuće principe _dobrog dizajna_. Za realizaciju projekta koristit će tehnologije poput [React.js](https://reactjs.org/), [Next.js](https://nextjs.org/), [Figma](https://www.figma.com/), [headless CMS](https://jamstack.org/headless-cms/), Git i drugih.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Važni linkovi <!-- omit in toc -->
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- [**Web stranica kolegija**](https://hci.mario-cagalj.from.hr/)
+- Predložak README datoteke za vaš projekt možete pronaći [ovdje](/docs/readme-template/README.md)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Iterativni proces dizajna: Faze i smjernice
 
-## Learn More
+Dizajn je iterativni postupak u kojem prolazimo kroz faze _dizajna_, _implementacije_ i _evaluacije_. Vaš rad na projektu odvijat će se okvirno u sljedećim fazama:
 
-To learn more about Next.js, take a look at the following resources:
+1. **Razumijevanje korisnika i njihovih zadaća**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   > Vi niste tipičan korisnik. Ne znate koje zadaće su važne korisnicima. Da biste bili sigurni da imate dobar opis zadaća, trebate ih evaluirati zajedno s korisnicima.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   U procesu _user experience_ (UX) dizajna vrlo važnu ulogu ima koncept **persone**. Persona predstavlja model osobe (arhetip), osobnosti i/ili ponašanja koji se izgradi na osnovu razgovora, intervjua i promatranja korisnika. Model osobe često uključuje i sliku tog modela. Vrijednost ovog alata u UX dizajnu proizlazi iz činjenice da persone pomažu dizajnerima i developerima razviti suosjećanje s krajnjim korisnicima, čime se smanjuje rizik razvoja produkta koji će biti neintuitivan i/ili težak za korištenje.
 
-## Deploy on Vercel
+   > [What are Personas?](https://youtu.be/XnG4c4gXaQY)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. **Izrada _low-fidelity_ i _high-fidelity_ prototipa i njihova evaluacija**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
->>>>>>> 6a94442 (Initial commit from Create Next App)
+   > Pokušajte odoljeti programerskom porivu da u ovoj fazi otvorite vaš preferirani editor i započnete programirati. U ovoj fazi razvoja projekta vaš najbolji prijatelj su olovka i papir, razni grafički editori (npr. [Excalidraw](https://excalidraw.com/)) te alati za brzu izradu prototipa (npr. [Figma](https://www.figma.com), [Balsamiq](https://balsamiq.com/wireframes/), [Sketch](https://www.sketch.com/), [inVision](https://www.invisionapp.com/), [Draw.io](https://drawio-app.com/)).
+   >
+   > Provedite evaluaciju vašeg prototipa s kolegama ili profesorom i ispravite uočene _usability bug_-ove.
+
+3. **Implementacija prototipa i njegova evaluacija**
+
+   U ovoj fazi konačno možete otvoriti svoj preferirani editor i započeti s implementacijom.
+
+   > Nemojte zaboraviti na evaluaciju u ovoj fazi. Provedite heurističku evaluaciju vašeg produkta i/ili _usability testing_ sa stvarnim korisnicima, ako je to moguće.
+
+## Zahtjevi i demonstracija projekta
+
+### Zahtjevi web aplikacije
+
+- Aplikacija će se koristiti iz web preglednika
+- Koristit će se na uređajima različitih veličina
+- Korisnik može pretraživati/filtrirati proizvode ili usluge
+- Aplikacija će podržati logiranje korisnika za prikaz privatnog sadržaja
+- Jedna od javnih stranica je blog koji treba sadržavati veći broj postova različitog sadržaja (slike, videa, _code snippets_)
+- Dio sadržaja aplikacije pohranjivat će se na udaljenom _headless_ CMS sustavu (npr. [Contentful](https://www.contentful.com), [Strapi](https://strapi.io) i sl.) koji je prilagođen za jednostavno editiranje sadržaja
+  - Lista prikladnih CMS sustava dostupana je na [Jamstack](https://jamstack.org/headless-cms/)
+
+### Demonstracija projekta
+
+- Pokazati produkcijsku verziju projekta
+- Produkcijska verzija projekta bit će postavljena _online_ na odgovarajuću _cloud_ platformu ([Vercel](https://vercel.com), [Netlify](https://www.netlify.com/) ili neku sličnu)
+- Analizirati performanse aplikacije korištenjem sljedećeg servisa:
+  - [PageSpeed Insights](https://pagespeed.web.dev/)
+  - Rezultati analize bit će dio finalnog izvještaja
+
+## Praktične vježbe
+
+### Projektni zadaci
+
+1. [Figma Essentials](https://hci.mario-cagalj.from.hr/projektni-zadaci)
+2. Personas, Information Architecture, and Sitemaps
+3. Next.js - Deploying an Application
+4. Low/High-fidelity Prototypes
+5. Next.js - Dynamic Routes and Data Fetching
+6. Full Responsive Page Coding
+7. TBA
+
+### Za rad u laboratoriju
+
+- Link na repozitorij - TBA
+
+### Za samostalan rad
+
+- [JavaScript za rad s React-om](/docs/js-for-react.md)
+- [JavaScript Tutorial](https://www.javascripttutorial.net/)
+- [JavaScript Event Loop](https://www.javascripttutorial.net/javascript-event-loop/)
+- [TypeScript Tutorial](https://www.typescripttutorial.net/)
+- [Learn Next.js](https://nextjs.org/learn)
+- [Learn Git Branching by Playing a Game](https://learngitbranching.js.org/)
