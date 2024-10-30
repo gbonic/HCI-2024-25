@@ -2,7 +2,7 @@
 
 - [Project Structure](#project-structure)
 - [My Project Links](#my-project-links)
-  - [Semester Project](#semester-project)
+  <!-- - [Semester Project](#semester-project) -->
   - [Semester Assignments](#semester-assignments)
 - [Project Requirements](#project-requirements)
   - [Web Application Requirements](#web-application-requirements)
@@ -15,18 +15,18 @@
 - **`/docs`**: If using GitHub for documentation (e.g., your final report in Markdown format)
 
 ## My Project Links
-
+<!--
 ### Semester Project
 
-- Link to your production version: [**Production Version**](URL_TO_PRODUCTION_VERSION) <!-- Replace with actual URL -->
-- Link to your final report: [**Final Report**](URL_TO_FINAL_REPORT) <!-- Replace with actual URL -->
+- Link to your production version: [**Production Version**](URL_TO_PRODUCTION_VERSION)  Replace with actual URL 
+- Link to your final report: [**Final Report**](URL_TO_FINAL_REPORT) <!-- Replace with actual URL -->-->
 <!-- Add more as necessary -->
 
 ### Semester Assignments
 
 - Link to Assignment 1: [**Assignment 1**](https://github.com/gbonic/HCI-2024-25/blob/main/assignments/1-assignment/figma-recording.mp4) <!-- Replace with actual URL -->
-- Link to Assignment 2: [**Assignment 2**](URL_TO_ASSIGNMENT_2) <!-- Replace with actual URL -->
-- Link to Assignment 3: [**Assignment 3**](URL_TO_ASSIGNMENT_3) <!-- Replace with actual URL -->
+- Link to Assignment 2: [**Assignment 2**](https://github.com/gbonic/HCI-2024-25/tree/main/assignments/02-assignment) <!-- Replace with actual URL -->
+<!-- - Link to Assignment 3: [**Assignment 3**](URL_TO_ASSIGNMENT_3) x Replace with actual URL -->
 <!-- Add more assignments as necessary -->
 
 ## Project Requirements
