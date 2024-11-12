@@ -1,0 +1,37 @@
+.page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 15px;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    grid-area: Header;
+  }
+  
+  .page h1 {
+      font-family: 'Italianno', cursive;
+      color:#2E6431;
+      font-size:48px;
+      font-weight: lighter;
+      margin-left: 10px;
+  }
+  
+  .page .flavor-fuse {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .page a {
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    color: #000;
+  }
+  
+  .page a:hover {
+    color: #2f4f2f;
+  }
+  
