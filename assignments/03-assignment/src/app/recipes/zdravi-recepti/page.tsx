@@ -7,12 +7,12 @@ type Page = {
 };
 
 const categories: Page[] = [
-    { title: "Zdravi deserti", path: "/recipes/vrsta-obroka/zdravi-deserti" },
-    { title: "Brzi zdravi recepti", path: "/recipes/vrsta-obroka/brzi-zdravi-recepti" },
-    { title: "Obroci za mršavljenje", path: "/recipes/vrsta-obroka/obroci-za-mrsavljenje" },
-    { title: "Prehrana za sportaše", path: "/recipes/vrsta-obroka/prehrana-za-sportase" },
-    { title: "Zdravi napitci", path: "/recipes/vrsta-obroka/zdravi-napitci" },
-    { title: "Jačanje imuniteta", path: "/recipes/vrsta-obroka/jacanje-imuniteta" },
+    { title: "Zdravi deserti", path: "/recipes/zdravi-recepti/zdravi-deserti" },
+    { title: "Brzi zdravi recepti", path: "/recipes/zdravi-recepti/brzi-zdravi-recepti" },
+    { title: "Obroci za mršavljenje", path: "/recipes/zdravi-recepti/obroci-za-mrsavljenje" },
+    { title: "Prehrana za sportaše", path: "/recipes/zdravi-recepti/prehrana-za-sportase" },
+    { title: "Zdravi napitci", path: "/recipes/zdravi-recepti/zdravi-napitci" },
+    { title: "Jačanje imuniteta", path: "/recipes/zdravi-recepti/jacanje-imuniteta" },
 ];
 
 const ZdraviRecepti = () => {
