@@ -1,3 +1,13 @@
+.main-content-recipes {
+  
+  display: grid;
+  grid-template-rows: 1fr 3fr 1fr;
+  grid-template-areas: 
+   "Header"
+   "Content"
+   "Footer";
+}
+
 .categories-recipes {
   display: flex;
   flex-wrap: wrap;

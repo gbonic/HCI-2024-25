@@ -1,0 +1,19 @@
+.footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 20px;
+    width: 100%;
+    bottom: 0;
+    grid-area: Footer;
+    background-color:#2e6431fe;
+}
+
+.footer p {
+    margin: 5px;
+    font-size: 0.9rem;
+    color: white;
+}
+.footer a {
+    color:white;
+    text-decoration: none;
+}
