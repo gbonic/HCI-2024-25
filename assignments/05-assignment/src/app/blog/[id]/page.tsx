@@ -1,5 +1,6 @@
-import { Post } from "../page"; // Importiraj tip Post iz index stranice
+import Link from "next/link";
 import { BASE_API_URL } from "../page";
+import type { Post } from "../page";
 import './page.css';
 
 
@@ -7,21 +8,26 @@ type BlogPostProps = {
   params: { id: string };
 };
 
-
-// Dohvat jednog posta prema ID-u
 async function getPost(id: string): Promise<Post> {
-  const res = await fetch(`${BASE_API_URL}/${id}`);
-  return res.json();
+  const data = await fetch(`${BASE_API_URL}/posts/${id}`);
+  return data.json();
 }
 
 
-export default async function PostPage({ params }: BlogPostProps) {
-  const post = await getPost(params.id);  // Dohvaćanje specifičnog posta
-
+export default async function BlogPost({ params }:
+BlogPostProps) {
+  const post = await getPost(params.id);
+  const { id, title, body } = post;
+  
   return (
     <main className="blog-id">
-      <h1>Post {post.id}: {post.title}</h1>
-      <p>{post.body}</p>
+      <Link
+          href="/blog"
+          className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-200 mb-6"
+      ></Link>
+      <h1>Post {id}: {title}</h1>
+      <p>{body}</p>
+
     </main>
   );
 }
