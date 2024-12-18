@@ -29,7 +29,7 @@
 - Link to Assignment 2: [**Assignment 2**](https://github.com/gbonic/HCI-2024-25/blob/main/assignments/02-assignment/user-persone-sitemap.pdf) <!-- Replace with actual URL -->
 - Link to Assignment 3: [**Assignment 3**](https://hci-2024-25.vercel.app/)
 - Link to Assignment 4: [**Assignment 4**](https://github.com/gbonic/HCI-2024-25/blob/main/assignments/04-assignment)
-- Link to Assignment 5: [**Assignment 5**](https://hci-2024-25-05-task.vercel.app/)
+- Link to Assignment 5: [**Assignment 5**](https://hci-2024-25-05-task.vercel.app/blog)
 <!-- Add more assignments as necessary -->
 
 ## Project Requirements
