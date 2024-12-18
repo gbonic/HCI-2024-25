@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BASE_API_URL } from "../page";
+import { BASE_API_URL } from "../constants";
 import type { Post } from "../page";
 import './page.css';
 

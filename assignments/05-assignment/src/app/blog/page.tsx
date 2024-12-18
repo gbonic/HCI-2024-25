@@ -1,5 +1,6 @@
 import Link from "next/link";
 import './page.css';
+import { BASE_API_URL } from "./constants";
 
 export type Post = {
   userId: number;
@@ -11,8 +12,6 @@ export type Post = {
 type BlogPageProps = {
   searchParams: { page: string };
 };
-
-export const BASE_API_URL = "https://jsonplaceholder.typicode.com";
 
 // Dohvat svih postova
 async function getPosts(): Promise<Post[]> {
