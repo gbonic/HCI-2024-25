@@ -35,7 +35,7 @@ export default function Home() {
 
         {!isRegistered && (
         <button
-          className="px-5 py-2 text-lg bg-[#1e1e1e21] text-[#2E6431] rounded-lg hover:bg-[#2E6431] hover:text-white"
+          className="px-5 py-2 text-lg bg-gray-200 text-[#2E6431] hover:bg-[#2E6431] hover:text-white rounded-full hover:scale-105 transition-transform duration-300"
           onClick={() => setIsModalOpen(true)}
         >
           Registriraj se

@@ -24,7 +24,7 @@ export default function Recipes() {
                         key={index}
                         className="flex justify-center items-center p-5 m-12 bg-gray-200 hover:bg-gray-300 hover:scale-105 transition-transform duration-300 rounded-full w-45 h-45"
                     >
-                        <Link href={category.path} className="text-center text-green-700 no-underline">
+                        <Link href={category.path} className="text-center text-[#2E6431] no-underline">
                             {category.title}
                         </Link>
                     </div>

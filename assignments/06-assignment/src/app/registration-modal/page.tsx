@@ -12,17 +12,40 @@ export default function RegistrationModal({ onClose, onRegister }: Props) {
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
+
+  const [error, setError] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const validatePassword = (password: string, confirmPassword: string) => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]).{8,}$/;
+    
+    if (!password.match(passwordRegex)) {
+      setError("Lozinka mora sadržavati: barem jedno veliko slovo, jedno malo slovo, broj i specijalni znak.");
+      return false;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Lozinke se ne poklapaju.");
+      return false;
+    }
+
+    setError("");
+    return true;
+  };
+
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onRegister(formData.name); // Pošaljemo ime roditeljskoj komponenti
-    onClose(); // Zatvaramo modal
+    if (validatePassword(formData.password, formData.confirmPassword)) {
+      onRegister(formData.name); // Pošaljemo ime roditeljskoj komponenti
+      onClose(); // Zatvaramo modal
+    }
   };
 
   return (
@@ -82,19 +105,22 @@ export default function RegistrationModal({ onClose, onRegister }: Props) {
 
            {/* Potvrda lozinke */}
            <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
               Potvrda lozinke
             </label>
             <input
               type="password"
-              id="password"
-              name="password"
-              value={formData.password}
+              id="confirmPassword"
+              name="confirmPassword"
+              value={formData.confirmPassword}
               onChange={handleChange}
               className="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-[#2E6431] focus:border-[#2E6431]"
               required
             />
           </div>
+
+          {/* Obavijest o grešci */}
+          {error && <p className="text-red-500 text-sm">{error}</p>}
 
           {/* Gumb za potvrdu */}
           <button
