@@ -21,7 +21,7 @@ function processPage(page: Page, index: number) {
       key={index}
       className={`text-black font-bold text-base hover:text-[#2f4f2f] ${
         page.title === "FlavorFuse"
-          ? "font-italianno text-[#2f4f2f] text-5xl font-light"
+          ? "font-italianno text-[#2f4f2f] text-6x1 font-light"
           : ""
       }`}
     >
@@ -32,9 +32,8 @@ function processPage(page: Page, index: number) {
 
 const Navbar = () => {
   return (
-    <header className="py-6">
+    <header className="py-6 mx-10">
       <ul className="flex items-center justify-between w-full list-none p-0 m-0 px-4">
-        {/* Linkovi ravnomerno raspoređeni */}
         {pages.map((page, index) => (
           <li
             key={index}
@@ -43,10 +42,9 @@ const Navbar = () => {
             {processPage(page, index)}
           </li>
         ))}
-        {/* Search input sa razmakom */}
         <input
           type="text"
-          className="border rounded px-2 py-2 text-black focus:outline-none"
+          className="border rounded px-1 py-1 text-black focus:outline-none"
           placeholder="Pretraži..."
         />
       </ul>

@@ -1,4 +1,3 @@
-import './page.css';
 import Link from 'next/link';
 
 type Page = {
@@ -18,18 +17,19 @@ const categories: Page[] = [
 
 export default function Recipes() {
     return (
-        <main className="main-content-recipes">
-            <section className="categories-recipes">
+        <main className="grid grid-rows-[1fr_auto_1fr] min-h-screen">
+            <section className="flex flex-wrap justify-center items-center gap-8 mt-10">
                 {categories.map((category, index) => (
-                    <div key={index} className="category-recipes">
-                    <Link href={category.path}>
+                    <div
+                        key={index}
+                        className="flex justify-center items-center p-5 m-12 bg-gray-200 hover:bg-gray-300 hover:scale-105 transition-transform duration-300 rounded-full w-45 h-45"
+                    >
+                        <Link href={category.path} className="text-center text-green-700 no-underline">
                             {category.title}
-                    </Link>
-                </div>
+                        </Link>
+                    </div>
                 ))}
             </section>
         </main>
     );
 }
-
-
