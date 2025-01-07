@@ -21,7 +21,7 @@ function processPage(page: Page, index: number) {
       key={index}
       className={`text-black font-bold text-base hover:text-[#2f4f2f] ${
         page.title === "FlavorFuse"
-          ? "font-italianno text-[#2f4f2f]  font-light text-4xl"
+          ? "font-italianno text-[#2f4f2f]  font-light text-6xl"
           : ""
       }`}
     >

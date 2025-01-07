@@ -2,12 +2,22 @@
 
 import { useState } from "react";
 
-type Props = {
-  onClose: () => void;
-  onRegister: (name: string) => void;
+type RegistrationModalProps = {
+  onClose: () => void; // Funkcija za zatvaranje modala
+  onRegister: (name: string) => void; // Funkcija za registraciju korisnika
+  className?: string; // Opcionalna klasa za stiliziranje
+  disabled?: boolean; // Opcionalna oznaka za onemogućavanje
 };
 
-export default function RegistrationModal({ onClose, onRegister }: Props) {
+
+const RegistrationModal: React.FC<RegistrationModalProps> = ({
+   onClose,
+  onRegister,
+  className,
+  disabled,
+  ...rest
+}) => {
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -22,7 +32,7 @@ export default function RegistrationModal({ onClose, onRegister }: Props) {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const validatePassword = (password: string, confirmPassword: string) => {
+  const validatePassword = (password: string, confirmPassword: string): boolean => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]).{8,}$/;
     
     if (!password.match(passwordRegex)) {
@@ -141,3 +151,5 @@ export default function RegistrationModal({ onClose, onRegister }: Props) {
     </div>
   );
 }
+
+export default RegistrationModal;
