@@ -5,16 +5,16 @@ import { useState } from "react";
 type RegistrationModalProps = {
   onClose: () => void; // Funkcija za zatvaranje modala
   onRegister: (name: string) => void; // Funkcija za registraciju korisnika
-  className?: string; // Opcionalna klasa za stiliziranje
-  disabled?: boolean; // Opcionalna oznaka za onemogućavanje
+  //className?: string; // Opcionalna klasa za stiliziranje
+  //disabled?: boolean; // Opcionalna oznaka za onemogućavanje
 };
 
 
 const RegistrationModal: React.FC<RegistrationModalProps> = ({
-   onClose,
+  onClose,
   onRegister,
-  className,
-  disabled,
+  //className,
+  //disabled,
   ...rest
 }) => {
 
@@ -34,7 +34,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
 
   const validatePassword = (password: string, confirmPassword: string): boolean => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]).{8,}$/;
-    
+
     if (!password.match(passwordRegex)) {
       setError("Lozinka mora sadržavati: barem jedno veliko slovo, jedno malo slovo, broj i specijalni znak.");
       return false;
@@ -113,8 +113,8 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
             />
           </div>
 
-           {/* Potvrda lozinke */}
-           <div>
+          {/* Potvrda lozinke */}
+          <div>
             <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
               Potvrda lozinke
             </label>

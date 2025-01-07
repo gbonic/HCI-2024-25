@@ -2,7 +2,7 @@
 
 import Recipes from "./recipes/page";
 import { useState } from "react";
-import RegistrationModal from "./registration-modal/page";
+import RegistrationModal from "./registration-modal/RegistrationModal";
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,12 +34,12 @@ export default function Home() {
         </p>
 
         {!isRegistered && (
-        <button
-          className="px-5 py-2 text-lg bg-gray-200 text-[#2E6431] hover:bg-[#2E6431] hover:text-white rounded-full hover:scale-105 transition-transform duration-300"
-          onClick={() => setIsModalOpen(true)}
-        >
-          Registriraj se
-        </button>
+          <button
+            className="px-5 py-2 text-lg bg-gray-200 text-[#2E6431] hover:bg-[#2E6431] hover:text-white rounded-full hover:scale-105 transition-transform duration-300"
+            onClick={() => setIsModalOpen(true)}
+          >
+            Registriraj se
+          </button>
         )}
       </div>
 
