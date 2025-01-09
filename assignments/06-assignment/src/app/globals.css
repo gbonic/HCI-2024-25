@@ -2,11 +2,11 @@
 @tailwind components;
 @tailwind utilities; 
 
-@import url('https://fonts.googleapis.com/css2?family=Italianno&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
 
 :root {
-  --background: #ffffff;
+  --background: #FFFAF1;
   --foreground: #171717;
 }
 
@@ -19,9 +19,9 @@
 
 body,html {
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Roboto;
   overflow-y: auto;
   overflow-x: hidden;
   height: 100%;
-  background-color:rgba(255, 253, 253, 0.627);
+  background-color:#FFFAF1;
 }

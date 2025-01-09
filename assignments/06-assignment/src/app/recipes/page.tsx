@@ -22,9 +22,9 @@ export default function Recipes() {
                 {categories.map((category, index) => (
                     <div
                         key={index}
-                        className="flex justify-center items-center p-5 m-12 bg-gray-200 hover:bg-gray-300 hover:scale-105 transition-transform duration-300 rounded-full w-45 h-45"
+                        className="flex justify-center items-center p-5 m-12"
                     >
-                        <Link href={category.path} className="text-center text-[#2E6431] no-underline">
+                        <Link href={category.path} className="px-5 py-3 text-lg bg-[#fde4b5] text-gray-900 border-2 border-[#b2823b] rounded-full hover:scale-105 transition-transform duration-300">
                             {category.title}
                         </Link>
                     </div>

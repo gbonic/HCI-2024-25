@@ -29,13 +29,16 @@ export default function Home() {
     <main className="grid grid-rows-[auto_auto_1fr] min-h-screen text-[#2E6431]">
       {/* Hero sekcija */}
       <div className="flex flex-col items-center justify-center text-center mt-16 mb-12">
-        <p className="text-5xl font-italianno mb-6 text-[#2E6431] w-[500px]">
-          Pronađite inspiraciju za svaki obrok i otkrijte recepte koji spajaju ljude.
+        <h1 className="text-[#3A702B] font-italianno font-extrabold text-4xl mb-2 drop-shadow-lg">FlavorFuse</h1>
+        <h2 className="text-[#294122] font-italianno font-normal">-SINCE 2024-</h2>
+        <p className="text-1xl font-sans m-6 text-gray-900 w-[700px]">
+          Ovdje istražujte, prilagođavajte i dijelite recepte koji odgovaraju vašem načinu života. Bilo da ste u potrazi za brzim obrocima, zdravim idejama ili posebnim jelima bez glutena - imamo sve što vam treba na dohvat ruke.
+          Pronađite savršeni recept za svaki trenutak i pretvorite kuhanje u užitak!
         </p>
 
         {!isRegistered && (
           <button
-            className="px-5 py-2 text-lg bg-gray-200 text-[#2E6431] hover:bg-[#2E6431] hover:text-white rounded-full hover:scale-105 transition-transform duration-300"
+            className="px-5 py-3 text-lg bg-[#fde4b5] text-gray-900 border-2 border-[#b2823b] rounded-full hover:scale-105 transition-transform duration-300"
             onClick={() => setIsModalOpen(true)}
           >
             Registriraj se
@@ -70,6 +73,8 @@ export default function Home() {
           )}
         </div>
       )}
+
+      <h1 className="items-center justify-center text-center font-italianno text-[#EB3D00] text-4xl font-bold drop-shadow-md">POZNATI RECEPTI</h1>
 
       {/* Kategorije recepata */}
       <section className="flex flex-wrap justify-center items-center gap-8 px-8">

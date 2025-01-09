@@ -8,7 +8,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        italianno: ['Italianno', 'cursive'],
+        italianno: ['Roboto'],
     },
   },
 },
