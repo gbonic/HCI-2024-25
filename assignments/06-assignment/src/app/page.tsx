@@ -3,6 +3,7 @@
 import Recipes from "./recipes/page";
 import { useState } from "react";
 import RegistrationModal from "./registration-modal/RegistrationModal";
+import PopularRecipes from "./popular-recipes/page";
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -29,8 +30,8 @@ export default function Home() {
     <main className="grid grid-rows-[auto_auto_1fr] min-h-screen text-[#2E6431]">
       {/* Hero sekcija */}
       <div className="flex flex-col items-center justify-center text-center mt-16 mb-12">
-        <h1 className="text-[#3A702B] font-italianno font-extrabold text-4xl mb-2 drop-shadow-lg">FlavorFuse</h1>
-        <h2 className="text-[#294122] font-italianno font-normal">-SINCE 2024-</h2>
+        <h1 className="text-[#EB3D00] font-italianno font-extrabold text-4xl mb-2 drop-shadow-lg">FlavorFuse</h1>
+        <h2 className="text-[#EB3D00] font-italianno font-normal">-SINCE 2024-</h2>
         <p className="text-1xl font-sans m-6 text-gray-900 w-[700px]">
           Ovdje istražujte, prilagođavajte i dijelite recepte koji odgovaraju vašem načinu života. Bilo da ste u potrazi za brzim obrocima, zdravim idejama ili posebnim jelima bez glutena - imamo sve što vam treba na dohvat ruke.
           Pronađite savršeni recept za svaki trenutak i pretvorite kuhanje u užitak!
@@ -74,7 +75,11 @@ export default function Home() {
         </div>
       )}
 
-      <h1 className="items-center justify-center text-center font-italianno text-[#EB3D00] text-4xl font-bold drop-shadow-md">POZNATI RECEPTI</h1>
+      <h1 className="items-center justify-center text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md">POZNATI RECEPTI</h1>
+      {/* Kategorije poznatih recepata */}
+      <section className="flex flex-wrap justify-center items-center gap-4 px-8">
+        <PopularRecipes />
+      </section>
 
       {/* Kategorije recepata */}
       <section className="flex flex-wrap justify-center items-center gap-8 px-8">
