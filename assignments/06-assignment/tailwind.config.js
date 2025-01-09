@@ -9,6 +9,7 @@ module.exports = {
     extend: {
       fontFamily: {
         italianno: ['Roboto'],
+        scintilla: ['Scintilla', 'sans-serif'],
     },
   },
 },
