@@ -30,7 +30,7 @@ export default function Home() {
     <main className="grid grid-rows-[auto_auto_1fr] min-h-screen text-[#2E6431]">
       {/* Hero sekcija */}
       <div className="flex flex-col items-center justify-center text-center mt-16 mb-12">
-        <h1 className="text-[#EB3D00] font-italianno font-extrabold text-4xl mb-2 drop-shadow-lg">FlavorFuse</h1>
+        <h1 className="text-[#EB3D00] font-scintilla font-extrabold text-4xl mb-2 drop-shadow-lg">FlavorFuse</h1>
         <h2 className="text-[#EB3D00] font-italianno font-normal">-SINCE 2024-</h2>
         <p className="text-1xl font-sans m-6 text-gray-900 w-[700px]">
           Ovdje istražujte, prilagođavajte i dijelite recepte koji odgovaraju vašem načinu života. Bilo da ste u potrazi za brzim obrocima, zdravim idejama ili posebnim jelima bez glutena - imamo sve što vam treba na dohvat ruke.
