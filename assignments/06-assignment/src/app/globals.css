@@ -11,23 +11,14 @@
   font-style: normal;
 }
 
-:root {
-  --background: #FFFAF1;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
 
 body,html {
   margin: 0;
-  font-family: Roboto;
   overflow-y: auto;
   overflow-x: hidden;
   height: 100%;
   background-color:#FFFAF1;
+  font-family: sans-serif;
+  scroll-behavior: smooth;
 }
+

@@ -15,7 +15,7 @@ const popularRecipes: Page[] = [
 
 export default function PopularRecipes() {
     return (
-        <main className="grid grid-rows-[1fr_auto_1fr] min-h-screen">
+        <main>
             <section className="flex flex-wrap justify-center items-center gap-8">
                 {popularRecipes.map((recipe, index) => (
                     <Link
