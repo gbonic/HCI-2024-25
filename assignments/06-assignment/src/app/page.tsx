@@ -4,6 +4,7 @@ import Recipes from "./recipes/page";
 import { useState } from "react";
 import RegistrationModal from "./registration-modal/RegistrationModal";
 import PopularRecipes from "./popular-recipes/page";
+import FaqComponent from "./FAQs/page";
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,11 +28,11 @@ export default function Home() {
   };
 
   return (
-    <main className="grid grid-rows-[auto_auto_1fr] min-h-screen text-[#2E6431]">
+    <main className="grid grid-rows-[auto_auto_auto] min-h-screen text-[#2E6431]">
       {/* Hero sekcija */}
-      <div className="flex flex-col items-center justify-center text-center mt-16 mb-12">
-        <h1 className="text-[#EB3D00] font-scintilla font-extrabold text-4xl mb-2 drop-shadow-lg">FlavorFuse</h1>
-        <h2 className="text-[#EB3D00] font-italianno font-normal">-SINCE 2024-</h2>
+      <div className="flex flex-col items-center justify-center text-center my-16">
+        <h1 className="text-[#2E6431] font-scintilla font-extrabold text-4xl mb-2 drop-shadow-lg">FlavorFuse</h1>
+        <h2 className="text-[#2E6431] font-italianno font-normal">-SINCE 2024-</h2>
         <p className="text-1xl font-sans m-6 text-gray-900 w-[700px]">
           Ovdje istražujte, prilagođavajte i dijelite recepte koji odgovaraju vašem načinu života. Bilo da ste u potrazi za brzim obrocima, zdravim idejama ili posebnim jelima bez glutena - imamo sve što vam treba na dohvat ruke.
           Pronađite savršeni recept za svaki trenutak i pretvorite kuhanje u užitak!
@@ -75,46 +76,19 @@ export default function Home() {
         </div>
       )}
 
-      <h1 className="items-center justify-center text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md">POZNATI RECEPTI</h1>
+      <h1 className="items-center justify-center text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md my-16">POZNATI RECEPTI</h1>
       {/* Kategorije poznatih recepata */}
       <section className="flex flex-wrap justify-center items-center gap-4 px-8">
         <PopularRecipes />
       </section>
 
+      <h1 className="items-center justify-center text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md my-16">KATEGORIJE</h1>
       {/* Kategorije recepata */}
-      <section className="flex flex-wrap justify-center items-center gap-8 px-8">
+      <section className="flex flex-wrap justify-center items-center px-8">
         <Recipes />
       </section>
 
-      {/* Kontakt i FAQ */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-8 px-8 mb-12">
-        {/* Kontakt */}
-        <div className="w-full bg-[#2E6431] text-white p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold mb-4">Kontakt</h2>
-          <p>📧 Email: info@flavorfuse.com</p>
-          <p>📞 Telefon: +385 99 123 4567</p>
-          <p>🏢 Adresa: Bilo koja</p>
-        </div>
-
-        {/* Često postavljana pitanja */}
-        <div className="w-full bg-[#f4f4f4] text-[#2E6431] p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold mb-4">Često postavljena pitanja</h2>
-          <div className="space-y-4">
-            <div>
-              <h3 className="font-semibold">1. Kako se registrirati?</h3>
-              <p>Da biste se registrirali, kliknite na gumb "Registriraj se" na početnoj stranici i ispunite tražene podatke.</p>
-            </div>
-            <div>
-              <h3 className="font-semibold">2. Kako pronaći recepte?</h3>
-              <p>Recepti su dostupni u kategoriji "Recepti" u glavnom izborniku. Možete ih pretražiti prema ključnim riječima.</p>
-            </div>
-            <div>
-              <h3 className="font-semibold">3. Mogu li dodati svoje recepte?</h3>
-              <p>Da, nakon registracije imate mogućnost dodavanja svojih recepata putem korisničkog profila.</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <FaqComponent />
     </main>
   );
 }
