@@ -20,20 +20,18 @@ function processPage(page: Page, index: number) {
       href={page.path}
       key={index}
       className={`text-black font-bold text-base hover:text-[#2f4f2f] ${
-        page.title === "FlavorFuse"
-          ? (
-            <img
-              src="./images/FlavorFuse-dark-logo.png"
-              alt="FlavorFuse"
-              className="h-16 w-auto"
-            />
-          )
-          : (
-            page.title
-          )
+        page.title === "FlavorFuse" ? "" : ""
       }`}
     >
-      {page.title}
+      {page.title === "FlavorFuse" ? (
+        <img
+          src="/images/FlavorFuse-dark-logo.png" // Putanja do tvoje slike
+          alt="FlavorFuse"
+          className="h-16 w-auto" // Dodaj odgovarajući CSS za veličinu slike
+        />
+      ) : (
+        page.title
+      )}
     </Link>
   );
 }
