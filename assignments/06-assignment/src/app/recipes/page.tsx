@@ -17,17 +17,20 @@ const categories: Page[] = [
 
 export default function Recipes() {
     return (
-        <main className="grid grid-rows-[1fr_auto_1fr] min-h-screen">
-            <section className="flex flex-wrap justify-center items-center gap-8 mt-10">
+        <main className="flex flex-col items-center justify-center mb-16">
+            <section className="flex flex-wrap justify-center items-center gap-8">
                 {categories.map((category, index) => (
-                    <div
-                        key={index}
-                        className="flex justify-center items-center p-5 m-12"
+                    <Link
+                        href={category.path}
+                        className="text-center text-lg font-bold tracking-wide group-hover:scale-105 transition-transform duration-300"
                     >
-                        <Link href={category.path} className="px-5 py-3 text-lg bg-[#fde4b5] text-gray-900 border-2 border-[#b2823b] rounded-full hover:scale-105 transition-transform duration-300">
+                        <div
+                            key={index}
+                            className="relative group flex justify-center items-center w-44 h-44 bg-[#fde4b5] text-[#b2823b] font-italianno border-2 border-[#b2823b] rounded-full shadow-lg hover:translate-y-[-10px] transition-transform duration-500"
+                        >
                             {category.title}
-                        </Link>
-                    </div>
+                        </div>
+                    </Link>
                 ))}
             </section>
         </main>
