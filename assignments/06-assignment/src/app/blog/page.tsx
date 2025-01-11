@@ -1,54 +1,52 @@
 import Link from "next/link";
-import './page.css';
-import { BASE_API_URL } from "./constants";
+import Image from "next/image";
 
-export type Post = {
-  userId: number;
+export type Recipe = {
   id: number;
   title: string;
-  body: string;
+  image: string;
+  instructions: string;
 };
 
-type BlogPageProps = {
-  searchParams: { page: string };
-};
 
 // Dohvat svih postova
-async function getPosts(): Promise<Post[]> {
-  const data = await fetch(`${BASE_API_URL}/posts`);
-  if (!data.ok) {
-    throw new Error(`Failed to fetch posts: ${data.status} ${data.statusText}`);
+async function getRecipes(): Promise<Recipe[]> {
+  const response = await fetch(`https://api.spoonacular.com/recipes/complexSearch?number=50&apiKey=987de0fe95f0494cb10c0d59057bed32`);
+  console.log(response);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch posts: ${response.status} ${response.statusText}`);
   }
-  return data.json();
+  const data = await response.json();
+  return data.results; // Osiguraj da vraćaš niz
 }
 
-function processPost(post: Post) {
-  const { id, title } = post;
+function processRecipe(recipe: Recipe) {
+  const { id, title, image } = recipe;
   return (
-    <li key={id} className="mb-4">
+    <div key={id} className="shadow-lg rounded-lg overflow-hidden bg-white">
       <Link
         href={`/blog/${id}`}
-        className="block p-6 bg-white rounded-lg border border-gray-200 shadow-md hover:bg-gray-100 transition-colors duration-200"
+        className="block p-6  rounded-lg  shadow-md  transition-colors duration-200"
       >
-        <h2 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">
-          Post {id}: {title}
-        </h2>
-        <p className="font-normal text-gray-700">
-          Click to read more about this fascinating topic...
-        </p>
+        <Image src={image} alt={title} className="mb-2 w-full h-40 object-cover rounded-lg" />
+        <div className="p-4">
+          <h2 className="text-xl font-bold text-gray-900">{title}</h2>
+          <p className="text-gray-700 mt-2">Click to read more...</p>
+        </div>
       </Link>
-    </li>
+    </div>
   );
 }
 
-export default async function BlogPage( { searchParams }: BlogPageProps) {
-  const posts = await getPosts();  // Dohvaćanje svih postova
+export default async function BlogPage() {
+  const posts = await getRecipes();  // Dohvaćanje svih postova
 
   return (
-    <main>
-      <ul className="ul-blog">
-        {posts.map(processPost)}
-      </ul>
+    <main className="container mx-auto p-6">
+      <h1 className="text-center text-4xl font-bold mb-8">Recipes</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {posts.map(processRecipe)}
+      </div>
     </main>
   );
 }

@@ -1,23 +1,23 @@
 import Link from "next/link";
-import { BASE_API_URL } from "../constants";
-import type { Post } from "../page";
+import type { Recipe } from "../page";
 import './page.css';
-
+import Image from "next/image";
 
 type BlogPostProps = {
   params: { id: string };
 };
 
-async function getPost(id: string): Promise<Post> {
-  const data = await fetch(`${BASE_API_URL}/posts/${id}`);
+async function getRecipe(id: string): Promise<Recipe> {
+  const data = await fetch(`https://api.spoonacular.com/recipes/${id}/information?apiKey=987de0fe95f0494cb10c0d59057bed32`);
   return data.json();
 }
 
 
 export default async function BlogPost({ params }:
 BlogPostProps) {
-  const post = await getPost(params.id);
-  const { id, title, body } = post;
+  const recipe = await getRecipe(params.id);
+  const { title, image, instructions } = recipe;
+
   
   return (
     <main className="blog-id">
@@ -25,9 +25,9 @@ BlogPostProps) {
           href="/blog"
           className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-200 mb-6"
       ></Link>
-      <h1>Post {id}: {title}</h1>
-      <p>{body}</p>
-
+      <h1 className="text-3xl font-bold">{title}</h1>
+      <Image src={image} alt={title} className="my-4 w-full h-60 object-cover rounded-lg" />
+      <p>{instructions}</p>
     </main>
   );
 }
