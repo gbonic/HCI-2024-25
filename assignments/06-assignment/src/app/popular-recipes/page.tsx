@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 type Page = {
     title: string;
@@ -27,7 +28,7 @@ export default function PopularRecipes() {
                             className="relative w-72 h-40 rounded-lg overflow-hidden shadow-md hover:scale-105 transition-transform duration-300"
                         >
                             {/* Slika recepta */}
-                            <img
+                            <Image
                                 src={recipe.image}
                                 alt={recipe.title}
                                 className="w-full h-full object-cover"

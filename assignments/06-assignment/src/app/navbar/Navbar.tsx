@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 type Page = {
   title: string;
@@ -19,15 +20,15 @@ function processPage(page: Page, index: number) {
     <Link
       href={page.path}
       key={index}
-      className={`text-black font-bold text-base hover:text-[#2f4f2f] ${
+      className={`text-black font-bold text-base hover:text-[#2E6431] hover:scale-105 transition-transform duration-300 ${
         page.title === "FlavorFuse" ? "" : ""
       }`}
     >
       {page.title === "FlavorFuse" ? (
-        <img
-          src="/images/FlavorFuse-dark-logo.png" // Putanja do tvoje slike
+        <Image
+          src="/images/FlavorFuse-dark-logo.png" 
           alt="FlavorFuse"
-          className="h-16 w-auto" // Dodaj odgovarajući CSS za veličinu slike
+          className="h-14 w-auto"
         />
       ) : (
         page.title
@@ -38,7 +39,7 @@ function processPage(page: Page, index: number) {
 
 const Navbar = () => {
   return (
-    <header className="py-6 mx-10">
+    <header className="pt-3 border-b border-gray-950 [grid-area:header]">
       <ul className="flex items-center justify-between w-full list-none p-0 m-0 px-4">
         {pages.map((page, index) => (
           <li
@@ -50,8 +51,8 @@ const Navbar = () => {
         ))}
         <input
           type="text"
-          className="border rounded px-1 py-1 text-black focus:outline-none"
-          placeholder="Pretraži..."
+          className="border rounded-full px-1 py-1 text-black focus:outline-none"
+          placeholder="  Pretraži..."
         />
       </ul>
     </header>

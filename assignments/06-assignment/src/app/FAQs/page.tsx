@@ -35,7 +35,7 @@ export default function FaqComponent() {
           <div>
             <h3 className="text-xl font-semibold mb-2">Kako mogu objaviti vlastiti recept?</h3>
             <p className="text-base">
-              Jednostavno se registrirajte ili prijavite na svoj račun, kliknite na gumb "Objavi recept" i slijedite upute za unos
+              Jednostavno se registrirajte ili prijavite na svoj račun, kliknite na gumb Objavi recept i slijedite upute za unos
               sastojaka, uputa i fotografija vašeg jela.
             </p>
           </div>
