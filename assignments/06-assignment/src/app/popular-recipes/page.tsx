@@ -17,21 +17,24 @@ const popularRecipes: Page[] = [
 export default function PopularRecipes() {
     return (
         <main>
-            <section className="flex flex-wrap justify-center items-center gap-8">
+            <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4">
                 {popularRecipes.map((recipe, index) => (
                     <Link
+                    key={index}
                         href={recipe.path}
                         className="text-center text-xl font-bold drop-shadow-md text-[#fde4b5] uppercase"
                     >
                         <div
                             key={index}
-                            className="relative w-72 h-40 rounded-lg overflow-hidden shadow-md hover:scale-105 transition-transform duration-300"
+                            className="relative w-full h-40 rounded-lg overflow-hidden shadow-md hover:scale-105 transition-transform duration-300"
                         >
                             {/* Slika recepta */}
                             <Image
                                 src={recipe.image}
                                 alt={recipe.title}
                                 className="w-full h-full object-cover"
+                                width={500}
+                                height={300}
                             />
                             {/* Tekst preko slike */}
                             <div className="absolute inset-0 flex justify-center items-center text-center backdrop-blur-[3px] bg-black/20">

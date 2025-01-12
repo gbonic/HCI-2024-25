@@ -20,5 +20,10 @@ body,html {
   background-color:#FFFAF1;
   font-family: sans-serif;
   scroll-behavior: smooth;
+  @apply min-h-screen bg-[#ffffff] text-[#2E6431] font-sans flex flex-col;
+}
+
+img {
+  @apply max-w-full h-auto;
 }
 

@@ -35,6 +35,7 @@ export default function RootLayout({
         />
       </head>
       <body
+         className="grid grid-rows-[auto_1fr_auto] min-h-screen sm:grid-rows-[auto_1fr_auto]" 
       >
         <div>
             <Navbar />
