@@ -32,7 +32,7 @@
 - Link to Assignment 5: [**Assignment 5**](https://hci-2024-25-05-task.vercel.app/blog)
 - Link to Assignment 6: [**UI Design**](https://github.com/gbonic/HCI-2024-25/blob/main/assignments/06-assignment/UI-v1.pdf)
 - Link to Assignment 6: [**Design standards**](https://github.com/gbonic/HCI-2024-25/blob/main/assignments/06-assignment/design-standards.png)
-- Link to Assignment 6: [**Deploy**](https://hci-2024-25-06-task.vercel.app/)
+- Link to Assignment 6: [**Deploy**](https://flavorfuse-8tro.vercel.app/)
 
 <!-- Add more assignments as necessary -->
 
