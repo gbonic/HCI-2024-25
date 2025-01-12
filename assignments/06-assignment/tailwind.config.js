@@ -10,9 +10,11 @@ module.exports = {
       fontFamily: {
         italianno: ['Roboto'],
         scintilla: ['Scintilla', 'sans-serif'],
+      },
     },
   },
-},
+  images: {
+    domains: ['img.spoonacular.com'], // Dodajte domenu s koje želite učitavati slike
+  },
   plugins: [],
 }
-

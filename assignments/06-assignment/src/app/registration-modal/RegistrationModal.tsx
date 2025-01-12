@@ -5,17 +5,13 @@ import { useState } from "react";
 type RegistrationModalProps = {
   onClose: () => void; // Funkcija za zatvaranje modala
   onRegister: (name: string) => void; // Funkcija za registraciju korisnika
-  //className?: string; // Opcionalna klasa za stiliziranje
-  //disabled?: boolean; // Opcionalna oznaka za onemogućavanje
 };
 
 
 const RegistrationModal: React.FC<RegistrationModalProps> = ({
   onClose,
   onRegister,
-  //className,
-  //disabled,
-  ...rest
+
 }) => {
 
   const [formData, setFormData] = useState({

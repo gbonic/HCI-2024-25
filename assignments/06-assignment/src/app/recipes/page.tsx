@@ -8,8 +8,6 @@ type Page = {
     path: `/${string}`;
 };
 
-
-
 const categories: Page[] = [
     { title: "Prema vrsti obroka", path: "/recipes/vrsta-obroka" },
     { title: "Zdravi recepti", path: "/recipes/zdravi-recepti" },
@@ -21,25 +19,25 @@ const categories: Page[] = [
 ];
 
 export default function Recipes() {
-
     const pathname = usePathname(); // Dohvaćamo trenutnu putanju
-
-    // Provjeravamo da li smo na /recipes stranici
     const isRecipesPage = pathname === '/recipes';
-    
-   
 
     return (
-        <main className={`flex flex-col items-center justify-center ${isRecipesPage ? 'min-h-screen' : ''} mb-16`}>
-            <section className="flex flex-wrap justify-center items-center gap-8">
+        <main
+            className={`flex flex-col items-center justify-center ${isRecipesPage ? 'min-h-screen' : ''
+                } mb-16`}
+        >
+            {/* Kategorije */}
+            <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4 px-4">
+
                 {categories.map((category, index) => (
                     <Link
                         key={index}
                         href={category.path}
-                        className="text-center text-lg font-bold tracking-wide group-hover:scale-105 transition-transform duration-300"
+                        className="group text-center"
                     >
                         <div
-                            className="relative group flex justify-center items-center w-44 h-44 bg-[#fde4b5] text-[#b2823b] font-italianno border-2 border-[#b2823b] rounded-full shadow-lg hover:translate-y-[-10px] transition-transform duration-500"
+                            className="relative flex justify-center items-center w-36 h-36 bg-[#fde4b5] text-[#b2823b] font-italianno border-2 border-[#b2823b] rounded-full shadow-lg hover:translate-y-[-10px] transition-transform duration-500"
                         >
                             {category.title}
                         </div>
