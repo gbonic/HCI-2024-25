@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities; 
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
+@font-face {
+  font-family: 'Scintilla';
+  src: url('/fonts/Scintilla.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+body,html {
+  margin: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
+  background-color:#ffedcf;
+  font-family: sans-serif;
+  scroll-behavior: smooth;
+  @apply min-h-screen bg-[#ffffff] text-[#2E6431] font-sans flex flex-col;
+}
+
+img {
+  @apply max-w-full h-auto;
+}
+

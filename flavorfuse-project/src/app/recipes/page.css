@@ -1,0 +1,42 @@
+.main-content {
+  display: grid;
+  grid-template-columns: 0.5fr 1fr;
+  min-height: 100vh;
+}
+
+.left-column {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+}
+
+.left-column h2 {
+  margin: 30px;
+  font-size: xx-large;
+  color:#2e644e;
+}
+
+.categories div {
+  padding: 10px;
+  background-color: rgba(30, 30, 30, 13%);
+  border-radius: 25px;
+  width: 35%;
+  margin-bottom: 15px;
+  margin-left:45px;
+}
+
+.categories div a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  text-decoration: none;
+  color: #2e644e;
+}
+
+.search-bar {
+  padding: 10px;
+  margin:30px;
+  border-radius: 25px;
+  border: #2e644e solid 1px;
+  width: 350px;
+}
