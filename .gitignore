@@ -34,3 +34,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+assignments/06-assignment/src/app/registration-modal/page.tsx
+assignments/06-assignment/src/app/blog/page.css
