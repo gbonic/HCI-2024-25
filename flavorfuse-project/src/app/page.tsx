@@ -1,26 +1,41 @@
 "use client";
 
 import Recipes from "./recipes/page";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PopularRecipes from "./popular-recipes/page";
 import FaqComponent from "./FAQs/page";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 export default function Home() {
   const [userInitials, setUserInitials] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isRegistered, setIsRegistered] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const userToken = Cookies.get("auth_token");
+    console.log("Auth token: ", userToken); // Provjera tokena
+  
+    if (userToken) {
+      const userName = localStorage.getItem("user_name");
+      console.log("User name from localStorage: ", userName); // Provjera imena korisnika
+  
+      if (userName) {
+        setUserInitials(userName.charAt(0).toUpperCase()); // Prvi inicijal imena korisnika
+      }
+    }
+  }, []);
 
   const handleDropdownToggle = () => {
     setIsDropdownOpen((prev) => !prev);
   };
 
   const handleLogout = () => {
+    Cookies.remove("auth_token");  // Uklonimo token
     setUserInitials(null);
-    setIsRegistered(false);
-    setIsDropdownOpen(false);
+    router.push("/");
+    // setIsDropdownOpen(false);
   };
 
   const handleLoginClick = () => {
@@ -81,45 +96,39 @@ export default function Home() {
           Pronađite savršeni recept za svaki trenutak i pretvorite kuhanje u užitak!
         </p>
 
-        {!isRegistered && (
+        {!userInitials ? (
           <button
             className="px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-lg bg-[#fde4b5] text-gray-900 border-2 border-[#b2823b] rounded-full hover:scale-105 transition-transform duration-300"
             onClick={handleLoginClick}
           >
             Prijavi se
           </button>
+        ) : (
+          <div className="absolute bottom-4 right-4 w-14 h-14 m-5 bg-[#fde4b5] text-gray-800 font-bold flex items-center justify-center rounded-full shadow-lg z-50">
+            <button
+              onClick={handleDropdownToggle}
+              className="w-full h-full flex items-center justify-center"
+            >
+              {userInitials}
+            </button>
+            {isDropdownOpen && (
+              <div className="absolute bottom-full right-0 mb-2 w-48 bg-white text-gray-800 rounded-lg shadow-lg p-2 z-50">
+                <ul>
+                  <li className="px-4 py-2 hover:bg-[#f4f4f4] cursor-pointer">
+                    Dodaj recept
+                  </li>
+                  <li className="px-4 py-2 hover:bg-[#f4f4f4] cursor-pointer">
+                    Moj profil
+                  </li>
+                  <li className="px-4 py-2 hover:bg-[#f4f4f4] cursor-pointer" onClick={handleLogout}>
+                    Odjava
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
         )}
       </div>
-
-      {/* Prikaz inicijala u gornjem desnom kutu */}
-      {userInitials && (
-        <div className="absolute bottom-4 right-4 w-14 h-14 m-5 bg-[#fde4b5] text-gray-800 font-bold flex items-center justify-center rounded-full shadow-lg z-50">
-          <button
-            onClick={handleDropdownToggle}
-            className="w-full h-full flex items-center justify-center"
-          >
-            {userInitials}
-          </button>
-
-          {/* Padajući izbornik */}
-          {isDropdownOpen && (
-            <div className="absolute bottom-full right-0 mb-2 w-48 bg-white text-gray-800 rounded-lg shadow-lg p-2 z-50">
-              <ul>
-                <li className="px-4 py-2 hover:bg-[#f4f4f4] cursor-pointer">
-                  Dodaj recept
-                </li>
-                <li className="px-4 py-2 hover:bg-[#f4f4f4] cursor-pointer">
-                  Moj profil
-                </li>
-                <li className="px-4 py-2 hover:bg-[#f4f4f4] cursor-pointer" onClick={handleLogout}>
-                  Odjava
-                </li>
-              </ul>
-            </div>
-          )}
-        </div>
-      )}
-
       <h1 className="items-center justify-center text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md my-16">POZNATI RECEPTI</h1>
       {/* Kategorije poznatih recepata */}
       <section className="flex flex-wrap justify-center items-center gap-4 px-8">
@@ -129,7 +138,7 @@ export default function Home() {
       <h1 className="items-center justify-center text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md my-16">KATEGORIJE</h1>
       {/* Kategorije recepata */}
       <section className="flex flex-wrap justify-center items-center px-8">
-        <Recipes/>
+        <Recipes />
       </section>
 
       <FaqComponent />

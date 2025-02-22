@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Cookies from "js-cookie"; // Import js-cookie for handling cookies
+import { useRouter } from "next/navigation";
 
 export default function Prijava() {
   const [email, setEmail] = useState("");
@@ -12,14 +13,14 @@ export default function Prijava() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const router = useRouter();
 
-  // Check cookies on page load
   useEffect(() => {
     const userToken = Cookies.get("auth_token");
     if (userToken) {
-      // User is already logged in, handle accordingly if needed
+      // If the user is already logged in, redirect them to the homepage
     }
-  }, []);
+  }, [router]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -64,6 +65,9 @@ export default function Prijava() {
       const userToken = "exampleAuthToken"; // In a real case, this would be a generated token
       Cookies.set("auth_token", userToken, { expires: 7, path: "/" });
 
+      // Store user name in localStorage after registration
+      localStorage.setItem("user_name", name);
+
       setSuccess("Uspješno ste se registrirali!");
       setIsRegistering(false); // Switch to login form after successful registration
     } else {
@@ -91,7 +95,11 @@ export default function Prijava() {
       const userToken = "exampleAuthToken"; // In a real case, this would be a generated token
       Cookies.set("auth_token", userToken, { expires: 7, path: "/" });
 
+      // Store user name in localStorage after login
+      localStorage.setItem("user_name", user.name);
+
       setSuccess("Prijava uspješna!");
+      router.push("/");
     }
   };
 
