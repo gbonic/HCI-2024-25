@@ -1,7 +1,10 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useUserContext } from "../context/UserContext";
 import Link from "next/link";
 import Image from "next/image";
+import Cookies from "js-cookie";
 
 type Page = {
   title: string;
@@ -27,32 +30,60 @@ const categories: Page[] = [
 ];
 
 const Navbar = () => {
+  const router = useRouter();
+  const { userInitials, userName, setUserInitials, setUserName } = useUserContext();  // Dohvati inicijale iz UserContext
+  const [recipesDropdownOpen, setRecipesDropdownOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
-  const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
+  const [mobileDropdownOpen, setMobileDropdownOpen] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
 
-  const handleMouseEnter = () => {
+  const handleRecipesMouseEnter = () => {
     if (dropdownTimeout) {
       clearTimeout(dropdownTimeout);
       setDropdownTimeout(null);
     }
-    setDropdownOpen(true);
+    setRecipesDropdownOpen(true);
   };
 
-  const handleMouseLeave = () => {
+  const handleRecipesMouseLeave = () => {
     const timeout = setTimeout(() => {
-      setDropdownOpen(false);
+      setRecipesDropdownOpen(false);
+    }, 500);
+    setDropdownTimeout(timeout);
+  };
+
+  const handleUserMouseEnter = () => {
+    if (dropdownTimeout) {
+      clearTimeout(dropdownTimeout);
+      setDropdownTimeout(null);
+    }
+    setUserDropdownOpen(true);
+  };
+
+  const handleUserMouseLeave = () => {
+    const timeout = setTimeout(() => {
+      setUserDropdownOpen(false);
     }, 500);
     setDropdownTimeout(timeout);
   };
 
   const toggleMobileDropdown = () => {
     setMobileDropdownOpen(!mobileDropdownOpen);
+  };
+
+  const handleLogout = () => {
+    Cookies.remove("auth_token");
+    localStorage.removeItem("user_name");
+    setUserInitials(null);
+    setUserName(null);
+    setIsLoggedIn(false);
+    router.push("/");
   };
 
   return (
@@ -85,8 +116,8 @@ const Navbar = () => {
                 <li
                   key={index}
                   className="relative text-black font-bold hover:text-[#2E6431] cursor-pointer"
-                  onMouseEnter={handleMouseEnter}
-                  onMouseLeave={handleMouseLeave}
+                  onMouseEnter={handleRecipesMouseEnter}
+                  onMouseLeave={handleRecipesMouseLeave}
                 >
                   {page.title}
                   <svg
@@ -103,11 +134,11 @@ const Navbar = () => {
                       d="M19 9l-7 7-7-7"
                     />
                   </svg>
-                  {dropdownOpen && (
+                  {recipesDropdownOpen && (
                     <ul
                       className="absolute z-50 left-0 top-full bg-white shadow-lg border mt-2 rounded-lg w-56"
-                      onMouseEnter={handleMouseEnter}
-                      onMouseLeave={handleMouseLeave}
+                      onMouseEnter={handleRecipesMouseEnter}
+                      onMouseLeave={handleRecipesMouseLeave}
                     >
                       {categories.map((category, i) => (
                         <li key={i} className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer">
@@ -145,12 +176,49 @@ const Navbar = () => {
         </div>
 
         {/* Desna strana */}
-        <div className="flex justify-center">
+        <div className="flex justify-center items-center">
           <ul className="hidden lg:flex justify-around w-full items-center">
             {pages.slice(3).map((page, index) => (
-              <li key={index} className="text-black font-bold hover:text-[#2E6431]">
-                <Link href={page.path}>{page.title}</Link>
-              </li>
+              page.title === "PRIJAVA" ? (
+                userInitials ? (
+                  <div
+                    key={index}
+                    className="relative flex items-center ml-4 cursor-pointer"
+                    onMouseEnter={handleUserMouseEnter}
+                    onMouseLeave={handleUserMouseLeave}
+                  >
+                    <div className="w-10 h-10 bg-[#fde4b5] text-gray-800 font-bold flex items-center justify-center rounded-full shadow-lg">
+                      {userInitials}
+                    </div>
+                    <span className="ml-2 text-black font-bold">{userName}</span>
+                    {userDropdownOpen && (
+                      <ul
+                        className="absolute z-50 right-0 top-full bg-white shadow-lg border mt-2 rounded-lg w-56"
+                        onMouseEnter={handleUserMouseEnter}
+                        onMouseLeave={handleUserMouseLeave}
+                      >
+                        <li className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer">
+                          <Link href="/profile">Moj profil</Link>
+                        </li>
+                        <li className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer">
+                          <Link href="/add-recipe">Dodaj recept</Link>
+                        </li>
+                        <li className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer" onClick={handleLogout}>
+                          Odjava
+                        </li>
+                      </ul>
+                    )}
+                  </div>
+                ) : (
+                  <li key={index} className="text-black font-bold hover:text-[#2E6431]">
+                    <Link href={page.path}>{page.title}</Link>
+                  </li>
+                )
+              ) : (
+                <li key={index} className="text-black font-bold hover:text-[#2E6431]">
+                  <Link href={page.path}>{page.title}</Link>
+                </li>
+              )
             ))}
           </ul>
           <input

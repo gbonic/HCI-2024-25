@@ -7,39 +7,42 @@ import FaqComponent from "./FAQs/page";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import { useUserContext } from "./context/UserContext";
 
 export default function Home() {
-  const [userInitials, setUserInitials] = useState<string | null>(null);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { userInitials, userName, setUserInitials, setUserName } = useUserContext();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const userToken = Cookies.get("auth_token");
     console.log("Auth token: ", userToken); // Provjera tokena
-  
+
     if (userToken) {
       const userName = localStorage.getItem("user_name");
       console.log("User name from localStorage: ", userName); // Provjera imena korisnika
-  
+
       if (userName) {
-        setUserInitials(userName.charAt(0).toUpperCase()); // Prvi inicijal imena korisnika
+        const nameParts = userName.split(' ');
+        const initials = nameParts[0].charAt(0).toUpperCase() + (nameParts[1]?.charAt(0).toUpperCase() || '');
+        setUserInitials(initials);
+        setUserName(userName);
+        setIsLoggedIn(true);
       }
     }
-  }, []);
-
-  const handleDropdownToggle = () => {
-    setIsDropdownOpen((prev) => !prev);
-  };
-
-  const handleLogout = () => {
-    Cookies.remove("auth_token");  // Uklonimo token
-    setUserInitials(null);
-    router.push("/");
-    // setIsDropdownOpen(false);
-  };
+  }, [setUserInitials, setUserName]);
 
   const handleLoginClick = () => {
     router.push("/prijava");
+  };
+
+  const handleLogout = () => {
+    Cookies.remove("auth_token");
+    localStorage.removeItem("user_name");
+    setUserInitials(null);
+    setUserName(null);
+    setIsLoggedIn(false);
+    router.push("/");
   };
 
   return (
@@ -95,38 +98,13 @@ export default function Home() {
           Ovdje istražujte, prilagođavajte i dijelite recepte koji odgovaraju vašem načinu života. Bilo da ste u potrazi za brzim obrocima, zdravim idejama ili posebnim jelima bez glutena - imamo sve što vam treba na dohvat ruke.
           Pronađite savršeni recept za svaki trenutak i pretvorite kuhanje u užitak!
         </p>
-
-        {!userInitials ? (
+        {!isLoggedIn && (
           <button
             className="px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-lg bg-[#fde4b5] text-gray-900 border-2 border-[#b2823b] rounded-full hover:scale-105 transition-transform duration-300"
             onClick={handleLoginClick}
           >
             Prijavi se
           </button>
-        ) : (
-          <div className="absolute bottom-4 right-4 w-14 h-14 m-5 bg-[#fde4b5] text-gray-800 font-bold flex items-center justify-center rounded-full shadow-lg z-50">
-            <button
-              onClick={handleDropdownToggle}
-              className="w-full h-full flex items-center justify-center"
-            >
-              {userInitials}
-            </button>
-            {isDropdownOpen && (
-              <div className="absolute bottom-full right-0 mb-2 w-48 bg-white text-gray-800 rounded-lg shadow-lg p-2 z-50">
-                <ul>
-                  <li className="px-4 py-2 hover:bg-[#f4f4f4] cursor-pointer">
-                    Dodaj recept
-                  </li>
-                  <li className="px-4 py-2 hover:bg-[#f4f4f4] cursor-pointer">
-                    Moj profil
-                  </li>
-                  <li className="px-4 py-2 hover:bg-[#f4f4f4] cursor-pointer" onClick={handleLogout}>
-                    Odjava
-                  </li>
-                </ul>
-              </div>
-            )}
-          </div>
         )}
       </div>
       <h1 className="items-center justify-center text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md my-16">POZNATI RECEPTI</h1>
