@@ -73,6 +73,7 @@ export default function Prijava() {
 
       // Store user name in localStorage after registration
       localStorage.setItem("user_name", name);
+      localStorage.setItem("user_email", email);
 
       // Set user initials and name in context
       const nameParts = name.split(' ');

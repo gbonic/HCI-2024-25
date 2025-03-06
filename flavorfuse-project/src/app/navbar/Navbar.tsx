@@ -5,6 +5,7 @@ import { useUserContext } from "../context/UserContext";
 import Link from "next/link";
 import Image from "next/image";
 import Cookies from "js-cookie";
+import { FaUser, FaPlus, FaSignOutAlt } from "react-icons/fa";
 
 type Page = {
   title: string;
@@ -190,20 +191,33 @@ const Navbar = () => {
                     <div className="w-10 h-10 bg-[#fde4b5] text-gray-800 font-bold flex items-center justify-center rounded-full shadow-lg">
                       {userInitials}
                     </div>
-                    <span className="ml-2 text-black font-bold">{userName}</span>
                     {userDropdownOpen && (
                       <ul
                         className="absolute z-50 right-0 top-full bg-white shadow-lg border mt-2 rounded-lg w-56"
                         onMouseEnter={handleUserMouseEnter}
                         onMouseLeave={handleUserMouseLeave}
                       >
+                        <div className="flex flex-col items-center p-4">
+                          <div className="w-12 h-12 bg-[#fde4b5] text-gray-800 font-bold flex items-center justify-center rounded-full shadow-lg">
+                            {userInitials}
+                          </div>
+                          <span className="mt-2 text-gray-800 font-bold">{userName}</span>
+                          <span className="text-gray-600">{localStorage.getItem("email")}</span>
+                        </div>
                         <li className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer">
-                          <Link href="/profile">Moj profil</Link>
+                          <Link href="/profile">
+                            <FaUser className="w-5 h-5 inline-block mr-2" />
+                            Moj profil
+                          </Link>
                         </li>
                         <li className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer">
-                          <Link href="/add-recipe">Dodaj recept</Link>
+                          <Link href="/add-recipe">
+                            <FaPlus className="w-5 h-5 inline-block mr-2" />
+                            Dodaj recept
+                          </Link>
                         </li>
                         <li className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer" onClick={handleLogout}>
+                          <FaSignOutAlt className="w-5 h-5 inline-block mr-2" />
                           Odjava
                         </li>
                       </ul>

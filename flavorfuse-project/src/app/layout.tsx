@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { UserProvider } from "./context/UserContext";
 import Navbar from "./navbar/Navbar";
 import Footer from "./footer/page";
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -33,11 +34,13 @@ export default function RootLayout({
       <body
          className="grid grid-rows-[auto_1fr_auto] min-h-screen sm:grid-rows-[auto_1fr_auto]" 
       >
+        <UserProvider>
         <div>
             <Navbar />
            <main>{children}</main>
             <Footer />
         </div>
+        </UserProvider>
       </body>
     </html>
   );

@@ -23,7 +23,7 @@ type Recept = {
     opisRecepta?: string;
     kategorija?: string[];
     podkategorija?: string[];
-    slikaRecepta?: Asset;
+    slikaRecepta?: Asset | string;
   };
 };
 
@@ -76,6 +76,8 @@ const BrzoIJednostavnoPage = () => {
 
   useEffect(() => {
     setLoading(true);
+
+    // Prvo dohvatimo recepte iz Contentful-a
     client.getEntries({ content_type: 'recept' })
       .then((response) => {
         const filteredRecipes = response.items
@@ -84,18 +86,56 @@ const BrzoIJednostavnoPage = () => {
           })
           .map(mapEntryToRecept);
 
-        if (selectedSubcategory) {
-          setRecipes(filteredRecipes.filter((recipe) => recipe.fields.podkategorija?.includes(selectedSubcategory)));
-        } else {
-          setRecipes(filteredRecipes);
+        // Potom dohvatimo recepte iz localStorage
+        const localStorageRecipes = localStorage.getItem('recipes');
+
+        let combinedRecipes = filteredRecipes;
+
+        if (localStorageRecipes) {
+          try {
+            const parsedRecipes = JSON.parse(localStorageRecipes);
+
+            // Mapiraj podatke na format koji aplikacija koristi
+            const formattedRecipes = parsedRecipes.map((recipe: any) => ({
+              contentTypeId: 'recept', // Zadržavamo Contentful contentType
+              sys: { id: recipe.id.toString() }, // Osiguravamo da id bude string
+              fields: {
+                nazivRecepta: recipe.title || 'Nepoznato ime',
+                sastojci: recipe.ingredients || 'Nema sastojaka',
+                uputeZaPripremu: recipe.steps || 'Nema uputa',
+                opisRecepta: recipe.description || '',
+                kategorija: [recipe.category || ''],
+                podkategorija: [recipe.subCategory || ''],
+                slikaRecepta: recipe.image || undefined, // Ovdje možete dodati logiku za slike, ako ih imate
+                userEmail: recipe.userEmail,
+              },
+            }));
+
+            // Filtriraj recepte iz localStorage na osnovu kategorije i podkategorije
+            const filteredLocalStorageRecipes = formattedRecipes.filter((recipe: any) => {
+              return recipe.fields.kategorija.includes('Brzo i jednostavno') &&
+                (!selectedSubcategory || recipe.fields.podkategorija.includes(selectedSubcategory));
+            });
+
+            // Kombiniraj recepte iz Contentful-a i localStorage-a
+            combinedRecipes = [...filteredRecipes, ...filteredLocalStorageRecipes];
+            console.log("Combined recipes:", combinedRecipes);  // Provjera kombiniranih recepata
+
+          } catch (error) {
+            console.error("Error parsing recipes from localStorage", error);
+          }
         }
+
+        setRecipes(combinedRecipes);
         setLoading(false);
       })
       .catch((error) => {
         console.error('Error fetching content from Contentful', error);
         setLoading(false);
       });
-  }, [selectedCategory, selectedSubcategory]);
+
+  }, [selectedCategory, selectedSubcategory]); // Pokreće se svaki put kad se filtriraju kategorie ili subkategorije
+
 
   const clearFilters = () => {
     window.location.href = '/recipes/brzo-i-jednostavno';
@@ -158,7 +198,7 @@ const BrzoIJednostavnoPage = () => {
           width={112}
           height={60}
         />
-        
+
         <h1 className="text-[#2E6431] font-scintilla font-extrabold text-2xl sm:text-3xl md:text-4xl mb-2 drop-shadow-lg">Brzo i jednostavno</h1>
         <p className="text-base sm:text-lg md:text-xl font-sans m-6 text-gray-900 max-w-[90%] md:max-w-[700px]">
           Brzo i jednostavno recepti su savršen izbor za one koji žele pripremiti ukusne obroke u kratkom vremenu.
@@ -201,16 +241,32 @@ const BrzoIJednostavnoPage = () => {
               key={recipe.sys.id}
               className="bg-white shadow-lg rounded-xl overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl cursor-pointer"
               onClick={() => openModal(recipe)}>
-              {recipe.fields.slikaRecepta && (
-                <div className="w-full h-48 relative">
-                  <Image
-                    src={`https:${recipe.fields.slikaRecepta.fields.file.url}`}
-                    alt={recipe.fields.nazivRecepta}
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-t-xl"
-                    loading="lazy"
-                  />
+              {recipe.fields.slikaRecepta ? (
+                typeof recipe.fields.slikaRecepta === 'string' && recipe.fields.slikaRecepta ? (
+                  <div className="w-full h-48 relative">
+                    <Image
+                      src={recipe.fields.slikaRecepta}
+                      alt={recipe.fields.nazivRecepta}
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-t-xl"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full h-48 relative">
+                    <Image
+                      src={`https:${(recipe.fields.slikaRecepta as Asset).fields.file.url}`}
+                      alt={recipe.fields.nazivRecepta}
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-t-xl"
+                      loading="lazy"
+                    />
+                  </div>
+                )
+              ) : (
+                <div className="w-full h-48 bg-gray-300 flex justify-center items-center">
+                  <span className="text-gray-500">Nema slike</span>
                 </div>
               )}
               <div className="p-4">
@@ -232,13 +288,23 @@ const BrzoIJednostavnoPage = () => {
             {selectedRecipe.fields.slikaRecepta && (
               <div className="md:w-1/2 flex justify-center items-center p-4">
                 <div className="w-full h-96 relative">
-                  <Image
-                    src={`https:${selectedRecipe.fields.slikaRecepta.fields.file.url}`}
-                    alt={selectedRecipe.fields.nazivRecepta}
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-lg"
-                  />
+                  {typeof selectedRecipe.fields.slikaRecepta === 'string' && selectedRecipe.fields.slikaRecepta ? (
+                    <Image
+                      src={selectedRecipe.fields.slikaRecepta}
+                      alt={selectedRecipe.fields.nazivRecepta}
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-lg"
+                    />
+                  ) : (
+                    <Image
+                      src={`https:${(selectedRecipe.fields.slikaRecepta as Asset).fields.file.url}`}
+                      alt={selectedRecipe.fields.nazivRecepta}
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-lg"
+                    />
+                  )}
                 </div>
               </div>
             )}
