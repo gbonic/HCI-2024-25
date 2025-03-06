@@ -5,6 +5,7 @@ import Image from "next/image";
 import Cookies from "js-cookie"; // Import js-cookie for handling cookies
 import { useRouter } from "next/navigation";
 import { useUserContext } from "../context/UserContext";
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import Font Awesome icons
 
 export default function Prijava() {
   const { setUserInitials, setUserName } = useUserContext();
@@ -15,6 +16,8 @@ export default function Prijava() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
 
  
@@ -155,91 +158,142 @@ export default function Prijava() {
         <div className="md:w-[40%] w-full p-10 flex flex-col justify-center">
           {success && <p className="text-green-500 mb-4">{success}</p>}
           {error && <p className="text-red-500 mb-4">{error}</p>}
-          <form onSubmit={handleSubmit}>
-            {isRegistering && (
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
-                  Ime i prezime
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  placeholder="Unesite ime i prezime"
-                />
-              </div>
-            )}
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="Unesite email"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-                Lozinka
-              </label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="Unesite lozinku"
-              />
-            </div>
-            {isRegistering && (
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmPassword">
-                  Potvrdite lozinku
-                </label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  placeholder="Potvrdite lozinku"
-                />
-              </div>
-            )}
-            <div className="flex items-center justify-between">
-              <button
-                type="submit"
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              >
-                {isRegistering ? "Registracija" : "Prijava"}
-              </button>
-              {isRegistering ? (
+
+          {!isRegistering ? (
+            <>
+              <h1 className="text-4xl font-bold text-gray-900 mb-4">Dobrodošli natrag!</h1>
+              <p className="text-slate-950 mb-6">
+                Nemaš račun?{" "}
                 <button
-                  type="button"
-                  onClick={handleBackToLogin}
-                  className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-                >
-                  Nazad na prijavu
-                </button>
-              ) : (
-                <button
-                  type="button"
                   onClick={() => setIsRegistering(true)}
-                  className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
+                  className="text-amber-900 hover:underline"
                 >
-                  Registracija
+                  Registriraj se
                 </button>
-              )}
-            </div>
-          </form>
+              </p>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <input
+                    type="email"
+                    placeholder="Unesite email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full p-3 bg-white border-2 border-[#8b5e34] rounded-lg text-gray-900 placeholder-[#a27e64]"
+                  />
+                </div>
+
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Unesite lozinku"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full p-3 bg-white border-2 border-[#8b5e34] rounded-lg text-[#6d4c3d] placeholder-[#a27e64]"
+                  />
+                  <div
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-[#8b5e34]"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full bg-[#8b5e34] p-3 rounded-lg font-semibold text-white hover:bg-[#6d4c3d] transition"
+                >
+                  Prijavi se
+                </button>
+              </form>
+            </>
+          ) : (
+            <>
+              <h1 className="text-4xl font-bold text-gray-900 mb-4">Registracija</h1>
+              <button
+                onClick={handleBackToLogin} // Return to login
+                className="text-sm text-left text-amber-900 hover:text-amber-950 mb-4"
+              >
+                &larr; Natrag na prijavu
+              </button>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Unesite ime"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full p-3 bg-white border-2 border-[#8b5e34] rounded-lg text-gray-900 placeholder-[#a27e64]"
+                  />
+                </div>
+
+                <div>
+                  <input
+                    type="email"
+                    placeholder="Unesite email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full p-3 bg-white border-2 border-[#8b5e34] rounded-lg text-gray-900 placeholder-[#a27e64]"
+                  />
+                </div>
+
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Unesite lozinku"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full p-3 bg-white border-2 border-[#8b5e34] rounded-lg text-[#6d4c3d] placeholder-[#a27e64]"
+                  />
+                  <div
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-[#8b5e34]"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </div>
+                </div>
+
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="Potvrdite lozinku"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full p-3 bg-white border-2 border-[#8b5e34] rounded-lg text-[#6d4c3d] placeholder-[#a27e64]"
+                  />
+                  <div
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-[#8b5e34]"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full bg-[#8b5e34] p-3 rounded-lg font-semibold text-white hover:bg-[#6d4c3d] transition"
+                >
+                  Registriraj se
+                </button>
+              </form>
+            </>
+          )}
+
+          {/* Alternative logins */}
+          <div className="flex items-center my-4">
+            <hr className="flex-grow border-[#8b5e34]" />
+            <span className="mx-2 text-slate-950">ILI</span>
+            <hr className="flex-grow border-[#8b5e34]" />
+          </div>
+
+          <div className="flex justify-center space-x-4">
+            <i className="fab fa-google p-3 text-gray-700 hover:text-black"></i>
+            <i className="fab fa-facebook-f p-3 text-gray-700 hover:text-black"></i>
+            <i className="fab fa-instagram p-3 text-gray-700 hover:text-black"></i>
+          </div>
         </div>
       </div>
     </div>
-  );
+ );
 }
