@@ -37,7 +37,8 @@ const Navbar = () => {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
-  const [mobileDropdownOpen, setMobileDropdownOpen] = useState(true);
+  const [mobileRecipesDropdownOpen, setMobileRecipesDropdownOpen] = useState(false);
+  const [mobileUserDropdownOpen, setMobileUserDropdownOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const toggleMenu = () => {
@@ -74,8 +75,12 @@ const Navbar = () => {
     setDropdownTimeout(timeout);
   };
 
-  const toggleMobileDropdown = () => {
-    setMobileDropdownOpen(!mobileDropdownOpen);
+  const toggleMobileRecipesDropdown = () => {
+    setMobileRecipesDropdownOpen(!mobileRecipesDropdownOpen);
+  };
+
+  const toggleMobileUserDropdown = () => {
+    setMobileUserDropdownOpen(!mobileUserDropdownOpen);
   };
 
   const handleLogout = () => {
@@ -250,10 +255,10 @@ const Navbar = () => {
             <li key={index} className="text-black font-bold hover:text-[#2E6431]">
               {page.title === "RECEPTI" ? (
                 <>
-                  <div className="flex justify-between items-center" onClick={toggleMobileDropdown}>
+                  <div className="flex justify-between items-center" onClick={toggleMobileRecipesDropdown}>
                     <span>{page.title}</span>
                     <svg
-                      className={`w-4 h-4 ml-1 transform ${mobileDropdownOpen ? 'rotate-180' : ''}`}
+                      className={`w-4 h-4 ml-1 transform ${mobileRecipesDropdownOpen ? 'rotate-180' : ''}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -267,7 +272,7 @@ const Navbar = () => {
                       />
                     </svg>
                   </div>
-                  {mobileDropdownOpen && (
+                  {mobileRecipesDropdownOpen && (
                     <ul className="pl-4 mt-2 space-y-2">
                       {categories.map((category, i) => (
                         <li key={i} className="text-gray-800 hover:text-[#2E6431]">
@@ -280,9 +285,48 @@ const Navbar = () => {
                   )}
                 </>
               ) : (
-                <Link href={page.path} onClick={() => setMenuOpen(false)}>
-                  {page.title}
-                </Link>
+                userInitials && page.title === "PRIJAVA" ? (
+                  <>
+                    <div className="flex justify-between items-center" onClick={toggleMobileUserDropdown}>
+                      <span className="text-black font-bold">{userName}</span>
+                      <svg
+                        className={`w-4 h-4 ml-1 transform ${mobileUserDropdownOpen ? 'rotate-180' : ''}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </div>
+                    {mobileUserDropdownOpen && (
+                      <ul className="pl-4 mt-2 space-y-2">
+                        <li className="text-gray-800 hover:text-[#2E6431]">
+                          <Link href="/profile" onClick={() => setMenuOpen(false)}>
+                            Moj profil
+                          </Link>
+                        </li>
+                        <li className="text-gray-800 hover:text-[#2E6431]">
+                          <Link href="/add-recipe" onClick={() => setMenuOpen(false)}>
+                            Dodaj recept
+                          </Link>
+                        </li>
+                        <li className="text-gray-800 hover:text-[#2E6431] cursor-pointer" onClick={() => { handleLogout(); setMenuOpen(false); }}>
+                          Odjava
+                        </li>
+                      </ul>
+                    )}
+                  </>
+                ) : (
+                  <Link href={page.path} onClick={() => setMenuOpen(false)}>
+                    {page.title}
+                  </Link>
+                )
               )}
             </li>
           ))}
