@@ -73,31 +73,32 @@ const AddRecipePage = () => {
         setImage(null);
     };
 
-    
+
     return (
-        <div className="max-w-3xl mx-auto p-8 bg-[#f8f1e1] rounded-xl shadow-lg border border-[#d2b48c] mt-10">
-            <h1 className="text-3xl font-extrabold text-[#8b5e3b] mb-6 text-center">Dodaj novi recept</h1>
+        <div className="max-w-4xl mx-auto p-8 bg-white rounded-xl shadow-lg border border-gray-300 mt-10">
+            <h1 className="text-3xl font-extrabold text-gray-800 mb-6 text-center">Dodaj novi recept</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                    <label className="block text-[#8b5e3b] font-semibold mb-1">Naziv recepta</label>
+                    <label className="block text-gray-700 font-semibold mb-1">Naziv recepta *</label>
                     <input
                         type="text"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        className="w-full border border-[#d2b48c] p-3 rounded-md bg-[#fffaf0] focus:ring focus:ring-[#c49a6c]"
+                        className="w-full border border-gray-300 p-3 rounded-md bg-gray-50 focus:ring focus:ring-gray-200"
                         required
                     />
                 </div>
 
+
                 <div>
-                    <label className="block text-[#8b5e3b] font-semibold mb-1">Kategorija</label>
+                    <label className="block text-gray-700 font-semibold mb-1">Kategorija *</label>
                     <select
                         value={category}
                         onChange={(e) => {
                             setCategory(e.target.value);
                             setSubCategory(""); // Resetiraj podkategoriju kada se promijeni kategorija
                         }}
-                        className="w-full border border-[#d2b48c] p-3 rounded-md bg-[#fffaf0] focus:ring focus:ring-[#c49a6c]"
+                        className="w-full border border-gray-300 p-3 rounded-md bg-gray-50 focus:ring focus:ring-gray-200"
                         required
                     >
                         <option value="" disabled>Odaberi kategoriju</option>
@@ -109,11 +110,11 @@ const AddRecipePage = () => {
 
                 {category && (
                     <div>
-                        <label className="block text-[#8b5e3b] font-semibold mb-1">Podkategorija</label>
+                        <label className="block text-gray-700 font-semibold mb-1">Podkategorija *</label>
                         <select
                             value={subCategory}
                             onChange={(e) => setSubCategory(e.target.value)}
-                            className="w-full border border-[#d2b48c] p-3 rounded-md bg-[#fffaf0] focus:ring focus:ring-[#c49a6c]"
+                            className="w-full border border-gray-300 p-3 rounded-md bg-gray-50 focus:ring focus:ring-gray-200"
                             required
                         >
                             <option value="" disabled>Odaberi podkategoriju</option>
@@ -124,44 +125,51 @@ const AddRecipePage = () => {
                     </div>
                 )}
 
-                <div>
-                    <label className="block text-[#8b5e3b] font-semibold mb-1">Sastojci</label>
-                    <textarea
-                        value={ingredients}
-                        onChange={(e) => setIngredients(e.target.value)}
-                        className="w-full border border-[#d2b48c] p-3 rounded-md bg-[#fffaf0] focus:ring focus:ring-[#c49a6c]"
-                        required
-                    ></textarea>
-                </div>
+                <div className="grid grid-cols-3 gap-4">
+                    <div>
+                        <label className="block text-gray-700 font-semibold mb-1">Sastojci *</label>
+                        <textarea
+                            value={ingredients}
+                            onChange={(e) => setIngredients(e.target.value)}
+                            className="w-full h-full border border-gray-300 p-3 rounded-md bg-gray-50 focus:ring focus:ring-gray-200"
+                            required
+                        ></textarea>
+                    </div>
 
-                <div>
-                    <label className="block text-[#8b5e3b] font-semibold mb-1">Koraci pripreme</label>
-                    <textarea
-                        value={steps}
-                        onChange={(e) => setSteps(e.target.value)}
-                        className="w-full border border-[#d2b48c] p-3 rounded-md bg-[#fffaf0] focus:ring focus:ring-[#c49a6c]"
-                        required
-                    ></textarea>
-                </div>
+                    <div>
+                        <label className="block text-gray-700 font-semibold mb-1">Koraci pripreme *</label>
+                        <textarea
+                            value={steps}
+                            onChange={(e) => setSteps(e.target.value)}
+                            className="w-full h-full border border-gray-300 p-3 rounded-md bg-gray-50 focus:ring focus:ring-gray-200"
+                            required
+                        ></textarea>
+                    </div>
 
-                <div>
-                    <label className="block text-[#8b5e3b] font-semibold mb-1">Opis</label>
-                    <textarea
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        className="w-full border border-[#d2b48c] p-3 rounded-md bg-[#fffaf0] focus:ring focus:ring-[#c49a6c]"
-                        required
-                    ></textarea>
+                    <div>
+                        <label className="block text-gray-700 font-semibold mb-1">Opis *</label>
+                        <textarea
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            className="w-full h-full mb-2 border border-gray-300 p-3 rounded-md bg-gray-50 focus:ring focus:ring-gray-200"
+                            required
+                        ></textarea>
+                    </div>
                 </div>
-
                 <div>
-                    <label className="block text-[#8b5e3b] font-semibold mb-1">Slika recepta</label>
+                    <label className="block text-gray-700 font-semibold mt-2 mb-1">Podijeli fotografije recepta koji si napravio/la: *</label>
+                    <p className="text-gray-500 mb-2">PNG ili JPG, max. 10MB</p>
                     <input
                         type="file"
                         accept="image/*"
                         onChange={handleImageChange}
-                        className="w-full border border-[#d2b48c] p-3 rounded-md bg-[#fffaf0] focus:ring focus:ring-[#c49a6c]"
+                        className="hidden"
+                        id="file-upload"
+                        required
                     />
+                    <label htmlFor="file-upload" className="cursor-pointer inline-block bg-white border border-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-100">
+                        Priložite fotografiju
+                    </label>
                     {image && (
                         <div className="mt-4">
                             <img src={image} alt="Preview" className="w-full h-auto rounded-md" />
@@ -170,34 +178,36 @@ const AddRecipePage = () => {
                 </div>
 
                 <div>
-                    <span className="block text-[#8b5e3b] font-semibold mb-2">Vidljivost recepta</span>
+                    <span className="block text-gray-700 font-semibold mb-2">Vidljivost recepta</span>
                     <label className="inline-flex items-center mr-4">
                         <input
                             type="radio"
                             value="public"
                             checked={isPublic === "public"}
                             onChange={() => setIsPublic("public")}
-                            className="form-radio text-[#c49a6c]"
+                            className="form-radio text-orange-500"
                         />
-                        <span className="ml-2 text-[#8b5e3b]">Javni</span>
+                        <span className="ml-2 text-gray-700">Javan recept</span>
                     </label>
+                    <p className="text-gray-500 mb-2">Svi imaju pristup receptu.</p>
                     <label className="inline-flex items-center">
                         <input
                             type="radio"
                             value="private"
                             checked={isPublic === "private"}
                             onChange={() => setIsPublic("private")}
-                            className="form-radio text-[#c49a6c]"
+                            className="form-radio text-gray-600"
                         />
-                        <span className="ml-2 text-[#8b5e3b]">Privatni</span>
+                        <span className="ml-2 text-gray-700">Privatan recept</span>
                     </label>
+                    <p className="text-gray-500">Recept je vidljiv samo prijavljenim korisnicima.</p>
                 </div>
 
                 <button
                     type="submit"
-                    className="w-full bg-[#8b5e3b] text-white py-3 rounded-lg font-bold text-lg hover:bg-[#6a3e23] transition duration-300"
+                    className="w-full bg-orange-500 text-white py-3 rounded-lg font-bold text-lg hover:bg-orange-600 transition duration-300"
                 >
-                    Spremi recept
+                    OBJAVITE RECEPT
                 </button>
             </form>
         </div>
