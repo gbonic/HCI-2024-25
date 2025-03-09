@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useUserContext } from "../context/UserContext";
 
 // Kategorije recepta
 const categories = {
@@ -14,6 +15,7 @@ const categories = {
 };
 
 const AddRecipePage = () => {
+  const { userEmail, setUserEmail } = useUserContext();
   const [recipes, setRecipes] = useState(() => {
     // Učitavanje recepata iz localStorage pri pokretanju
     if (typeof window !== "undefined") {
@@ -29,6 +31,14 @@ const AddRecipePage = () => {
   const [category, setCategory] = useState("");
   const [subCategory, setSubCategory] = useState("");
   const [image, setImage] = useState(null);
+
+  useEffect(() => {
+    // Dohvaćanje e-maila korisnika iz localStorage
+    const email = localStorage.getItem("user_email");
+    if (email) {
+       setUserEmail(email); 
+    }
+  }, []);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -52,6 +62,7 @@ const AddRecipePage = () => {
       description,
       isPublic,
       image,
+      userEmail, // Dodavanje e-maila korisnika
     };
 
     const updatedRecipes = [...recipes, newRecipe];

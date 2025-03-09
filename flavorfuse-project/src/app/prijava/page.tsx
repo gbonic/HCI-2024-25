@@ -8,7 +8,7 @@ import { useUserContext } from "../context/UserContext";
 import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import Font Awesome icons
 
 export default function Prijava() {
-  const { setUserInitials, setUserName } = useUserContext();
+  const { setUserInitials, setUserName, setUserEmail } = useUserContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isRegistering, setIsRegistering] = useState(false);
@@ -83,6 +83,7 @@ export default function Prijava() {
       const initials = nameParts[0].charAt(0).toUpperCase() + (nameParts[1]?.charAt(0).toUpperCase() || '');
       setUserInitials(initials);
       setUserName(name);
+      setUserEmail(email);
 
       setSuccess("Uspješno ste se registrirali!");
       setIsRegistering(false); // Switch to login form after successful registration
@@ -119,6 +120,7 @@ export default function Prijava() {
       const initials = nameParts[0].charAt(0).toUpperCase() + (nameParts[1]?.charAt(0).toUpperCase() || '');
       setUserInitials(initials);
       setUserName(user.name);
+      setUserEmail(user.email);
 
       setSuccess("Prijava uspješna!");
       router.push("/");

@@ -1,12 +1,20 @@
 "use client";
 
 import { useUserContext } from "../context/UserContext";
-import { useState } from "react";
-import Link from "next/link";
+import { useState, useEffect } from "react";
 
 const ProfilePage = () => {
-  const { userName } = useUserContext();
+  const { userName, userEmail } = useUserContext();
   const [activeTab, setActiveTab] = useState("moji-recepti");
+  const [userRecipes, setUserRecipes] = useState([]);
+
+  useEffect(() => {
+    // Učitavanje recepata iz localStorage
+    const recipes = JSON.parse(localStorage.getItem("recipes")) || [];
+    // Filtriranje recepata prema e-mailu korisnika
+    const filteredRecipes = recipes.filter(recipe => recipe.userEmail === userEmail);
+    setUserRecipes(filteredRecipes);
+  }, [userEmail]);
 
   const tabs = [
     { id: "moji-recepti", label: "Moji recepti" },
@@ -39,7 +47,7 @@ const ProfilePage = () => {
 
       <div className="flex flex-wrap justify-around mt-6">
         <div className="text-center mb-4 sm:mb-0">
-          <span className="block text-xl font-bold text-gray-800">0</span>
+          <span className="block text-xl font-bold text-gray-800">{userRecipes.length}</span>
           <span className="text-gray-600">Moji recepti</span>
         </div>
         <div className="text-center mb-4 sm:mb-0">
@@ -61,11 +69,10 @@ const ProfilePage = () => {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 mb-2 rounded-full font-semibold ${
-              activeTab === tab.id
+            className={`px-4 py-2 mb-2 rounded-full font-semibold ${activeTab === tab.id
                 ? "bg-orange-500 text-white"
                 : "bg-gray-200 text-gray-800"
-            }`}
+              }`}
           >
             {tab.label}
           </button>
@@ -76,7 +83,18 @@ const ProfilePage = () => {
         {activeTab === "moji-recepti" && (
           <div>
             <h3 className="text-xl font-bold text-gray-800">Moji recepti</h3>
-            <p className="text-gray-500 mt-2">Nema pronađenih rezultata.</p>
+            {userRecipes.length === 0 ? (
+              <p className="text-gray-500 mt-2">Nema pronađenih rezultata.</p>
+            ) : (
+              <ul className="mt-4 space-y-4">
+                {userRecipes.map((recipe) => (
+                  <li key={recipe.id} className="border p-4 rounded-lg shadow-sm">
+                    <h4 className="text-lg font-bold text-gray-800">{recipe.title}</h4>
+                    <p className="text-gray-600">{recipe.description}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
         {activeTab === "omiljeni-recepti" && (
