@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { createClient, Entry, Asset } from 'contentful';
 import Image from 'next/image';
-import RecipeCard from '../recipe-card/page';
-import RecipeModal from '../recipe-modal/page';
+import RecipeCard from '../recipes/recipe-card/page';
+import RecipeModal from '../recipes/recipe-modal/page';
 const client = createClient({
   space: 'ocm9154cjmz1',
   accessToken: 'r7B6-Fb1TqITT79XXiA3igrdqBEtOwlHiS2hazq2T6o'

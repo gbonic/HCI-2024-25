@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
-import RecipeModal from '../recipe-modal/page';
+import RecipeModal from '../recipes/recipe-modal/page';
 import { fetchRecipes, Recept, Asset } from '../utils/contentfulClient';
 
 const SearchPage = () => {

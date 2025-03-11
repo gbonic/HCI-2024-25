@@ -20,13 +20,17 @@ const UserMenu = ({
 }: UserMenuProps) => {
   if (!userInitials) return null;
 
+  // Izdvajanje samo prvog imena
+  const firstName = userName ? userName.split(' ')[0] : '';
+
   return (
     <div
-      className="relative flex items-center ml-4 cursor-pointer"
+      className="relative flex items-center ml-4 cursor-pointer border border-gray-300 rounded-full p-2"
       onMouseEnter={handleUserMouseEnter}
       onMouseLeave={handleUserMouseLeave}
     >
-      <div className="w-10 h-10 bg-[#fde4b5] text-gray-800 font-bold flex items-center justify-center rounded-full shadow-lg">
+      <p className='mr-2 text-gray-800'>Pozdrav, {firstName}</p>
+      <div className="w-8 h-8 bg-[#fde4b5] text-gray-800 font-bold flex items-center justify-center rounded-full shadow-lg">
         {userInitials}
       </div>
       {userDropdownOpen && (
