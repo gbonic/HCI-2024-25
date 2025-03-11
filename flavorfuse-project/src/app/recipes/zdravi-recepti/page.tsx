@@ -26,7 +26,7 @@ const ZdraviReceptiPage = () => {
         const contentfulRecipes = await fetchRecipes();
 
         const filteredContentfulRecipes = contentfulRecipes.filter((item) => {
-          return Array.isArray(item.fields.kategorija) && item.fields.kategorija.some((kat) => kat === 'Brzo i jednostavno') &&
+          return Array.isArray(item.fields.kategorija) && item.fields.kategorija.some((kat) => kat === 'Zdravi recepti') &&
             (!selectedSubcategory || (Array.isArray(item.fields.podkategorija) && item.fields.podkategorija.includes(selectedSubcategory)));
         });
 
