@@ -25,12 +25,13 @@ const ZdraviReceptiPage = () => {
       try {
         const contentfulRecipes = await fetchRecipes();
 
-        const filteredRecipes = contentfulRecipes.filter((item) => {
-          return Array.isArray(item.fields.kategorija) && item.fields.kategorija.some((kat) => kat === 'Zdravi recepti');
+        const filteredContentfulRecipes = contentfulRecipes.filter((item) => {
+          return Array.isArray(item.fields.kategorija) && item.fields.kategorija.some((kat) => kat === 'Brzo i jednostavno') &&
+            (!selectedSubcategory || (Array.isArray(item.fields.podkategorija) && item.fields.podkategorija.includes(selectedSubcategory)));
         });
 
         const localStorageRecipes = localStorage.getItem('recipes');
-        let combinedRecipes = filteredRecipes;
+        let combinedRecipes = filteredContentfulRecipes;
 
         if (localStorageRecipes) {
           try {
@@ -56,7 +57,7 @@ const ZdraviReceptiPage = () => {
                 (!selectedSubcategory || recipe.fields.podkategorija.includes(selectedSubcategory));
             });
 
-            combinedRecipes = [...filteredRecipes, ...filteredLocalStorageRecipes];
+            combinedRecipes = [...filteredContentfulRecipes, ...filteredLocalStorageRecipes];
             console.log("Combined recipes:", combinedRecipes);
 
           } catch (error) {
@@ -165,8 +166,8 @@ const ZdraviReceptiPage = () => {
           Ukloni filtriranje
         </button>
       </div>
-{/* Recipes */}
-<div className="mt-10 grid p-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
+      {/* Recipes */}
+      <div className="mt-10 grid p-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
         {loading ? (
           Array.from({ length: 6 }).map((_, index) => (
             <div key={index} className="bg-gray-200 animate-pulse h-48 rounded-xl"></div>
@@ -187,9 +188,9 @@ const ZdraviReceptiPage = () => {
           recipe={selectedRecipe}
           onClose={closeModal}
           komentar=""
-          setKomentar={() => {}}
+          setKomentar={() => { }}
           komentari={[]}
-          handleKomentarSubmit={() => {}}
+          handleKomentarSubmit={() => { }}
         />
       )}
     </main>

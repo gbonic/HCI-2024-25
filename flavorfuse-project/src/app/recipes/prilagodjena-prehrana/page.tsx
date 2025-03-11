@@ -26,12 +26,13 @@ const PrilagodenaPrehranaPage = () => {
       try {
         const contentfulRecipes = await fetchRecipes();
 
-        const filteredRecipes = contentfulRecipes.filter((item) => {
-          return Array.isArray(item.fields.kategorija) && item.fields.kategorija.some((kat) => kat === 'Prilagođena prehrana');
+        const filteredContentfulRecipes = contentfulRecipes.filter((item) => {
+          return Array.isArray(item.fields.kategorija) && item.fields.kategorija.some((kat) => kat === 'Brzo i jednostavno') &&
+            (!selectedSubcategory || (Array.isArray(item.fields.podkategorija) && item.fields.podkategorija.includes(selectedSubcategory)));
         });
 
         const localStorageRecipes = localStorage.getItem('recipes');
-        let combinedRecipes = filteredRecipes;
+        let combinedRecipes = filteredContentfulRecipes;
 
         if (localStorageRecipes) {
           try {
@@ -57,7 +58,7 @@ const PrilagodenaPrehranaPage = () => {
                 (!selectedSubcategory || recipe.fields.podkategorija.includes(selectedSubcategory));
             });
 
-            combinedRecipes = [...filteredRecipes, ...filteredLocalStorageRecipes];
+            combinedRecipes = [...filteredContentfulRecipes, ...filteredLocalStorageRecipes];
             console.log("Combined recipes:", combinedRecipes);
 
           } catch (error) {
