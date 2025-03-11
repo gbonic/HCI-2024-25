@@ -39,7 +39,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "next.config.js"
-  ],
+, "src/app/recipe-modal"  ],
   "exclude": [
     "node_modules"
   ]
