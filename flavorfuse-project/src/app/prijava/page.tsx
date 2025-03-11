@@ -20,6 +20,37 @@ export default function Prijava() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
 
+  let logoutTimer: NodeJS.Timeout;
+
+  const resetLogoutTimer = () => {
+    if (logoutTimer) {
+      clearTimeout(logoutTimer);
+    } 
+    logoutTimer = setTimeout(() => {
+      handleLogout();
+    }, 20 * 60 * 1000)
+  };
+
+
+  useEffect(() => {
+    const handleActivity = () => {
+      resetLogoutTimer();
+    };
+
+    window.addEventListener("mousemove", handleActivity);
+    window.addEventListener("keydown", handleActivity);
+
+    resetLogoutTimer(); // Initialize the timer when the component mounts
+
+    return () => {
+      window.removeEventListener("mousemove", handleActivity);
+      window.removeEventListener("keydown", handleActivity);
+      if (logoutTimer) {
+        clearTimeout(logoutTimer);
+      }
+    };
+  }, []);
+
  
   useEffect(() => {
     const userToken = Cookies.get("auth_token");
@@ -30,6 +61,16 @@ export default function Prijava() {
       router.push("/prijava");
     }
   }, [router]);
+
+  const handleLogout = () => {
+    Cookies.remove("auth_token");
+    localStorage.removeItem("user_name");
+    localStorage.removeItem("user_email");
+    setUserInitials("");
+    setUserName("");
+    setUserEmail("");
+    router.push("/prijava");
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
