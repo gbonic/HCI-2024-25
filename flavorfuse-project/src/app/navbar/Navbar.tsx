@@ -6,10 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Cookies from "js-cookie";
 import { BiSearch } from "react-icons/bi";
-import MobileMenu from "./mobileMenu/page";
-import NavItem from "./NavItem/page";
-import DropdownMenu from "./dropdown-menu/page";
-import UserMenu from "./user-menu/page";
+import { FaUser, FaPlus, FaSignOutAlt } from 'react-icons/fa';
 
 type Page = {
   title: string;
@@ -133,13 +130,13 @@ const Navbar = () => {
             </li>
             {pages.slice(0, 2).map((page, index) =>
               page.title === "RECEPTI" ? (
-                <NavItem
+                <li
                   key={index}
-                  title={page.title}
-                  path={page.path}
+                  className="relative text-black font-bold hover:text-[#2E6431] cursor-pointer"
                   onMouseEnter={handleRecipesMouseEnter}
                   onMouseLeave={handleRecipesMouseLeave}
                 >
+                  <Link href={page.path}>{page.title}</Link>
                   <svg
                     className="w-4 h-4 inline-block ml-1"
                     fill="none"
@@ -154,15 +151,29 @@ const Navbar = () => {
                       d="M19 9l-7 7-7-7"
                     />
                   </svg>
-                  <DropdownMenu
-                    isOpen={recipesDropdownOpen}
-                    items={categories}
-                    onMouseEnter={handleRecipesMouseEnter}
-                    onMouseLeave={handleRecipesMouseLeave}
-                  />
-                </NavItem>
+                  {recipesDropdownOpen && (
+                    <ul
+                      className="absolute z-50 left-0 top-full bg-white shadow-lg border mt-2 rounded-lg w-56"
+                      onMouseEnter={handleRecipesMouseEnter}
+                      onMouseLeave={handleRecipesMouseLeave}
+                    >
+                      {categories.map((item, index) => (
+                        <li key={index} className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer">
+                          <Link href={item.path} className="block w-full h-full">
+                            {item.title}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
               ) : (
-                <NavItem key={index} title={page.title} path={page.path} />
+                <li
+                  key={index}
+                  className="relative text-black font-bold hover:text-[#2E6431] cursor-pointer"
+                >
+                  <Link href={page.path}>{page.title}</Link>
+                </li>
               )
             )}
           </ul>
@@ -187,20 +198,63 @@ const Navbar = () => {
             {pages.slice(2).map((page, index) => (
               page.title === "PRIJAVA" ? (
                 userInitials ? (
-                  <UserMenu
+                  <div
                     key={index}
-                    userInitials={userInitials}
-                    userName={userName}
-                    userDropdownOpen={userDropdownOpen}
-                    handleUserMouseEnter={handleUserMouseEnter}
-                    handleUserMouseLeave={handleUserMouseLeave}
-                    handleLogout={handleLogout}
-                  />
+                    className="relative flex items-center ml-4 cursor-pointer border border-gray-300 rounded-full p-2"
+                    onMouseEnter={handleUserMouseEnter}
+                    onMouseLeave={handleUserMouseLeave}
+                  >
+                    <p className='mr-2 text-gray-800'>Pozdrav, {userName ? userName.split(' ')[0] : ''}</p>
+                    <div className="w-8 h-8 bg-[#fde4b5] text-gray-800 font-bold flex items-center justify-center rounded-full shadow-lg">
+                      {userInitials}
+                    </div>
+                    {userDropdownOpen && (
+                      <ul
+                        className="absolute z-50 right-0 top-full bg-white shadow-lg border mt-2 rounded-lg w-56"
+                        onMouseEnter={handleUserMouseEnter}
+                        onMouseLeave={handleUserMouseLeave}
+                      >
+                        <div className="flex flex-col items-center p-4">
+                          <div className="w-12 h-12 bg-[#fde4b5] text-gray-800 font-bold flex items-center justify-center rounded-full shadow-lg">
+                            {userInitials}
+                          </div>
+                          <span className="mt-2 text-gray-800 font-bold">{userName}</span>
+                          <span className="text-gray-600">{localStorage.getItem("email")}</span>
+                        </div>
+                        <li className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer">
+                          <Link href="/profile">
+                            <FaUser className="w-5 h-5 inline-block mr-2" />
+                            Moj profil
+                          </Link>
+                        </li>
+                        <li className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer">
+                          <Link href="/add-recipe">
+                            <FaPlus className="w-5 h-5 inline-block mr-2" />
+                            Dodaj recept
+                          </Link>
+                        </li>
+                        <li className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer" onClick={handleLogout}>
+                          <FaSignOutAlt className="w-5 h-5 inline-block mr-2" />
+                          Odjava
+                        </li>
+                      </ul>
+                    )}
+                  </div>
                 ) : (
-                  <NavItem key={index} title={page.title} path={page.path} />
+                  <li
+                    key={index}
+                    className="relative text-black font-bold hover:text-[#2E6431] cursor-pointer"
+                  >
+                    <Link href={page.path}>{page.title}</Link>
+                  </li>
                 )
               ) : (
-                <NavItem key={index} title={page.title} path={page.path} />
+                <li
+                  key={index}
+                  className="relative text-black font-bold hover:text-[#2E6431] cursor-pointer"
+                >
+                  <Link href={page.path}>{page.title}</Link>
+                </li>
               )
             ))}
           </ul>
@@ -208,20 +262,97 @@ const Navbar = () => {
       </nav>
 
       {/* Mobile dropdown menu */}
-      <MobileMenu
-        pages={pages}
-        categories={categories}
-        userInitials={userInitials}
-        userName={userName}
-        menuOpen={menuOpen}
-        mobileRecipesDropdownOpen={mobileRecipesDropdownOpen}
-        mobileUserDropdownOpen={mobileUserDropdownOpen}
-        toggleMobileRecipesDropdown={toggleMobileRecipesDropdown}
-        toggleMobileUserDropdown={toggleMobileUserDropdown}
-        handleLogout={handleLogout}
-        handleSearchClick={handleSearchClick}
-        setMenuOpen={setMenuOpen}
-      />
+      {menuOpen && (
+        <ul className="lg:hidden bg-white w-full py-3 px-4 space-y-3">
+          {pages.map((page, index) => (
+            <li key={index} className="text-gray-900 font-bold hover:text-[#2E6431]">
+              {page.title === "RECEPTI" ? (
+                <>
+                  <div className="flex justify-between items-center" onClick={toggleMobileRecipesDropdown}>
+                    <span>{page.title}</span>
+                    <svg
+                      className={`w-4 h-4 ml-1 transform ${mobileRecipesDropdownOpen ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
+                  {mobileRecipesDropdownOpen && (
+                    <ul className="pl-4 mt-2 space-y-2">
+                      {categories.map((category, i) => (
+                        <li key={i} className="text-gray-800 hover:text-[#2E6431]">
+                          <Link href={category.path} onClick={() => setMenuOpen(false)}>
+                            {category.title}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </>
+              ) : (
+                userInitials && page.title === "PRIJAVA" ? (
+                  <>
+                    <div className="flex justify-between items-center" onClick={toggleMobileUserDropdown}>
+                      <span className="text-gray-900 font-bold">{userName}</span>
+                      <svg
+                        className={`w-4 h-4 ml-1 transform ${mobileUserDropdownOpen ? 'rotate-180' : ''}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </div>
+                    {mobileUserDropdownOpen && (
+                      <ul className="pl-4 mt-2 space-y-2">
+                        <li className="text-gray-800 hover:text-[#2E6431]">
+                          <Link href="/profile" onClick={() => setMenuOpen(false)}>
+                            <FaUser className="w-3 h-3 inline-block mr-2" />
+                            Moj profil
+                          </Link>
+                        </li>
+                        <li className="text-gray-800 hover:text-[#2E6431]">
+                          <Link href="/add-recipe" onClick={() => setMenuOpen(false)}>
+                            <FaPlus className="w-3 h-3 inline-block mr-2" />
+                            Dodaj recept
+                          </Link>
+                        </li>
+                        <li className="text-gray-800 hover:text-[#2E6431] cursor-pointer" onClick={() => { handleLogout(); setMenuOpen(false); }}>
+                          <FaSignOutAlt className="w-3 h-3 inline-block mr-2" />
+                          Odjava
+                        </li>
+                      </ul>
+                    )}
+                  </>
+                ) : (
+                  <Link href={page.path} onClick={() => setMenuOpen(false)}>
+                    {page.title}
+                  </Link>
+                )
+              )}
+            </li>
+          ))}
+          <li>
+            <button onClick={handleSearchClick} className="hidden lg:block text-gray-700 p-2 rounded-full shadow-lg hover:text-gray-500 transition duration-300">
+              <BiSearch className="w-6 h-6" />
+            </button>
+          </li>
+        </ul>
+      )}
     </header>
   );
 };
