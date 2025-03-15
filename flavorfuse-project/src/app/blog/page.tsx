@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { createClient, Entry, Asset } from 'contentful';
 import Image from 'next/image';
 import { FaTimes } from 'react-icons/fa';
+import { useUserContext } from "../context/UserContext";
 
 const client = createClient({
   space: 'ocm9154cjmz1',
@@ -22,6 +23,7 @@ type Recept = {
     opisRecepta?: string;
     kategorija?: string[];
     slikaRecepta?: Asset | string;
+    isPublic?: string; // Dodano za recepte iz localStorage
   };
 };
 
@@ -64,23 +66,48 @@ const fetchRecipes = async (): Promise<Recept[]> => {
 };
 
 const BlogPage = () => {
+  const { userEmail } = useUserContext();
   const [recipes, setRecipes] = useState<Recept[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRecipe, setSelectedRecipe] = useState<Recept | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [komentar, setKomentar] = useState("");
   const [komentari, setKomentari] = useState<string[]>([]);
-
+  
   useEffect(() => {
-    fetchRecipes()
-      .then((mappedRecipes) => {
-        setRecipes(mappedRecipes);
+    const fetchAllRecipes = async () => {
+      try {
+        const contentfulRecipes = await fetchRecipes();
+
+        const localStorageRecipes = localStorage.getItem('recipes');
+        let localRecipes = [];
+
+        if (localStorageRecipes) {
+          localRecipes = JSON.parse(localStorageRecipes).map((recipe: any) => ({
+            contentTypeId: 'local',
+            sys: { id: recipe.id.toString() },
+            fields: {
+              nazivRecepta: recipe.title || 'Nepoznato ime',
+              sastojci: recipe.ingredients || 'Nema sastojaka',
+              uputeZaPripremu: recipe.steps || 'Nema uputa',
+              opisRecepta: recipe.description || '',
+              kategorija: [recipe.category || ''],
+              slikaRecepta: recipe.image || undefined,
+              isPublic: recipe.isPublic || 'public', // Dodano za vidljivost
+            },
+          }));
+        }
+
+        const combinedRecipes = [...contentfulRecipes, ...localRecipes];
+        setRecipes(combinedRecipes);
         setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error fetching content from Contentful', error);
+      } catch (error) {
+        console.error('Error fetching recipes', error);
         setLoading(false);
-      });
+      }
+    };
+
+    fetchAllRecipes();
   }, []);
 
   const openModal = (recipe: Recept) => {
@@ -99,6 +126,8 @@ const BlogPage = () => {
       setKomentar(""); // Prazni input polje nakon dodavanja
     }
   };
+
+  const isLoggedIn = !!userEmail;
 
   return (
     <main className="grid grid-rows-[auto_auto_auto] min-h-screen justify-center ">
@@ -163,32 +192,38 @@ const BlogPage = () => {
             <div key={index} className="bg-gray-200 animate-pulse h-48 rounded-xl"></div>
           ))
         ) : (
-          recipes.map((recipe) => (
-            <div
-              key={recipe.sys.id}
-              className="bg-white shadow-lg rounded-xl overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl cursor-pointer"
-              onClick={() => openModal(recipe)}
-            >
-              {recipe.fields.slikaRecepta && (
-                <div className="w-full h-48 relative">
-                  <Image
-                    src={typeof recipe.fields.slikaRecepta === 'string' ? recipe.fields.slikaRecepta : `https:${recipe.fields.slikaRecepta?.fields?.file?.url}`}
-                    alt={recipe.fields.nazivRecepta}
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-t-xl"
-                    loading="lazy"
-                  />
+          recipes.map((recipe) => {
+            // Prikazivanje svih recepata iz Contentful-a i recepata iz localStorage na temelju vidljivosti
+            if (recipe.contentTypeId === 'recept' || recipe.fields.isPublic === "public" || (recipe.contentTypeId === 'local' && recipe.fields.isPublic === "private" && isLoggedIn)) {
+              return (
+                <div
+                  key={recipe.sys.id}
+                  className="bg-white shadow-lg rounded-xl overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl cursor-pointer"
+                  onClick={() => openModal(recipe)}
+                >
+                  {recipe.fields.slikaRecepta && (
+                    <div className="w-full h-48 relative">
+                      <Image
+                        src={typeof recipe.fields.slikaRecepta === 'string' ? recipe.fields.slikaRecepta : `https:${recipe.fields.slikaRecepta?.fields?.file?.url}`}
+                        alt={recipe.fields.nazivRecepta}
+                        layout="fill"
+                        objectFit="cover"
+                        className="rounded-t-xl"
+                        loading="lazy"
+                      />
+                    </div>
+                  )}
+                  <div className="p-4">
+                    <h2 className="text-xl font-semibold text-gray-900">{recipe.fields.nazivRecepta}</h2>
+                    <p className="text-gray-600 mt-2">
+                      {recipe.fields.opisRecepta ? recipe.fields.opisRecepta.slice(0, 100) + "..." : "Kliknite za više."}
+                    </p>
+                  </div>
                 </div>
-              )}
-              <div className="p-4">
-                <h2 className="text-xl font-semibold text-gray-900">{recipe.fields.nazivRecepta}</h2>
-                <p className="text-gray-600 mt-2">
-                  {recipe.fields.opisRecepta ? recipe.fields.opisRecepta.slice(0, 100) + "..." : "Kliknite za više."}
-                </p>
-              </div>
-            </div>
-          ))
+              );
+            }
+            return null;
+          })
         )}
       </div>
 

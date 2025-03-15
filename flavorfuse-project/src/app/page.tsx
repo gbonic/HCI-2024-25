@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { useUserContext } from "./context/UserContext";
+import MyRecipes from "./my-recipes/page";
 
 export default function Home() {
   const { userInitials, userName, setUserInitials, setUserName } = useUserContext();
@@ -32,10 +33,6 @@ export default function Home() {
     }
   }, [setUserInitials, setUserName]);
 
-  const handleLoginClick = () => {
-    router.push("/prijava");
-  };
-
   const handleLogout = () => {
     Cookies.remove("auth_token");
     localStorage.removeItem("user_name");
@@ -46,7 +43,7 @@ export default function Home() {
   };
 
   return (
-    <main className="grid grid-rows-[auto_auto_auto] min-h-screen text-[#2E6431] justify-center sm:px-8">
+    <main className="grid grid-rows-[auto_auto_auto] min-h-screen mx-4 sm:mx-8 md:mx-24 text-[#2E6431] justify-center">
       {/* Hero sekcija */}
       <div className="relative flex flex-col items-center justify-center text-center my-16">
         {/* Slike sa strane */}
@@ -99,23 +96,31 @@ export default function Home() {
           Pronađite savršeni recept za svaki trenutak i pretvorite kuhanje u užitak!
         </p>
         {!isLoggedIn && (
-          <button
-            className="px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-lg bg-[#fde4b5] text-gray-900 border-2 border-[#b2823b] rounded-full hover:scale-105 transition-transform duration-300"
-            onClick={handleLoginClick}
-          >
-            Prijavi se
-          </button>
+          <div className="text-center mt-8">
+            <button
+              className="px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-lg bg-[#8b5e34] text-white font-semibold rounded-full shadow-md hover:bg-[#b2823b] transition-colors duration-300"
+              onClick={() => router.push('/prijava')}
+            >
+              Prijavi se
+            </button>
+          </div>
         )}
       </div>
+
       <h1 className="items-center justify-center text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md my-16">POZNATI RECEPTI</h1>
       {/* Kategorije poznatih recepata */}
-      <section className="flex flex-wrap justify-center items-center gap-4 px-8">
+      <section className="flex flex-wrap justify-center items-center gap-4 px-4 sm:px-8">
         <PopularRecipes />
       </section>
 
+      {isLoggedIn && <MyRecipes />}
+
       <h1 className="items-center justify-center text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md my-16">KATEGORIJE</h1>
       {/* Kategorije recepata */}
-      <section className="flex flex-wrap justify-center items-center px-8">
+      <section className="hidden lg:grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4 px-4">
+        <Recipes />
+      </section>
+      <section className="flex lg:hidden overflow-x-scroll no-scrollbar gap-2 px-2 mt-2">
         <Recipes />
       </section>
 
