@@ -117,12 +117,9 @@ export default function Home() {
 
       <h1 className="items-center justify-center text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md my-16">KATEGORIJE</h1>
       {/* Kategorije recepata */}
-      <section className="hidden lg:grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4 px-4">
+      
         <Recipes />
-      </section>
-      <section className="flex lg:hidden overflow-x-scroll no-scrollbar gap-2 px-2 mt-2">
-        <Recipes />
-      </section>
+      
 
       <FaqComponent />
     </main>
