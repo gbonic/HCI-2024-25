@@ -17,11 +17,11 @@ export default function Home() {
 
   useEffect(() => {
     const userToken = Cookies.get("auth_token");
-    console.log("Auth token: ", userToken); // Provjera tokena
+    console.log("Auth token: ", userToken);
 
     if (userToken) {
       const userName = localStorage.getItem("user_name");
-      console.log("User name from localStorage: ", userName); // Provjera imena korisnika
+      console.log("User name from localStorage: ", userName);
 
       if (userName) {
         const nameParts = userName.split(' ');
@@ -43,7 +43,7 @@ export default function Home() {
   };
 
   return (
-    <main className="grid grid-rows-[auto_auto_auto] min-h-screen mx-4 sm:mx-8 md:mx-24 text-[#2E6431] justify-center">
+    <main className="grid grid-rows-[auto_auto_auto] min-h-screen text-[#2E6431] max-w-7xl mx-auto px-4 sm:px-8 md:px-12">
       {/* Hero sekcija */}
       <div className="relative flex flex-col items-center justify-center text-center my-16">
         {/* Slike sa strane */}
@@ -107,7 +107,7 @@ export default function Home() {
         )}
       </div>
 
-      <h1 className="items-center justify-center text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md my-16">POZNATI RECEPTI</h1>
+      <h1 className="text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md my-16">POZNATI RECEPTI</h1>
       {/* Kategorije poznatih recepata */}
       <section className="flex flex-wrap justify-center items-center gap-4 px-4 sm:px-8">
         <PopularRecipes />
@@ -115,11 +115,9 @@ export default function Home() {
 
       {isLoggedIn && <MyRecipes />}
 
-      <h1 className="items-center justify-center text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md my-16">KATEGORIJE</h1>
+      <h1 className="text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md my-16">KATEGORIJE</h1>
       {/* Kategorije recepata */}
-      
-        <Recipes />
-      
+      <Recipes />
 
       <FaqComponent />
     </main>

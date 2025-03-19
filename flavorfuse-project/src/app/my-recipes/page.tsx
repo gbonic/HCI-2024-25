@@ -20,11 +20,11 @@ const MyRecipes = () => {
     <section className="my-16 px-4 sm:px-8 max-w-6xl mx-auto">
       <h1 className="text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md mb-8">MOJI RECEPTI</h1>
       {recipes.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 justify-center items-center ">
           {recipes.map(recipe => (
-            <div key={recipe.id} className="bg-white shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl cursor-pointer">
+            <div key={recipe.id} className="flex flex-col shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl cursor-pointer">
               {recipe.image && (
-                <div className="w-full h-48 relative">
+                <div className="w-72 h-48 relative">
                   <Image
                     src={recipe.image}
                     alt={recipe.title}
@@ -38,7 +38,7 @@ const MyRecipes = () => {
               <div className="p-4">
                 <h2 className="text-lg font-semibold text-gray-900">{recipe.title}</h2>
                 <p className="text-gray-600 mt-2">
-                  {recipe.description ? recipe.description.slice(0, 100) + "..." : "Kliknite za više."}
+                  Kliknite za više...
                 </p>
               </div>
             </div>
