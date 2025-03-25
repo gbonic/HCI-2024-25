@@ -79,7 +79,7 @@ const AddRecipePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center py-12 px-4 relative">
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 relative">
       {/* Improved Notification */}
       {showNotification && (
         <div className="fixed top-16 right-6 z-50 bg-amber-100 border-l-4 border-amber-600 text-amber-900 px-6 py-4 rounded-r-lg shadow-lg max-w-sm animate-slide-in">
