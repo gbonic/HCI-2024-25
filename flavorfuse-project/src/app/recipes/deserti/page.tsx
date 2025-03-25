@@ -4,8 +4,9 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaTimes } from 'react-icons/fa';
+import { FaTimes, FaUtensils, FaListUl, FaComment } from 'react-icons/fa';
 import { createClient, Entry, Asset } from 'contentful';
+import { useUserContext } from '@/app/context/UserContext';
 
 const client = createClient({
   space: 'ocm9154cjmz1',
@@ -25,6 +26,7 @@ type Recept = {
     kategorija?: string[];
     podkategorija?: string[];
     slikaRecepta?: Asset | string;
+    isPublic?: string;
   };
 };
 
@@ -72,14 +74,16 @@ const fetchRecipes = async (): Promise<Recept[]> => {
 };
 
 const DesertiPage = () => {
+  const { userEmail } = useUserContext();
   const [recipes, setRecipes] = useState<Recept[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRecipe, setSelectedRecipe] = useState<Recept | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const searchParams = useSearchParams(); // Get the category filter from the URL
-  const selectedCategory = searchParams.get('category') || ''; // Category from URL (Torte, Kolači, etc.)
-  const selectedSubcategory = searchParams.get('subcategory') || ''; // Subcategory from URL (e.g., Torte)
-
+  const searchParams = useSearchParams();
+  const selectedCategory = searchParams.get('category') || '';
+  const selectedSubcategory = searchParams.get('subcategory') || '';
+  const [komentar, setKomentar] = useState("");
+  const [komentari, setKomentari] = useState<string[]>([]);
 
   useEffect(() => {
     setLoading(true);
@@ -111,7 +115,7 @@ const DesertiPage = () => {
                 kategorija: [recipe.category || ''],
                 podkategorija: [recipe.subCategory || ''],
                 slikaRecepta: recipe.image || undefined,
-                userEmail: recipe.userEmail,
+                isPublic: recipe.isPublic || "public",
               },
             }));
 
@@ -153,6 +157,14 @@ const DesertiPage = () => {
     setSelectedRecipe(null);
   };
 
+  const handleKomentarSubmit = () => {
+    if (komentar.trim()) {
+      setKomentari([...komentari, komentar]);
+      setKomentar("");
+    }
+  };
+
+  const isLoggedIn = !!userEmail;
 
   return (
     <main className="grid grid-rows-[auto_auto_auto] min-h-screen text-[#2E6431] justify-center">

@@ -4,8 +4,9 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaTimes } from 'react-icons/fa';
+import { FaTimes, FaUtensils, FaListUl, FaComment } from 'react-icons/fa';
 import { createClient, Entry, Asset } from 'contentful';
+import { useUserContext } from '@/app/context/UserContext';
 
 const client = createClient({
   space: 'ocm9154cjmz1',
@@ -25,6 +26,7 @@ type Recept = {
     kategorija?: string[];
     podkategorija?: string[];
     slikaRecepta?: Asset | string;
+    isPublic?: string;
   };
 };
 
@@ -72,13 +74,16 @@ const fetchRecipes = async (): Promise<Recept[]> => {
 };
 
 const TradicionalnaJelaPage = () => {
+  const { userEmail } = useUserContext();
   const [recipes, setRecipes] = useState<Recept[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRecipe, setSelectedRecipe] = useState<Recept | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const searchParams = useSearchParams(); // Get the category filter from the URL
-  const selectedCategory = searchParams.get('category') || ''; // Category from URL (Torte, Kolači, etc.)
-  const selectedSubcategory = searchParams.get('subcategory') || ''; // Subcategory from URL (e.g., Torte)
+  const searchParams = useSearchParams();
+  const selectedCategory = searchParams.get('category') || '';
+  const selectedSubcategory = searchParams.get('subcategory') || '';
+  const [komentar, setKomentar] = useState("");
+  const [komentari, setKomentari] = useState<string[]>([]);
 
   useEffect(() => {
     setLoading(true);
@@ -110,7 +115,7 @@ const TradicionalnaJelaPage = () => {
                 kategorija: [recipe.category || ''],
                 podkategorija: [recipe.subCategory || ''],
                 slikaRecepta: recipe.image || undefined,
-                userEmail: recipe.userEmail,
+                isPublic: recipe.isPublic || "public",
               },
             }));
 
@@ -151,6 +156,14 @@ const TradicionalnaJelaPage = () => {
     setIsModalOpen(false);
     setSelectedRecipe(null);
   };
+  const handleKomentarSubmit = () => {
+    if (komentar.trim()) {
+      setKomentari([...komentari, komentar]);
+      setKomentar("");
+    }
+  };
+
+  const isLoggedIn = !!userEmail;
 
 
   return (
@@ -226,133 +239,159 @@ const TradicionalnaJelaPage = () => {
           Ukloni filtriranje
         </button>
       </div>
-      {/* Recipes */}
+      {/* Recipes Grid */}
       <div className="mt-10 grid p-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
         {loading ? (
           Array.from({ length: 6 }).map((_, index) => (
-            <div key={index} className="bg-gray-200 animate-pulse h-48 rounded-xl"></div>
+            <div key={index} className="bg-gray-200 animate-pulse h-48 rounded-xl" />
           ))
         ) : (
-          recipes.map((recipe) => (
-            <div
-              key={recipe.sys.id}
-              className="bg-white shadow-lg rounded-xl overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl cursor-pointer"
-              onClick={() => openModal(recipe)}
-            >
-              {recipe.fields.slikaRecepta && (
-                <div className="w-full h-48 relative">
-                  <Image
-                    src={typeof recipe.fields.slikaRecepta === 'string' ? recipe.fields.slikaRecepta : `https:${recipe.fields.slikaRecepta?.fields?.file?.url}`}
-                    alt={recipe.fields.nazivRecepta}
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-t-xl"
-                    loading="lazy"
-                  />
+          recipes.map((recipe) => {
+            if (
+              recipe.contentTypeId === "recept" ||
+              (recipe.contentTypeId === "local" && recipe.fields.isPublic === "private" && isLoggedIn)
+            ) {
+              return (
+                <div
+                  key={recipe.sys.id}
+                  className="bg-white shadow-lg rounded-xl overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl cursor-pointer"
+                  onClick={() => openModal(recipe)}
+                >
+                  {recipe.fields.slikaRecepta && (
+                    <div className="w-full h-48 relative">
+                      <Image
+                        src={
+                          typeof recipe.fields.slikaRecepta === "string"
+                            ? recipe.fields.slikaRecepta
+                            : `https:${recipe.fields.slikaRecepta?.fields?.file?.url}`
+                        }
+                        alt={recipe.fields.nazivRecepta}
+                        layout="fill"
+                        objectFit="cover"
+                        className="rounded-t-xl"
+                        loading="lazy"
+                      />
+                    </div>
+                  )}
+                  <div className="p-4">
+                    <h2 className="text-lg font-semibold text-gray-900">{recipe.fields.nazivRecepta}</h2>
+                    <p className="text-gray-600 mt-2 line-clamp-2">
+                      {recipe.fields.opisRecepta ? recipe.fields.opisRecepta.slice(0, 100) + "..." : "Kliknite za više."}
+                    </p>
+                  </div>
                 </div>
-              )}
-              <div className="p-4">
-                <h2 className="text-xl font-semibold text-gray-900">{recipe.fields.nazivRecepta}</h2>
-                <p className="text-gray-600 mt-2">
-                  {recipe.fields.opisRecepta ? recipe.fields.opisRecepta.slice(0, 100) + "..." : "Kliknite za više."}
-                </p>
-              </div>
-            </div>
-          ))
+              );
+            }
+            return null;
+          })
         )}
       </div>
 
+      {/* Modern Modal with Title Below Image */}
       {isModalOpen && selectedRecipe && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+          className="fixed inset-0 bg-gray-900/70 flex items-center justify-center z-50 px-4"
           onClick={closeModal}
         >
           <div
-            className="bg-white p-8 rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative flex flex-col items-center"
+            className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto relative transform transition-all duration-300 scale-95 hover:scale-100"
             onClick={(e) => e.stopPropagation()}
           >
-            <button
-              onClick={closeModal}
-              className="absolute top-4 right-4 text-gray-600 hover:text-gray-800 text-3xl transition-transform transform hover:scale-110"
-            >
-              <FaTimes />
-            </button>
-
-            {/* Naslov */}
-            <h2 className="text-center text-3xl font-bold text-gray-800 mb-4">
-              {selectedRecipe.fields.nazivRecepta}
-            </h2>
-
-            {/* Slika */}
-            {selectedRecipe.fields.slikaRecepta && (
-              <div className="w-full flex justify-center mb-4">
-                <div className="w-full max-w-lg h-80 relative">
+            {/* Image Header */}
+            <div className="relative">
+              {selectedRecipe.fields.slikaRecepta && (
+                <div className="w-full h-64 relative">
                   <Image
-                    src={typeof selectedRecipe.fields.slikaRecepta === 'string' ? selectedRecipe.fields.slikaRecepta : `https:${selectedRecipe.fields.slikaRecepta?.fields?.file?.url}`}
+                    src={
+                      typeof selectedRecipe.fields.slikaRecepta === "string"
+                        ? selectedRecipe.fields.slikaRecepta
+                        : `https:${selectedRecipe.fields.slikaRecepta?.fields?.file?.url}`
+                    }
                     alt={selectedRecipe.fields.nazivRecepta}
                     layout="fill"
                     objectFit="cover"
-                    className="rounded-lg"
+                    className="rounded-t-2xl"
                   />
                 </div>
-              </div>
-            )}
-
-            {/* Opis, sastojci, koraci */}
-            <div className="flex flex-col md:flex-row w-full text-gray-950">
-              {/* Opis (lijevo) */}
-              <div className="md:w-1/3 max-w-xs p-4">
-                <h3 className="text-lg font-semibold mb-2">Opis</h3>
-                <p className="text-gray-700">{selectedRecipe.fields.opisRecepta}</p>
-              </div>
-
-              {/* Sastojci (sredina) */}
-              <div className="md:w-1/3 p-4">
-                <h3 className="text-lg font-semibold mb-2">Sastojci</h3>
-                <ul className="list-none space-y-2 text-gray-700 pl-4">
-                  {selectedRecipe.fields.sastojci.split("\n").map((item: string, index: number) => (
-                    <li key={index} className="text-gray-700">{item.replace(/^[•-]\s?/, "")}</li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Koraci (desno) */}
-              <div className="md:w-1/3 p-4">
-                <h3 className="text-lg font-semibold mb-2">Upute za pripremu</h3>
-                <ol className="list-decimal list-inside space-y-2 text-gray-700 pl-4">
-                  {selectedRecipe.fields.uputeZaPripremu.split("\n").map((step: string, index: number) => (
-                    <li key={index} className="text-gray-700">{step.replace(/^[•-]\s?/, "")}</li>
-                  ))}
-                </ol>
-              </div>
+              )}
+              <button
+                onClick={closeModal}
+                className="absolute top-4 right-4 text-white bg-gray-800/80 p-2 rounded-full hover:bg-gray-800 transition"
+                aria-label="Zatvori modal"
+              >
+                <FaTimes size={20} />
+              </button>
             </div>
 
-            {/* Komentari */}
-            <div className="w-full p-4 mt-6 border-t text-gray-950">
-              <h3 className="text-lg font-semibold mb-2">Dodaj komentar</h3>
-              <textarea
-                className="w-full border rounded-lg p-2 text-gray-700"
-                rows={3}
-                placeholder="Napiši svoj komentar..."
-                value=""
-                onChange={() => { }}
-              />
-              <button
-                className="mt-2 bg-[#8b5e34] p-3 rounded-lg font-semibold text-white hover:bg-[#cc7c57] transition"
-                onClick={() => { }}
-              >
-                Dodaj komentar
-              </button>
+            {/* Content */}
+            <div className="p-6 space-y-6">
+              {/* Recipe Title */}
+              <h2 className="text-2xl font-bold text-gray-800 text-center">{selectedRecipe.fields.nazivRecepta}</h2>
 
-              {/* Prikaz komentara */}
-              <div className="mt-4">
-                {[].length > 0 && (
-                  <>
-                    <h4 className="text-lg font-semibold mb-2">Komentari</h4>
-                    {[].map((kom, index) => (
-                      <p key={index} className="bg-gray-100 p-2 rounded-lg mb-2">{kom}</p>
+              {/* Recipe Details */}
+              <div className="grid grid-cols-1 gap-6">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center space-x-2">
+                    <FaUtensils className="text-[#8b5e34]" />
+                    <span>Opis</span>
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed max-w-md">
+                    {selectedRecipe.fields.opisRecepta
+                      ? selectedRecipe.fields.opisRecepta
+                      : "Nema opisa."}
+                  </p>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center space-x-2">
+                    <FaListUl className="text-[#8b5e34]" />
+                    <span>Sastojci</span>
+                  </h3>
+                  <ul className="list-disc pl-5 text-gray-600 space-y-1">
+                    {selectedRecipe.fields.sastojci.split("\n").map((item, index) => (
+                      <li key={index}>{item.replace(/^[•-]\s?/, "")}</li>
                     ))}
-                  </>
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center space-x-2">
+                    <FaListUl className="text-[#8b5e34]" />
+                    <span>Upute za pripremu</span>
+                  </h3>
+                  <ol className="list-decimal pl-5 text-gray-600 space-y-1 max-w-md">
+                    {selectedRecipe.fields.uputeZaPripremu.split("\n").map((step, index) => (
+                      <li key={index}>{step.replace(/^[•-]\s?/, "")}</li>
+                    ))}
+                  </ol>
+                </div>
+              </div>
+
+              {/* Comments Section */}
+              <div className="border-t pt-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
+                  <FaComment className="text-[#8b5e34]" />
+                  <span>Komentari</span>
+                </h3>
+                <textarea
+                  className="w-full border border-gray-300 rounded-md p-3 text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#8b5e34] resize-none"
+                  rows={4}
+                  placeholder="Napiši svoj komentar..."
+                  value={komentar}
+                  onChange={(e) => setKomentar(e.target.value)}
+                />
+                <button
+                  className="mt-4 bg-[#8b5e34] text-white py-2 px-6 rounded-md hover:bg-[#6b4727] transition w-full sm:w-auto sm:self-end"
+                  onClick={handleKomentarSubmit}
+                >
+                  Objavi komentar
+                </button>
+                {komentar.length > 0 && (
+                  <div className="mt-6 space-y-3">
+                    {komentari.map((kom, index) => (
+                      <p key={index} className="bg-gray-100 p-3 rounded-md text-gray-600">
+                        {kom}
+                      </p>
+                    ))}
+                  </div>
                 )}
               </div>
             </div>

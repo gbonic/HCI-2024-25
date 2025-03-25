@@ -4,8 +4,9 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaTimes } from 'react-icons/fa';
+import { FaTimes, FaUtensils, FaListUl, FaComment } from 'react-icons/fa';
 import { createClient, Entry, Asset } from 'contentful';
+import { useUserContext } from '@/app/context/UserContext';
 
 const client = createClient({
   space: 'ocm9154cjmz1',
@@ -25,6 +26,7 @@ type Recept = {
     kategorija?: string[];
     podkategorija?: string[];
     slikaRecepta?: Asset | string;
+    isPublic?: string;
   };
 };
 
@@ -73,6 +75,7 @@ const fetchRecipes = async (): Promise<Recept[]> => {
 
 
 const ZdraviReceptiPage = () => {
+  const { userEmail } = useUserContext();
   const [recipes, setRecipes] = useState<Recept[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRecipe, setSelectedRecipe] = useState<Recept | null>(null);
@@ -80,6 +83,8 @@ const ZdraviReceptiPage = () => {
   const searchParams = useSearchParams();
   const selectedCategory = searchParams.get('category') || '';
   const selectedSubcategory = searchParams.get('subcategory') || '';
+  const [komentar, setKomentar] = useState("");
+  const [komentari, setKomentari] = useState<string[]>([]);
 
   useEffect(() => {
     setLoading(true);
@@ -111,7 +116,7 @@ const ZdraviReceptiPage = () => {
                 kategorija: [recipe.category || ''],
                 podkategorija: [recipe.subCategory || ''],
                 slikaRecepta: recipe.image || undefined,
-                userEmail: recipe.userEmail,
+                isPublic: recipe.isPublic || "public",
               },
             }));
 
@@ -152,6 +157,15 @@ const ZdraviReceptiPage = () => {
     setIsModalOpen(false);
     setSelectedRecipe(null);
   };
+
+  const handleKomentarSubmit = () => {
+    if (komentar.trim()) {
+      setKomentari([...komentari, komentar]);
+      setKomentar("");
+    }
+  };
+
+  const isLoggedIn = !!userEmail;
 
   return (
     <main className="grid grid-rows-[auto_auto_auto] min-h-screen w-full text-[#2E6431] justify-center">
