@@ -129,7 +129,7 @@ export default function Prijava() {
   const handleBackToLogin = () => setIsRegistering(false);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-5xl flex flex-col md:flex-row bg-white shadow-lg">
         {/* Left side - Image */}
         <div className="md:w-1/2 hidden md:block relative group">

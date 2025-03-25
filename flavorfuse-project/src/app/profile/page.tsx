@@ -14,6 +14,17 @@ const ProfilePage = () => {
     setUserRecipes(filteredRecipes);
   }, [userEmail]);
 
+  const handleDelete = (recipeId) => {
+    // Filter out the recipe to be deleted
+    const updatedUserRecipes = userRecipes.filter((recipe) => recipe.id !== recipeId);
+    setUserRecipes(updatedUserRecipes);
+
+    // Update all recipes in localStorage
+    const allRecipes = JSON.parse(localStorage.getItem("recipes") || "[]");
+    const updatedAllRecipes = allRecipes.filter((recipe) => recipe.id !== recipeId);
+    localStorage.setItem("recipes", JSON.stringify(updatedAllRecipes));
+  };
+
   const tabs = [
     { id: "moji-recepti", label: "Moji recepti" },
     { id: "omiljeni-recepti", label: "Omiljeni recepti" },
@@ -22,7 +33,7 @@ const ProfilePage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white py-12 px-4">
+    <div className="min-h-screen py-12 px-4">
       <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 transform transition-all hover:shadow-2xl">
         {/* Header Section */}
         <div className="bg-gradient-to-r from-amber-600 to-orange-600 p-8 text-white">
@@ -94,10 +105,32 @@ const ProfilePage = () => {
                   {userRecipes.map((recipe) => (
                     <div
                       key={recipe.id}
-                      className="bg-amber-50 p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-amber-100"
+                      className="bg-amber-50 p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-amber-100 flex justify-between items-start"
                     >
-                      <h4 className="text-lg font-semibold text-amber-700">{recipe.title}</h4>
-                      <p className="text-gray-600 mt-1 line-clamp-2">{recipe.description}</p>
+                      <div>
+                        <h4 className="text-lg font-semibold text-amber-700">{recipe.title}</h4>
+                        <p className="text-gray-600 mt-1 line-clamp-2">{recipe.description}</p>
+                      </div>
+                      <button
+                        onClick={() => handleDelete(recipe.id)}
+                        className="ml-4 p-2 text-red-600 hover:text-red-800 transition-colors"
+                        title="Obriši recept"
+                      >
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4M3 7h18"
+                          />
+                        </svg>
+                      </button>
                     </div>
                   ))}
                 </div>

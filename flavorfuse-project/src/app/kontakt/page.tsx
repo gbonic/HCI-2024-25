@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 const ContactPage: React.FC = () => {
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-white py-12 px-4">
+    <div className="relative min-h-screen flex items-center justify-center py-12 px-4">
       {/* Main container with subtle animation */}
       <div className="w-full max-w-6xl flex flex-col md:flex-row bg-white shadow-xl rounded-2xl overflow-hidden transform transition-all hover:shadow-2xl">
         {/* Left side - Image with overlay */}

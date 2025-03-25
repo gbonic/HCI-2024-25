@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useUserContext } from "../context/UserContext";
 
-// Kategorije recepta (unchanged)
 const categories = {
   "Prema vrsti obroka": ["Doručak", "Ručak", "Večera"],
   "Zdravi recepti": ["Zdravi deserti", "Obroci za mršavljenje", "Zdravi napitci", "Prehrana za sportaše"],
@@ -11,7 +10,7 @@ const categories = {
   "Tradicionalna jela": ["Blagdanska jela", "Sezonska jela", "Zimnica"],
   "Prilagođena prehrana": ["Vegansko", "Vegetarijansko", "Bez glutena", "Bez laktoze"],
   "Jela za pripremu unaprijed": ["Za cijeli tjedan", "Dugi rok trajanja", "Za putovanje"],
-  "Deserti": ["Torte", "Kolači", "Deserti u čaši", "Deserti do 5 sastojaka"]
+  "Deserti": ["Torte", "Kolači", "Deserti u čaši", "Deserti do 5 sastojaka"],
 };
 
 const AddRecipePage = () => {
@@ -30,20 +29,23 @@ const AddRecipePage = () => {
   const [category, setCategory] = useState("");
   const [subCategory, setSubCategory] = useState("");
   const [image, setImage] = useState(null);
+  const [showNotification, setShowNotification] = useState(false);
 
   useEffect(() => {
     const email = localStorage.getItem("user_email");
     if (email) setUserEmail(email);
-  }, []);
+  }, [setUserEmail]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onloadend = () => setImage(reader.result);
-    reader.readAsDataURL(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setImage(reader.result);
+      reader.readAsDataURL(file);
+    }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const newRecipe = {
       id: Date.now(),
@@ -60,6 +62,12 @@ const AddRecipePage = () => {
     const updatedRecipes = [...recipes, newRecipe];
     setRecipes(updatedRecipes);
     localStorage.setItem("recipes", JSON.stringify(updatedRecipes));
+
+    // Trigger notification
+    setShowNotification(true);
+    setTimeout(() => setShowNotification(false), 3000);
+
+    // Reset form
     setTitle("");
     setCategory("");
     setSubCategory("");
@@ -71,7 +79,33 @@ const AddRecipePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center py-12 px-4">
+    <div className="min-h-screen bg-white flex items-center justify-center py-12 px-4 relative">
+      {/* Improved Notification */}
+      {showNotification && (
+        <div className="fixed top-16 right-6 z-50 bg-amber-100 border-l-4 border-amber-600 text-amber-900 px-6 py-4 rounded-r-lg shadow-lg max-w-sm animate-slide-in">
+          <div className="flex items-center space-x-3">
+            <svg
+              className="w-6 h-6 text-amber-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            <div>
+              <p className="font-semibold">Uspjeh!</p>
+              <p className="text-sm">Vaš recept je uspješno dodan.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="w-full max-w-4xl space-y-8">
         <h1 className="text-4xl font-extrabold text-[#F28C38] mb-8 text-center font-['Caveat'] tracking-wide">
           Dodaj novi recept
@@ -100,9 +134,13 @@ const AddRecipePage = () => {
               className="w-full border border-[#F2E8D5] p-3 rounded-lg bg-[#FDF7F2] text-[#5A4A3B] focus:ring-2 focus:ring-[#F28C38] focus:outline-none transition duration-200"
               required
             >
-              <option value="" disabled>Odaberi kategoriju</option>
+              <option value="" disabled>
+                Odaberi kategoriju
+              </option>
               {Object.keys(categories).map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
               ))}
             </select>
           </div>
@@ -115,9 +153,13 @@ const AddRecipePage = () => {
                 className="w-full border border-[#F2E8D5] p-3 rounded-lg bg-[#FDF7F2] text-[#5A4A3B] focus:ring-2 focus:ring-[#F28C38] focus:outline-none transition duration-200"
                 required
               >
-                <option value="" disabled>Odaberi podkategoriju</option>
+                <option value="" disabled>
+                  Odaberi podkategoriju
+                </option>
                 {categories[category].map((sub) => (
-                  <option key={sub} value={sub}>{sub}</option>
+                  <option key={sub} value={sub}>
+                    {sub}
+                  </option>
                 ))}
               </select>
             </div>
