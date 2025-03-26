@@ -7,22 +7,30 @@ const ProfilePage = () => {
   const { userName, userEmail } = useUserContext();
   const [activeTab, setActiveTab] = useState("moji-recepti");
   const [userRecipes, setUserRecipes] = useState([]);
+  const [aboutMe, setAboutMe] = useState(""); // Novo stanje za dodatni tekst
+  const [isEditing, setIsEditing] = useState(false); // Stanje za uređivanje
 
   useEffect(() => {
     const recipes = JSON.parse(localStorage.getItem("recipes") || "[]");
     const filteredRecipes = recipes.filter((recipe) => recipe.userEmail === userEmail);
     setUserRecipes(filteredRecipes);
+
+    // Učitavanje sačuvanog "O meni" teksta iz localStorage
+    const savedAboutMe = localStorage.getItem("aboutMe");
+    if (savedAboutMe) setAboutMe(savedAboutMe);
   }, [userEmail]);
 
   const handleDelete = (recipeId) => {
-    // Filter out the recipe to be deleted
     const updatedUserRecipes = userRecipes.filter((recipe) => recipe.id !== recipeId);
     setUserRecipes(updatedUserRecipes);
-
-    // Update all recipes in localStorage
     const allRecipes = JSON.parse(localStorage.getItem("recipes") || "[]");
     const updatedAllRecipes = allRecipes.filter((recipe) => recipe.id !== recipeId);
     localStorage.setItem("recipes", JSON.stringify(updatedAllRecipes));
+  };
+
+  const handleAboutMeSave = () => {
+    localStorage.setItem("aboutMe", aboutMe); // Spremanje u localStorage
+    setIsEditing(false); // Izlaz iz moda uređivanja
   };
 
   const tabs = [
@@ -156,12 +164,52 @@ const ProfilePage = () => {
           {activeTab === "o-meni" && (
             <div>
               <h3 className="text-2xl font-bold text-gray-800 mb-4">O meni</h3>
-              <div className="bg-amber-50 p-6 rounded-xl shadow-sm">
+              <div className="bg-amber-50 p-6 rounded-xl shadow-sm relative">
                 <p className="text-gray-600">
                   {userName ? `Pozdrav, ja sam ${userName}!` : "Pozdrav, ja sam korisnik!"}{" "}
                   Volim kuhati i dijeliti svoje recepte s FlavorFuse zajednicom.
                 </p>
-                <p className="text-gray-600 mt-2">Email: {userEmail || "Nije postavljen"}</p>
+                {isEditing ? (
+                  <div className="mt-4">
+                    <textarea
+                      value={aboutMe}
+                      onChange={(e) => setAboutMe(e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md"
+                      rows={3}
+                      placeholder="Dodaj nešto o sebi..."
+                    />
+                    <button
+                      onClick={handleAboutMeSave}
+                      className="mt-2 px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition-colors"
+                    >
+                      Spremi
+                    </button>
+                  </div>
+                ) : (
+                  <div className="mt-4">
+                    <p className="text-gray-600">{aboutMe || "Dodaj nešto o sebi klikom na olovku!"}</p>
+                    <button
+                      onClick={() => setIsEditing(true)}
+                      className="absolute top-4 right-4 p-2 text-amber-600 hover:text-amber-800 transition-colors"
+                      title="Uredi opis"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           )}

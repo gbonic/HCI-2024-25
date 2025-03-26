@@ -85,64 +85,81 @@ const BrzoIJednostavnoPage = () => {
   const [komentar, setKomentar] = useState("");
   const [komentari, setKomentari] = useState<string[]>([]);
 
-  useEffect(() => {
+  const fetchAllRecipes = async () => {
     setLoading(true);
+    try {
+      const contentfulRecipes = await fetchRecipes();
 
-    const fetchAllRecipes = async () => {
-      try {
-        const contentfulRecipes = await fetchRecipes();
+      const filteredContentfulRecipes = contentfulRecipes.filter((item) => {
+        return (
+          Array.isArray(item.fields.kategorija) &&
+          item.fields.kategorija.some((kat) => kat === "Brzo i jednostavno") &&
+          (!selectedSubcategory ||
+            (Array.isArray(item.fields.podkategorija) &&
+              item.fields.podkategorija.includes(selectedSubcategory)))
+        );
+      });
 
-        const filteredContentfulRecipes = contentfulRecipes.filter((item) => {
-          return Array.isArray(item.fields.kategorija) && item.fields.kategorija.some((kat) => kat === 'Brzo i jednostavno') &&
-            (!selectedSubcategory || (Array.isArray(item.fields.podkategorija) && item.fields.podkategorija.includes(selectedSubcategory)));
-        });
+      const localStorageRecipes = localStorage.getItem("recipes");
+      let combinedRecipes = filteredContentfulRecipes;
 
-        const localStorageRecipes = localStorage.getItem('recipes');
-        let combinedRecipes = filteredContentfulRecipes;
+      if (localStorageRecipes) {
+        try {
+          const parsedRecipes = JSON.parse(localStorageRecipes);
 
-        if (localStorageRecipes) {
-          try {
-            const parsedRecipes = JSON.parse(localStorageRecipes);
+          const formattedRecipes = parsedRecipes.map((recipe) => ({
+            contentTypeId: "recept",
+            sys: { id: recipe.id.toString() },
+            fields: {
+              nazivRecepta: recipe.title || "Nepoznato ime",
+              sastojci: recipe.ingredients || "Nema sastojaka",
+              uputeZaPripremu: recipe.steps || "Nema uputa",
+              opisRecepta: recipe.description || "",
+              kategorija: [recipe.category || ""],
+              podkategorija: [recipe.subCategory || ""],
+              slikaRecepta: recipe.image || undefined,
+              isPublic: recipe.isPublic || "public",
+            },
+          }));
 
-            const formattedRecipes = parsedRecipes.map((recipe: any) => ({
-              contentTypeId: 'recept',
-              sys: { id: recipe.id.toString() },
-              fields: {
-                nazivRecepta: recipe.title || 'Nepoznato ime',
-                sastojci: recipe.ingredients || 'Nema sastojaka',
-                uputeZaPripremu: recipe.steps || 'Nema uputa',
-                opisRecepta: recipe.description || '',
-                kategorija: [recipe.category || ''],
-                podkategorija: [recipe.subCategory || ''],
-                slikaRecepta: recipe.image || undefined,
-                isPublic: recipe.isPublic || "public",
-              },
-            }));
+          const filteredLocalStorageRecipes = formattedRecipes.filter((recipe) => {
+            return (
+              recipe.fields.kategorija.includes("Brzo i jednostavno") &&
+              (!selectedSubcategory ||
+                recipe.fields.podkategorija.includes(selectedSubcategory))
+            );
+          });
 
-            const filteredLocalStorageRecipes = formattedRecipes.filter((recipe: any) => {
-              return recipe.fields.kategorija.includes('Brzo i jednostavno') &&
-                (!selectedSubcategory || recipe.fields.podkategorija.includes(selectedSubcategory));
-            });
-
-            combinedRecipes = [...filteredContentfulRecipes, ...filteredLocalStorageRecipes];
-            console.log("Combined recipes:", combinedRecipes);
-
-          } catch (error) {
-            console.error("Error parsing recipes from localStorage", error);
-          }
+          combinedRecipes = [...filteredContentfulRecipes, ...filteredLocalStorageRecipes];
+          console.log("Combined recipes:", combinedRecipes);
+        } catch (error) {
+          console.error("Error parsing recipes from localStorage", error);
         }
-
-        setRecipes(combinedRecipes);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching content from Contentful', error);
-        setLoading(false);
       }
+
+      setRecipes(combinedRecipes);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching content from Contentful", error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllRecipes();
+
+    // Dodavanje event listenera za promjene u localStorage
+    const handleStorageChange = () => {
+      fetchAllRecipes();
     };
 
-    fetchAllRecipes();
-  }, [selectedCategory, selectedSubcategory]);
+    window.addEventListener("storage", handleStorageChange);
 
+    // Čišćenje listenera kada se komponenta unmounta
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, [selectedCategory, selectedSubcategory]);
   const clearFilters = () => {
     window.location.href = '/recipes/brzo-i-jednostavno';
   };

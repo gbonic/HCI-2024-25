@@ -7,7 +7,7 @@ const ContactPage: React.FC = () => {
   return (
     <div className="relative min-h-screen flex items-center justify-center py-12 px-4">
       {/* Main container with subtle animation */}
-      <div className="w-full max-w-6xl flex flex-col md:flex-row bg-white shadow-xl rounded-2xl overflow-hidden transform transition-all hover:shadow-2xl">
+      <div className="w-full max-w-5xl flex flex-col md:flex-row bg-white shadow-xl rounded-2xl overflow-hidden transform transition-all hover:shadow-2xl">
         {/* Left side - Image with overlay */}
         <div className="md:w-1/2 hidden md:block relative group">
           <Image 
@@ -24,7 +24,7 @@ const ContactPage: React.FC = () => {
 
         {/* Right side - Form with enhanced styling */}
         <div className="md:w-1/2 w-full p-8 md:p-12 flex flex-col justify-center bg-white">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-3xl font-bold text-gray-900 mb-4 bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
             Kontaktirajte nas
           </h1>
           <p className="text-gray-600 mb-8 text-lg">Povežimo se i stvorimo nešto ukusno zajedno!</p>

@@ -33,7 +33,7 @@ const categories: Page[] = [
 
 const Navbar = () => {
   const router = useRouter();
-  const { userInitials, userName, setUserInitials, setUserName } = useUserContext();
+  const { userInitials, userName, userEmail, setUserEmail, setUserInitials, setUserName } = useUserContext();
   const [recipesDropdownOpen, setRecipesDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -87,9 +87,11 @@ const Navbar = () => {
   const handleLogout = () => {
     Cookies.remove("auth_token");
     localStorage.removeItem("user_name");
+    localStorage.removeItem("user_email");
     setUserInitials(null);
     setUserName(null);
     setIsLoggedIn(false);
+    setUserEmail(null);
     router.push("/");
   };
 
@@ -221,23 +223,24 @@ const Navbar = () => {
                           <span className="mt-2 text-gray-800 font-bold">{userName}</span>
                           <span className="text-gray-600">{localStorage.getItem("email")}</span>
                         </div>
-                        <li className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer">
-                          <Link href="/profile">
+                        <Link href="/profile">
+                          <li className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer">
                             <FaUser className="w-5 h-5 inline-block mr-2" />
                             Moj profil
-                          </Link>
-                        </li>
-                        <li className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer">
-                          <Link href="/add-recipe">
+                          </li>
+                        </Link>
+                        <Link href="/add-recipe">
+                          <li className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer">
                             <FaPlus className="w-5 h-5 inline-block mr-2" />
                             Dodaj recept
-                          </Link>
-                        </li>
+                          </li>
+                        </Link>
                         <li className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer" onClick={handleLogout}>
                           <FaSignOutAlt className="w-5 h-5 inline-block mr-2" />
                           Odjava
                         </li>
                       </ul>
+
                     )}
                   </div>
                 ) : (
@@ -259,51 +262,20 @@ const Navbar = () => {
             ))}
           </ul>
         </div>
-      </nav>
+      </nav >
 
       {/* Mobile dropdown menu */}
-      {menuOpen && (
-        <ul className="lg:hidden bg-white w-full py-3 px-4 space-y-3">
-          {pages.map((page, index) => (
-            <li key={index} className="text-gray-900 font-bold hover:text-[#2E6431]">
-              {page.title === "RECEPTI" ? (
-                <>
-                  <div className="flex justify-between items-center" onClick={toggleMobileRecipesDropdown}>
-                    <span>{page.title}</span>
-                    <svg
-                      className={`w-4 h-4 ml-1 transform ${mobileRecipesDropdownOpen ? 'rotate-180' : ''}`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </div>
-                  {mobileRecipesDropdownOpen && (
-                    <ul className="pl-4 mt-2 space-y-2">
-                      {categories.map((category, i) => (
-                        <li key={i} className="text-gray-800 hover:text-[#2E6431]">
-                          <Link href={category.path} onClick={() => setMenuOpen(false)}>
-                            {category.title}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </>
-              ) : (
-                userInitials && page.title === "PRIJAVA" ? (
+      {
+        menuOpen && (
+          <ul className="lg:hidden bg-white w-full py-3 px-4 space-y-3">
+            {pages.map((page, index) => (
+              <li key={index} className="text-gray-900 font-bold hover:text-[#2E6431]">
+                {page.title === "RECEPTI" ? (
                   <>
-                    <div className="flex justify-between items-center" onClick={toggleMobileUserDropdown}>
-                      <span className="text-gray-900 font-bold">{userName}</span>
+                    <div className="flex justify-between items-center" onClick={toggleMobileRecipesDropdown}>
+                      <span>{page.title}</span>
                       <svg
-                        className={`w-4 h-4 ml-1 transform ${mobileUserDropdownOpen ? 'rotate-180' : ''}`}
+                        className={`w-4 h-4 ml-1 transform ${mobileRecipesDropdownOpen ? 'rotate-180' : ''}`}
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -317,43 +289,76 @@ const Navbar = () => {
                         />
                       </svg>
                     </div>
-                    {mobileUserDropdownOpen && (
+                    {mobileRecipesDropdownOpen && (
                       <ul className="pl-4 mt-2 space-y-2">
-                        <li className="text-gray-800 hover:text-[#2E6431]">
-                          <Link href="/profile" onClick={() => setMenuOpen(false)}>
-                            <FaUser className="w-3 h-3 inline-block mr-2" />
-                            Moj profil
-                          </Link>
-                        </li>
-                        <li className="text-gray-800 hover:text-[#2E6431]">
-                          <Link href="/add-recipe" onClick={() => setMenuOpen(false)}>
-                            <FaPlus className="w-3 h-3 inline-block mr-2" />
-                            Dodaj recept
-                          </Link>
-                        </li>
-                        <li className="text-gray-800 hover:text-[#2E6431] cursor-pointer" onClick={() => { handleLogout(); setMenuOpen(false); }}>
-                          <FaSignOutAlt className="w-3 h-3 inline-block mr-2" />
-                          Odjava
-                        </li>
+                        {categories.map((category, i) => (
+                          <li key={i} className="text-gray-800 hover:text-[#2E6431]">
+                            <Link href={category.path} onClick={() => setMenuOpen(false)}>
+                              {category.title}
+                            </Link>
+                          </li>
+                        ))}
                       </ul>
                     )}
                   </>
                 ) : (
-                  <Link href={page.path} onClick={() => setMenuOpen(false)}>
-                    {page.title}
-                  </Link>
-                )
-              )}
+                  userInitials && page.title === "PRIJAVA" ? (
+                    <>
+                      <div className="flex justify-between items-center" onClick={toggleMobileUserDropdown}>
+                        <span className="text-gray-900 font-bold">{userName}</span>
+                        <svg
+                          className={`w-4 h-4 ml-1 transform ${mobileUserDropdownOpen ? 'rotate-180' : ''}`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </div>
+                      {mobileUserDropdownOpen && (
+                        <ul className="pl-4 mt-2 space-y-2">
+                          <li className="text-gray-800 hover:text-[#2E6431]">
+                            <Link href="/profile" onClick={() => setMenuOpen(false)}>
+                              <FaUser className="w-3 h-3 inline-block mr-2" />
+                              Moj profil
+                            </Link>
+                          </li>
+                          <li className="text-gray-800 hover:text-[#2E6431]">
+                            <Link href="/add-recipe" onClick={() => setMenuOpen(false)}>
+                              <FaPlus className="w-3 h-3 inline-block mr-2" />
+                              Dodaj recept
+                            </Link>
+                          </li>
+                          <li className="text-gray-800 hover:text-[#2E6431] cursor-pointer" onClick={() => { handleLogout(); setMenuOpen(false); }}>
+                            <FaSignOutAlt className="w-3 h-3 inline-block mr-2" />
+                            Odjava
+                          </li>
+                        </ul>
+                      )}
+                    </>
+                  ) : (
+                    <Link href={page.path} onClick={() => setMenuOpen(false)}>
+                      {page.title}
+                    </Link>
+                  )
+                )}
+              </li>
+            ))}
+            <li>
+              <button onClick={handleSearchClick} className="hidden lg:block text-gray-700 p-2 rounded-full shadow-lg hover:text-gray-500 transition duration-300">
+                <BiSearch className="w-6 h-6" />
+              </button>
             </li>
-          ))}
-          <li>
-            <button onClick={handleSearchClick} className="hidden lg:block text-gray-700 p-2 rounded-full shadow-lg hover:text-gray-500 transition duration-300">
-              <BiSearch className="w-6 h-6" />
-            </button>
-          </li>
-        </ul>
-      )}
-    </header>
+          </ul>
+        )
+      }
+    </header >
   );
 };
 

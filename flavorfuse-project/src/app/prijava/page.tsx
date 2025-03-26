@@ -95,7 +95,7 @@ export default function Prijava() {
       setUserName(name);
       setUserEmail(email);
       setSuccess("Uspješno ste se registrirali!");
-      setIsRegistering(false);
+      router.push("/");
     } else {
       if (!email || !password) {
         setError("Molimo unesite email i lozinku.");
@@ -148,7 +148,7 @@ export default function Prijava() {
         {/* Right side - Form */}
         <div className="md:w-1/2 w-full p-8 md:p-10 flex flex-col justify-center">
           <div className="text-center mb-6">
-            <h1 className="text-4xl md:text-4xl font-light bg-gradient-to-r from-amber-600 to-orange-600 font-serif bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 font-sans bg-clip-text text-transparent">
               {isRegistering ? "Registracija" : "Prijava"}
             </h1>
             <p className="text-gray-600 mt-2">
