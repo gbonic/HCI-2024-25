@@ -107,7 +107,7 @@ const AddRecipePage = () => {
       )}
 
       <form onSubmit={handleSubmit} className="w-full max-w-4xl space-y-8">
-        <h1 className="text-4xl font-extrabold text-[#F28C38] mb-8 text-center font-['Caveat'] tracking-wide">
+        <h1 className="text-4xl md:text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 font-sans bg-clip-text text-transparent">
           Dodaj novi recept
         </h1>
 
@@ -254,7 +254,7 @@ const AddRecipePage = () => {
 
         <button
           type="submit"
-          className="w-full bg-[#F28C38] text-white py-3 rounded-full font-bold text-lg hover:bg-[#E07B30] transition duration-300 shadow-md"
+          className="w-full bg-gradient-to-r from-amber-600 to-orange-600 p-4 rounded-xl font-semibold text-white hover:from-amber-700 hover:to-orange-700 transform hover:-translate-y-1 transition-all duration-300 shadow-md"
         >
           OBJAVITE RECEPT
         </button>

@@ -182,7 +182,7 @@ const Navbar = () => {
         </div>
 
         {/* Središnji logo */}
-        <div className="flex justify-start lg:justify-center items-center">
+        <div className="flex justify-start lg:justify-center items-center -ml-3 sm:-ml-4">
           <Link href="/">
             <Image
               src="/images/FlavorFuse-dark-logo.png"

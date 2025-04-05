@@ -2,7 +2,6 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 import Image from 'next/image';
 import { FaTimes, FaUtensils, FaListUl, FaComment } from 'react-icons/fa';
 import { createClient, Entry, Asset } from 'contentful';
@@ -43,28 +42,20 @@ const mapEntryToRecept = (entry: Entry<Recept>): Recept => {
     ? entry.fields.podkategorija.map((kat) => (typeof kat === 'string' ? kat : kat.fields.nazivPodkategorije))
     : [];
 
-  const slikaRecepta = entry.fields.slikaRecepta && entry.fields.slikaRecepta.sys && entry.fields.slikaRecepta.fields
-    ? {
-      sys: entry.fields.slikaRecepta.sys,
-      fields: entry.fields.slikaRecepta.fields,
-      metadata: entry.fields.slikaRecepta.metadata,
-    }
-    : undefined;
+  const slikaRecepta =
+    typeof entry.fields.slikaRecepta === "object" &&
+      entry.fields.slikaRecepta !== null &&
+      "sys" in entry.fields.slikaRecepta &&
+      "fields" in entry.fields.slikaRecepta
+      ? (entry.fields.slikaRecepta as unknown as Asset)
+      : typeof entry.fields.slikaRecepta === "string"
+        ? entry.fields.slikaRecepta
+        : undefined;
 
   return {
     contentTypeId: entry.sys.contentType.sys.id,
-    sys: {
-      id: entry.sys.id,
-    },
-    fields: {
-      nazivRecepta,
-      sastojci,
-      uputeZaPripremu,
-      opisRecepta,
-      kategorija,
-      podkategorija,
-      slikaRecepta,
-    },
+    sys: { id: entry.sys.id },
+    fields: { nazivRecepta, sastojci, uputeZaPripremu, opisRecepta, kategorija, podkategorija, slikaRecepta },
   };
 };
 
@@ -75,91 +66,83 @@ const fetchRecipes = async (): Promise<Recept[]> => {
 
 const BrzoIJednostavnoPage = () => {
   const { userEmail } = useUserContext();
-  const [recipes, setRecipes] = useState<Recept[]>([]);
+  const [allRecipes, setAllRecipes] = useState<Recept[]>([]);
+  const [filteredRecipes, setFilteredRecipes] = useState<Recept[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRecipe, setSelectedRecipe] = useState<Recept | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const searchParams = useSearchParams();
-  const selectedCategory = searchParams.get('category') || '';
-  const selectedSubcategory = searchParams.get('subcategory') || '';
+  const [subcategories, setSubcategories] = useState<string[]>([]);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string>("");
   const [komentar, setKomentar] = useState("");
   const [komentari, setKomentari] = useState<string[]>([]);
 
-  const fetchAllRecipes = async () => {
-    setLoading(true);
-    try {
-      const contentfulRecipes = await fetchRecipes();
+  useEffect(() => {
+    const fetchAllData = async () => {
+      setLoading(true);
+      try {
+        const contentfulRecipes = await fetchRecipes();
+        const podkategorijeResponse = await client.getEntries({ content_type: "podkategorije", include: 2 });
+        const localStorageRecipes = localStorage.getItem("recipes");
+        let combinedRecipes = contentfulRecipes;
 
-      const filteredContentfulRecipes = contentfulRecipes.filter((item) => {
-        return (
-          Array.isArray(item.fields.kategorija) &&
-          item.fields.kategorija.some((kat) => kat === "Brzo i jednostavno") &&
-          (!selectedSubcategory ||
-            (Array.isArray(item.fields.podkategorija) &&
-              item.fields.podkategorija.includes(selectedSubcategory)))
-        );
-      });
-
-      const localStorageRecipes = localStorage.getItem("recipes");
-      let combinedRecipes = filteredContentfulRecipes;
-
-      if (localStorageRecipes) {
-        try {
-          const parsedRecipes = JSON.parse(localStorageRecipes);
-
-          const formattedRecipes = parsedRecipes.map((recipe) => ({
-            contentTypeId: "recept",
-            sys: { id: recipe.id.toString() },
-            fields: {
-              nazivRecepta: recipe.title || "Nepoznato ime",
-              sastojci: recipe.ingredients || "Nema sastojaka",
-              uputeZaPripremu: recipe.steps || "Nema uputa",
-              opisRecepta: recipe.description || "",
-              kategorija: [recipe.category || ""],
-              podkategorija: [recipe.subCategory || ""],
-              slikaRecepta: recipe.image || undefined,
-              isPublic: recipe.isPublic || "public",
-            },
-          }));
-
-          const filteredLocalStorageRecipes = formattedRecipes.filter((recipe) => {
-            return (
-              recipe.fields.kategorija.includes("Brzo i jednostavno") &&
-              (!selectedSubcategory ||
-                recipe.fields.podkategorija.includes(selectedSubcategory))
-            );
-          });
-
-          combinedRecipes = [...filteredContentfulRecipes, ...filteredLocalStorageRecipes];
-          console.log("Combined recipes:", combinedRecipes);
-        } catch (error) {
-          console.error("Error parsing recipes from localStorage", error);
+        if (localStorageRecipes) {
+          try {
+            const parsedRecipes = JSON.parse(localStorageRecipes);
+            const formattedRecipes = parsedRecipes.map((recipe: any) => ({
+              contentTypeId: "recept",
+              sys: { id: recipe.id.toString() },
+              fields: {
+                nazivRecepta: recipe.title || "Nepoznato ime",
+                sastojci: recipe.ingredients || "Nema sastojaka",
+                uputeZaPripremu: recipe.steps || "Nema uputa",
+                opisRecepta: recipe.description || "",
+                kategorija: [recipe.category || ""],
+                podkategorija: [recipe.subCategory || ""],
+                slikaRecepta: recipe.image || undefined,
+                isPublic: recipe.isPublic || "public",
+              },
+            }));
+            combinedRecipes = [...contentfulRecipes, ...formattedRecipes];
+          } catch (error) {
+            console.error("Error parsing recipes from localStorage", error);
+          }
         }
-      }
 
-      setRecipes(combinedRecipes);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching content from Contentful", error);
-      setLoading(false);
-    }
-  };
+        // Filtriraj recepte samo za kategoriju "Zdravi recepti"
+        const zdravRecepti = combinedRecipes.filter((recipe) =>
+          recipe.fields.kategorija?.includes("Brzo i jednostavno")
+        );
+
+        // Dohvati podkategorije samo za "Zdravi recepti" kao niz stringova
+        const zdravSubcategories = podkategorijeResponse.items
+          .filter((podkat: any) => podkat.fields.kategorija?.fields.nazivKategorije === "Brzo i jednostavno")
+          .map((podkat: any) => podkat.fields.nazivPodkategorije || "");
+
+        setAllRecipes(zdravRecepti);
+        setFilteredRecipes(zdravRecepti);
+        setSubcategories(zdravSubcategories);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching content from Contentful", error);
+        setLoading(false);
+      }
+    };
+
+    fetchAllData();
+  }, []);
 
   useEffect(() => {
-    fetchAllRecipes();
+    const filtered = allRecipes.filter((recipe) => {
+      const matchesSubcategory = !selectedSubcategory || recipe.fields.podkategorija?.includes(selectedSubcategory);
+      return matchesSubcategory;
+    });
+    setFilteredRecipes(filtered);
+  }, [selectedSubcategory, allRecipes]);
 
-    // Dodavanje event listenera za promjene u localStorage
-    const handleStorageChange = () => {
-      fetchAllRecipes();
-    };
+  const handleSubcategoryClick = (subcategory: string) => {
+    setSelectedSubcategory(subcategory);
+  };
 
-    window.addEventListener("storage", handleStorageChange);
-
-    // Čišćenje listenera kada se komponenta unmounta
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, [selectedCategory, selectedSubcategory]);
   const clearFilters = () => {
     window.location.href = '/recipes/brzo-i-jednostavno';
   };
@@ -241,22 +224,24 @@ const BrzoIJednostavnoPage = () => {
       </div>
 
       {/* Filter Buttons */}
-      <div className="mt-8 w-full max-w-6xl flex flex-wrap justify-center gap-4">
-        <Link href="/recipes/brzo-i-jednostavno?subcategory=Recepti za početnike">
-          <button className="px-6 py-2 bg-gray-200 rounded-full text-gray-800 hover:bg-gray-300">Recepti za početnike</button>
-        </Link>
-        <Link href="/recipes/brzo-i-jednostavno?subcategory=Jela za 30 minuta">
-          <button className="px-6 py-2 bg-gray-200 rounded-full text-gray-800 hover:bg-gray-300">Jela za 30 minuta</button>
-        </Link>
-        <Link href="/recipes/brzo-i-jednostavno?subcategory=Međuobroci">
-          <button className="px-6 py-2 bg-gray-200 rounded-full text-gray-800 hover:bg-gray-300">Međuobroci</button>
-        </Link>
-        <Link href="/recipes/brzo-i-jednostavno?subcategory=Ukusno i jeftino">
-          <button className="px-6 py-2 bg-gray-200 rounded-full text-gray-800 hover:bg-gray-300">Ukusno i jeftino</button>
-        </Link>
-        {/* Clear Filters Button */}
-        <button onClick={clearFilters} className="px-6 py-2 bg-red-200 rounded-full text-red-800 hover:bg-red-300">
-          Ukloni filtriranje
+      <div className="mt-8 max-w-6xl w-full flex flex-wrap gap-3 justify-center">
+        {subcategories.map((subcategory) => (
+          <button
+            key={subcategory}
+            onClick={() => handleSubcategoryClick(subcategory)}
+            className={`font-medium px-6 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 ${selectedSubcategory === subcategory
+                ? "bg-[#dcb794] text-[#8b5e34]"
+                : "bg-[#f5e8d9] text-[#8b5e34] hover:bg-[#dcb794]"
+              }`}
+          >
+            {subcategory}
+          </button>
+        ))}
+        <button
+          onClick={clearFilters}
+          className="font-medium py-2 px-5 rounded-full bg-red-200 text-red-800 hover:bg-red-300 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1"
+        >
+          Poništi filter
         </button>
       </div>
       {/* Recipes Grid */}
@@ -266,7 +251,7 @@ const BrzoIJednostavnoPage = () => {
             <div key={index} className="bg-gray-200 animate-pulse h-48 rounded-xl" />
           ))
         ) : (
-          recipes.map((recipe) => {
+          filteredRecipes.map((recipe) => {
             if (
               recipe.contentTypeId === "recept" ||
               (recipe.contentTypeId === "local" && recipe.fields.isPublic === "private" && isLoggedIn)

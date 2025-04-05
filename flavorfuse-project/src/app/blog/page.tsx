@@ -20,79 +20,133 @@ type Recept = {
     uputeZaPripremu: string;
     opisRecepta?: string;
     kategorija?: string[];
+    podkategorija?: string[];
     slikaRecepta?: Asset | string;
     isPublic?: string;
   };
 };
 
-const mapEntryToRecept = (entry: Entry<Recept>): Recept => {
+const mapEntryToRecept = (entry: Entry<any>): Recept => {
   const nazivRecepta = typeof entry.fields.nazivRecepta === "string" ? entry.fields.nazivRecepta : "Nepoznato ime";
   const sastojci = typeof entry.fields.sastojci === "string" ? entry.fields.sastojci : "Nepoznati sastojci";
   const uputeZaPripremu = typeof entry.fields.uputeZaPripremu === "string" ? entry.fields.uputeZaPripremu : "Nema uputa";
   const opisRecepta = typeof entry.fields.opisRecepta === "string" ? entry.fields.opisRecepta : "";
   const kategorija = Array.isArray(entry.fields.kategorija)
-    ? entry.fields.kategorija.map((kat) => (typeof kat === "string" ? kat : kat.fields.nazivKategorije))
+    ? entry.fields.kategorija.map((kat) => (typeof kat === "string" ? kat : kat.fields?.nazivKategorije || ""))
     : [];
-  const slikaRecepta =
-    entry.fields.slikaRecepta && entry.fields.slikaRecepta.sys && entry.fields.slikaRecepta.fields
-      ? { sys: entry.fields.slikaRecepta.sys, fields: entry.fields.slikaRecepta.fields, metadata: entry.fields.slikaRecepta.metadata }
-      : undefined;
+  const podkategorija = Array.isArray(entry.fields.podkategorija)
+    ? entry.fields.podkategorija.map((podkat) => (typeof podkat === "string" ? podkat : podkat.fields?.nazivPodkategorije || ""))
+    : [];
+  const slikaRecepta = typeof entry.fields.slikaRecepta === "object" && "sys" in entry.fields.slikaRecepta && "fields" in entry.fields.slikaRecepta
+  ? entry.fields.slikaRecepta as Asset
+  : typeof entry.fields.slikaRecepta === "string"
+  ? entry.fields.slikaRecepta
+  : undefined;
+
 
   return {
     contentTypeId: entry.sys.contentType.sys.id,
     sys: { id: entry.sys.id },
-    fields: { nazivRecepta, sastojci, uputeZaPripremu, opisRecepta, kategorija, slikaRecepta },
+    fields: { nazivRecepta, sastojci, uputeZaPripremu, opisRecepta, kategorija, podkategorija, slikaRecepta },
   };
 };
 
 const fetchRecipes = async (): Promise<Recept[]> => {
-  const response = await client.getEntries({ content_type: "recept" });
+  const response = await client.getEntries({ content_type: "recept", include: 2 }); // Dodan include: 2 za reference
   return response.items.map(mapEntryToRecept);
 };
 
 const BlogPage = () => {
   const { userEmail } = useUserContext();
-  const [recipes, setRecipes] = useState<Recept[]>([]);
+  const [allRecipes, setAllRecipes] = useState<Recept[]>([]);
+  const [filteredRecipes, setFilteredRecipes] = useState<Recept[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRecipe, setSelectedRecipe] = useState<Recept | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [komentar, setKomentar] = useState("");
   const [komentari, setKomentari] = useState<string[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [subcategories, setSubcategories] = useState<{ nazivPodkategorije: string; kategorija: string }[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string>("");
 
   useEffect(() => {
-    const fetchAllRecipes = async () => {
+    const fetchAllData = async () => {
+      setLoading(true);
       try {
         const contentfulRecipes = await fetchRecipes();
+        const podkategorijeResponse = await client.getEntries({ content_type: "podkategorije", include: 2 });
         const localStorageRecipes = localStorage.getItem("recipes");
-        let localRecipes = [];
+        let combinedRecipes = contentfulRecipes;
 
         if (localStorageRecipes) {
-          localRecipes = JSON.parse(localStorageRecipes).map((recipe: any) => ({
-            contentTypeId: "local",
-            sys: { id: recipe.id.toString() },
-            fields: {
-              nazivRecepta: recipe.title || "Nepoznato ime",
-              sastojci: recipe.ingredients || "Nema sastojaka",
-              uputeZaPripremu: recipe.steps || "Nema uputa",
-              opisRecepta: recipe.description || "",
-              kategorija: [recipe.category || ""],
-              slikaRecepta: recipe.image || undefined,
-              isPublic: recipe.isPublic || "public",
-            },
-          }));
+          try {
+            const parsedRecipes = JSON.parse(localStorageRecipes);
+            const formattedRecipes = parsedRecipes.map((recipe: any) => ({
+              contentTypeId: "recept",
+              sys: { id: recipe.id.toString() },
+              fields: {
+                nazivRecepta: recipe.title || "Nepoznato ime",
+                sastojci: recipe.ingredients || "Nema sastojaka",
+                uputeZaPripremu: recipe.steps || "Nema uputa",
+                opisRecepta: recipe.description || "",
+                kategorija: [recipe.category || ""],
+                podkategorija: [recipe.subCategory || ""],
+                slikaRecepta: recipe.image || undefined,
+                isPublic: recipe.isPublic || "public",
+              },
+            }));
+            combinedRecipes = [...contentfulRecipes, ...formattedRecipes];
+          } catch (error) {
+            console.error("Error parsing recipes from localStorage", error);
+          }
         }
 
-        const combinedRecipes = [...contentfulRecipes, ...localRecipes];
-        setRecipes(combinedRecipes);
+        // Dohvati jedinstvene kategorije iz recepata
+        const allCategories = Array.from(new Set(combinedRecipes.flatMap((r) => r.fields.kategorija || []))).filter(Boolean);
+
+        // Dohvati podkategorije s povezanim kategorijama
+        const allSubcategories = podkategorijeResponse.items.map((podkat: any) => ({
+          nazivPodkategorije: podkat.fields.nazivPodkategorije || "",
+          kategorija: podkat.fields.kategorija?.fields.nazivKategorije || "",
+        }));
+
+        setAllRecipes(combinedRecipes);
+        setFilteredRecipes(combinedRecipes);
+        setCategories(allCategories);
+        setSubcategories(allSubcategories);
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching recipes", error);
+        console.error("Error fetching content from Contentful", error);
         setLoading(false);
       }
     };
 
-    fetchAllRecipes();
+    fetchAllData();
   }, []);
+
+  useEffect(() => {
+    const filtered = allRecipes.filter((recipe) => {
+      const matchesCategory = !selectedCategory || recipe.fields.kategorija?.includes(selectedCategory);
+      const matchesSubcategory = !selectedSubcategory || recipe.fields.podkategorija?.includes(selectedSubcategory);
+      return matchesCategory && matchesSubcategory;
+    });
+    setFilteredRecipes(filtered);
+  }, [selectedCategory, selectedSubcategory, allRecipes]);
+
+  const clearFilters = () => {
+    setSelectedCategory("");
+    setSelectedSubcategory("");
+  };
+
+  const handleCategoryClick = (category: string) => {
+    setSelectedCategory(category);
+    setSelectedSubcategory("");
+  };
+
+  const handleSubcategoryClick = (subcategory: string) => {
+    setSelectedSubcategory(subcategory);
+  };
 
   const openModal = (recipe: Recept) => {
     setSelectedRecipe(recipe);
@@ -115,7 +169,6 @@ const BlogPage = () => {
 
   return (
     <main className="grid grid-rows-[auto_auto_auto] min-h-screen justify-center">
-      {/* Header Section */}
       <div className="relative flex flex-col items-center justify-center text-center my-16 px-4 sm:px-8">
         <Image
           src="/images/list.png"
@@ -171,14 +224,53 @@ const BlogPage = () => {
         </p>
       </div>
 
-      {/* Recipes Grid */}
+      <div className="mt-8 max-w-6xl w-full flex flex-wrap gap-3 justify-center">
+        {categories.map((category) => (
+          <div key={category} className="relative group">
+            <button
+              onClick={() => handleCategoryClick(category)}
+              className={`font-medium px-6 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 ${
+                selectedCategory === category ? "bg-[#dcb794] text-[#8b5e34]" : "bg-[#f5e8d9] text-[#8b5e34] hover:bg-[#dcb794]"
+              }`}
+            >
+              {category}
+            </button>
+            {subcategories.filter((sub) => sub.kategorija === category).length > 0 && (
+              <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-56 bg-white shadow-xl rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 pointer-events-none group-hover:pointer-events-auto scale-95 group-hover:scale-100">
+                <div className="py-2">
+                  {subcategories
+                    .filter((sub) => sub.kategorija === category)
+                    .map((subcategory) => (
+                      <button
+                        key={subcategory.nazivPodkategorije}
+                        onClick={() => handleSubcategoryClick(subcategory.nazivPodkategorije)}
+                        className={`block w-full text-left px-4 py-2 text-gray-800 hover:bg-[#f5e8d9] hover:text-[#8b5e34] transition-colors duration-200 text-sm font-medium ${
+                          selectedSubcategory === subcategory.nazivPodkategorije ? "bg-[#f5e8d9] text-[#8b5e34]" : ""
+                        }`}
+                      >
+                        {subcategory.nazivPodkategorije}
+                      </button>
+                    ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+        <button
+          onClick={clearFilters}
+          className="font-medium py-2 px-5 rounded-full bg-red-200 text-red-800 hover:bg-red-300 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1"
+        >
+          Poništi filter
+        </button>
+      </div>
+
       <div className="mt-10 grid p-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
         {loading ? (
           Array.from({ length: 6 }).map((_, index) => (
             <div key={index} className="bg-gray-200 animate-pulse h-48 rounded-xl" />
           ))
         ) : (
-          recipes.map((recipe) => {
+          filteredRecipes.map((recipe) => {
             if (
               recipe.contentTypeId === "recept" ||
               recipe.fields.isPublic === "public" ||
@@ -220,7 +312,6 @@ const BlogPage = () => {
         )}
       </div>
 
-      {/* Modern Modal with Title Below Image */}
       {isModalOpen && selectedRecipe && (
         <div
           className="fixed inset-0 bg-gray-900/70 flex items-center justify-center z-50 px-4"
@@ -230,7 +321,6 @@ const BlogPage = () => {
             className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto relative transform transition-all duration-300 scale-95 hover:scale-100"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Image Header */}
             <div className="relative">
               {selectedRecipe.fields.slikaRecepta && (
                 <div className="w-full h-64 relative">
@@ -255,13 +345,17 @@ const BlogPage = () => {
                 <FaTimes size={20} />
               </button>
             </div>
-
-            {/* Content */}
             <div className="p-6 space-y-6">
-              {/* Recipe Title */}
-              <h2 className="text-2xl font-bold text-gray-800 text-center">{selectedRecipe.fields.nazivRecepta}</h2>
-
-              {/* Recipe Details */}
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-gray-800">{selectedRecipe.fields.nazivRecepta}</h2>
+                <div className="mt-2 text-sm text-gray-600">
+                  <span className="font-semibold">Kategorija: </span>
+                  {selectedRecipe.fields.kategorija?.join(", ") || "Nema kategorije"}
+                  <br />
+                  <span className="font-semibold">Podkategorija: </span>
+                  {selectedRecipe.fields.podkategorija?.join(", ") || "Nema podkategorije"}
+                </div>
+              </div>
               <div className="grid grid-cols-1 gap-6">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center space-x-2">
@@ -269,9 +363,7 @@ const BlogPage = () => {
                     <span>Opis</span>
                   </h3>
                   <p className="text-gray-600 leading-relaxed max-w-md">
-                    {selectedRecipe.fields.opisRecepta
-                      ? selectedRecipe.fields.opisRecepta
-                      : "Nema opisa."}
+                    {selectedRecipe.fields.opisRecepta || "Nema opisa."}
                   </p>
                 </div>
                 <div>
@@ -297,8 +389,6 @@ const BlogPage = () => {
                   </ol>
                 </div>
               </div>
-
-              {/* Comments Section */}
               <div className="border-t pt-6">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
                   <FaComment className="text-[#8b5e34]" />

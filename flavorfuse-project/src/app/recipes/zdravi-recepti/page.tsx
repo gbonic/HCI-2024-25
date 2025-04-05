@@ -1,23 +1,20 @@
 "use client";
 
-import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import Image from 'next/image';
-import { FaTimes, FaUtensils, FaListUl, FaComment } from 'react-icons/fa';
-import { createClient, Entry, Asset } from 'contentful';
-import { useUserContext } from '@/app/context/UserContext';
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import Image from "next/image";
+import { FaTimes, FaUtensils, FaListUl, FaComment } from "react-icons/fa";
+import { createClient, Entry, Asset } from "contentful";
+import { useUserContext } from "@/app/context/UserContext";
 
 const client = createClient({
-  space: 'ocm9154cjmz1',
-  accessToken: 'r7B6-Fb1TqITT79XXiA3igrdqBEtOwlHiS2hazq2T6o'
+  space: "ocm9154cjmz1",
+  accessToken: "r7B6-Fb1TqITT79XXiA3igrdqBEtOwlHiS2hazq2T6o",
 });
 
 type Recept = {
   contentTypeId: string;
-  sys: {
-    id: string;
-  };
+  sys: { id: string };
   fields: {
     nazivRecepta: string;
     sastojci: string;
@@ -30,122 +27,121 @@ type Recept = {
   };
 };
 
-const mapEntryToRecept = (entry: Entry<Recept>): Recept => {
-  const nazivRecepta = typeof entry.fields.nazivRecepta === 'string' ? entry.fields.nazivRecepta : 'Nepoznato ime';
-  const sastojci = typeof entry.fields.sastojci === 'string' ? entry.fields.sastojci : 'Nepoznati sastojci';
-  const uputeZaPripremu = typeof entry.fields.uputeZaPripremu === 'string' ? entry.fields.uputeZaPripremu : 'Nema uputa';
-  const opisRecepta = typeof entry.fields.opisRecepta === 'string' ? entry.fields.opisRecepta : '';
+const mapEntryToRecept = (entry: Entry<any>): Recept => {
+  const nazivRecepta = typeof entry.fields.nazivRecepta === "string" ? entry.fields.nazivRecepta : "Nepoznato ime";
+  const sastojci = typeof entry.fields.sastojci === "string" ? entry.fields.sastojci : "Nepoznati sastojci";
+  const uputeZaPripremu = typeof entry.fields.uputeZaPripremu === "string" ? entry.fields.uputeZaPripremu : "Nema uputa";
+  const opisRecepta = typeof entry.fields.opisRecepta === "string" ? entry.fields.opisRecepta : "";
   const kategorija = Array.isArray(entry.fields.kategorija)
-    ? entry.fields.kategorija.map((kat) => (typeof kat === 'string' ? kat : kat.fields.nazivKategorije))
+    ? entry.fields.kategorija.map((kat) => (typeof kat === "string" ? kat : kat.fields?.nazivKategorije || ""))
     : [];
-
   const podkategorija = Array.isArray(entry.fields.podkategorija)
-    ? entry.fields.podkategorija.map((kat) => (typeof kat === 'string' ? kat : kat.fields.nazivPodkategorije))
+    ? entry.fields.podkategorija.map((podkat) => (typeof podkat === "string" ? podkat : podkat.fields?.nazivPodkategorije || ""))
     : [];
-
-  const slikaRecepta = entry.fields.slikaRecepta && entry.fields.slikaRecepta.sys && entry.fields.slikaRecepta.fields
-    ? {
-      sys: entry.fields.slikaRecepta.sys,
-      fields: entry.fields.slikaRecepta.fields,
-      metadata: entry.fields.slikaRecepta.metadata,
-    }
-    : undefined;
-
-  return {
+    const slikaRecepta =
+    typeof entry.fields.slikaRecepta === "object" &&
+    entry.fields.slikaRecepta !== null &&
+    "sys" in entry.fields.slikaRecepta &&
+    "fields" in entry.fields.slikaRecepta
+      ? (entry.fields.slikaRecepta as Asset)
+      : typeof entry.fields.slikaRecepta === "string"
+      ? entry.fields.slikaRecepta
+      : undefined;
+    
+    return {
     contentTypeId: entry.sys.contentType.sys.id,
-    sys: {
-      id: entry.sys.id,
-    },
-    fields: {
-      nazivRecepta,
-      sastojci,
-      uputeZaPripremu,
-      opisRecepta,
-      kategorija,
-      podkategorija,
-      slikaRecepta,
-    },
-  };
+    sys: { id: entry.sys.id },
+    fields: { nazivRecepta, sastojci, uputeZaPripremu, opisRecepta, kategorija, podkategorija, slikaRecepta },
+    };
 };
 
 const fetchRecipes = async (): Promise<Recept[]> => {
-  const response = await client.getEntries({ content_type: 'recept' });
+  const response = await client.getEntries({ content_type: "recept", include: 2 });
   return response.items.map(mapEntryToRecept);
 };
 
-
 const ZdraviReceptiPage = () => {
   const { userEmail } = useUserContext();
-  const [recipes, setRecipes] = useState<Recept[]>([]);
+  const [allRecipes, setAllRecipes] = useState<Recept[]>([]);
+  const [filteredRecipes, setFilteredRecipes] = useState<Recept[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRecipe, setSelectedRecipe] = useState<Recept | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const searchParams = useSearchParams();
-  const selectedCategory = searchParams.get('category') || '';
-  const selectedSubcategory = searchParams.get('subcategory') || '';
   const [komentar, setKomentar] = useState("");
   const [komentari, setKomentari] = useState<string[]>([]);
+  const [subcategories, setSubcategories] = useState<string[]>([]);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string>("");
+
 
   useEffect(() => {
-    setLoading(true);
-
-    const fetchAllRecipes = async () => {
+    const fetchAllData = async () => {
+      setLoading(true);
       try {
         const contentfulRecipes = await fetchRecipes();
-
-        const filteredContentfulRecipes = contentfulRecipes.filter((item) => {
-          return Array.isArray(item.fields.kategorija) && item.fields.kategorija.some((kat) => kat === 'Zdravi recepti') &&
-            (!selectedSubcategory || (Array.isArray(item.fields.podkategorija) && item.fields.podkategorija.includes(selectedSubcategory)));
-        });
-
-        const localStorageRecipes = localStorage.getItem('recipes');
-        let combinedRecipes = filteredContentfulRecipes;
+        const podkategorijeResponse = await client.getEntries({ content_type: "podkategorije", include: 2 });
+        const localStorageRecipes = localStorage.getItem("recipes");
+        let combinedRecipes = contentfulRecipes;
 
         if (localStorageRecipes) {
           try {
             const parsedRecipes = JSON.parse(localStorageRecipes);
-
             const formattedRecipes = parsedRecipes.map((recipe: any) => ({
-              contentTypeId: 'recept',
+              contentTypeId: "recept",
               sys: { id: recipe.id.toString() },
               fields: {
-                nazivRecepta: recipe.title || 'Nepoznato ime',
-                sastojci: recipe.ingredients || 'Nema sastojaka',
-                uputeZaPripremu: recipe.steps || 'Nema uputa',
-                opisRecepta: recipe.description || '',
-                kategorija: [recipe.category || ''],
-                podkategorija: [recipe.subCategory || ''],
+                nazivRecepta: recipe.title || "Nepoznato ime",
+                sastojci: recipe.ingredients || "Nema sastojaka",
+                uputeZaPripremu: recipe.steps || "Nema uputa",
+                opisRecepta: recipe.description || "",
+                kategorija: [recipe.category || ""],
+                podkategorija: [recipe.subCategory || ""],
                 slikaRecepta: recipe.image || undefined,
                 isPublic: recipe.isPublic || "public",
               },
             }));
-
-            const filteredLocalStorageRecipes = formattedRecipes.filter((recipe: any) => {
-              return recipe.fields.kategorija.includes('Zdravi recepti') &&
-                (!selectedSubcategory || recipe.fields.podkategorija.includes(selectedSubcategory));
-            });
-
-            combinedRecipes = [...filteredContentfulRecipes, ...filteredLocalStorageRecipes];
-            console.log("Combined recipes:", combinedRecipes);
-
+            combinedRecipes = [...contentfulRecipes, ...formattedRecipes];
           } catch (error) {
             console.error("Error parsing recipes from localStorage", error);
           }
         }
 
-        setRecipes(combinedRecipes);
+        // Filtriraj recepte samo za kategoriju "Zdravi recepti"
+        const zdravRecepti = combinedRecipes.filter((recipe) =>
+          recipe.fields.kategorija?.includes("Zdravi recepti")
+        );
+
+        // Dohvati podkategorije samo za "Zdravi recepti" kao niz stringova
+        const zdravSubcategories = podkategorijeResponse.items
+          .filter((podkat: any) => podkat.fields.kategorija?.fields.nazivKategorije === "Zdravi recepti")
+          .map((podkat: any) => podkat.fields.nazivPodkategorije || "");
+
+        setAllRecipes(zdravRecepti);
+        setFilteredRecipes(zdravRecepti);
+        setSubcategories(zdravSubcategories);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching content from Contentful', error);
+        console.error("Error fetching content from Contentful", error);
         setLoading(false);
       }
     };
 
-    fetchAllRecipes();
-  }, [selectedCategory, selectedSubcategory]);
+    fetchAllData();
+  }, []);
 
+  useEffect(() => {
+    const filtered = allRecipes.filter((recipe) => {
+      const matchesSubcategory = !selectedSubcategory || recipe.fields.podkategorija?.includes(selectedSubcategory);
+      return matchesSubcategory;
+    });
+    setFilteredRecipes(filtered);
+  }, [selectedSubcategory, allRecipes]);
+
+  const handleSubcategoryClick = (subcategory: string) => {
+    setSelectedSubcategory(subcategory);
+  };
+  
   const clearFilters = () => {
-    window.location.href = '/recipes/zdravi-recepti';
+    setSelectedSubcategory("");
   };
 
   const openModal = (recipe: Recept) => {
@@ -169,9 +165,7 @@ const ZdraviReceptiPage = () => {
 
   return (
     <main className="grid grid-rows-[auto_auto_auto] min-h-screen w-full text-[#2E6431] justify-center">
-      {/* Header Section */}
       <div className="relative flex flex-col items-center justify-center text-center my-16 px-4 sm:px-8">
-        {/* Slike sa strane */}
         <Image
           src="/images/list.png"
           alt="cvijet"
@@ -214,7 +208,9 @@ const ZdraviReceptiPage = () => {
           width={112}
           height={60}
         />
-        <h1 className="text-[#2E6431] font-scintilla font-extrabold text-2xl sm:text-3xl md:text-4xl mb-2 drop-shadow-lg">Zdravi recepti</h1>
+        <h1 className="text-[#2E6431] font-scintilla font-extrabold text-2xl sm:text-3xl md:text-4xl mb-2 drop-shadow-lg">
+          Zdravi recepti
+        </h1>
         <p className="text-base sm:text-lg md:text-xl font-sans m-6 text-gray-900 max-w-[90%] md:max-w-[700px]">
           Ovdje ćete pronaći recepte bogate vitaminima, vlaknima i esencijalnim nutrijentima, idealne za one koji žele održati zdrav način života.
           Bilo da se radi o laganim salatama, smoothie-ima, juhama ili punim obrocima, svaki recept je dizajniran da vam pruži energiju i podrži vaše zdravlje.
@@ -223,34 +219,35 @@ const ZdraviReceptiPage = () => {
         </p>
       </div>
 
-      {/* Filter Buttons */}
-      <div className="mt-8 w-full max-w-6xl flex flex-wrap justify-center gap-4">
-        <Link href="/recipes/zdravi-recepti?subcategory=Zdravi deserti">
-          <button className="px-6 py-2 bg-gray-200 rounded-full text-gray-800 hover:bg-gray-300">Zdravi deserti</button>
-        </Link>
-        <Link href="/recipes/zdravi-recepti?subcategory=Obroci za mršavljenje">
-          <button className="px-6 py-2 bg-gray-200 rounded-full text-gray-800 hover:bg-gray-300">Obroci za mršavljenje</button>
-        </Link>
-        <Link href="/recipes/zdravi-recepti?subcategory=Zdravi napitci">
-          <button className="px-6 py-2 bg-gray-200 rounded-full text-gray-800 hover:bg-gray-300">Zdravi napitci</button>
-        </Link>
-        <Link href="/recipes/zdravi-recepti?subcategory=Prehrana za sportaše">
-          <button className="px-6 py-2 bg-gray-200 rounded-full text-gray-800 hover:bg-gray-300">Prehrana za sportaše</button>
-        </Link>
-
-        {/* Clear Filters Button */}
-        <button onClick={clearFilters} className="px-6 py-2 bg-red-200 rounded-full text-red-800 hover:bg-red-300">
-          Ukloni filtriranje
+      <div className="mt-8 max-w-6xl w-full flex flex-wrap gap-3 justify-center">
+        {subcategories.map((subcategory) => (
+          <button
+            key={subcategory}
+            onClick={() => handleSubcategoryClick(subcategory)}
+            className={`font-medium px-6 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 ${
+              selectedSubcategory === subcategory
+                ? "bg-[#dcb794] text-[#8b5e34]"
+                : "bg-[#f5e8d9] text-[#8b5e34] hover:bg-[#dcb794]"
+            }`}
+          >
+            {subcategory}
+          </button>
+        ))}
+         <button
+          onClick={clearFilters}
+          className="font-medium py-2 px-5 rounded-full bg-red-200 text-red-800 hover:bg-red-300 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1"
+        >
+          Poništi filter
         </button>
       </div>
-      {/* Recipes Grid */}
+
       <div className="mt-10 grid p-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
         {loading ? (
           Array.from({ length: 6 }).map((_, index) => (
             <div key={index} className="bg-gray-200 animate-pulse h-48 rounded-xl" />
           ))
         ) : (
-          recipes.map((recipe) => {
+          filteredRecipes.map((recipe) => {
             if (
               recipe.contentTypeId === "recept" ||
               (recipe.contentTypeId === "local" && recipe.fields.isPublic === "private" && isLoggedIn)
@@ -291,7 +288,6 @@ const ZdraviReceptiPage = () => {
         )}
       </div>
 
-      {/* Modern Modal with Title Below Image */}
       {isModalOpen && selectedRecipe && (
         <div
           className="fixed inset-0 bg-gray-900/70 flex items-center justify-center z-50 px-4"
@@ -301,7 +297,6 @@ const ZdraviReceptiPage = () => {
             className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto relative transform transition-all duration-300 scale-95 hover:scale-100"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Image Header */}
             <div className="relative">
               {selectedRecipe.fields.slikaRecepta && (
                 <div className="w-full h-64 relative">
@@ -326,13 +321,8 @@ const ZdraviReceptiPage = () => {
                 <FaTimes size={20} />
               </button>
             </div>
-
-            {/* Content */}
             <div className="p-6 space-y-6">
-              {/* Recipe Title */}
               <h2 className="text-2xl font-bold text-gray-800 text-center">{selectedRecipe.fields.nazivRecepta}</h2>
-
-              {/* Recipe Details */}
               <div className="grid grid-cols-1 gap-6">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center space-x-2">
@@ -340,9 +330,7 @@ const ZdraviReceptiPage = () => {
                     <span>Opis</span>
                   </h3>
                   <p className="text-gray-600 leading-relaxed max-w-md">
-                    {selectedRecipe.fields.opisRecepta
-                      ? selectedRecipe.fields.opisRecepta
-                      : "Nema opisa."}
+                    {selectedRecipe.fields.opisRecepta || "Nema opisa."}
                   </p>
                 </div>
                 <div>
@@ -368,8 +356,6 @@ const ZdraviReceptiPage = () => {
                   </ol>
                 </div>
               </div>
-
-              {/* Comments Section */}
               <div className="border-t pt-6">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
                   <FaComment className="text-[#8b5e34]" />
@@ -388,7 +374,7 @@ const ZdraviReceptiPage = () => {
                 >
                   Objavi komentar
                 </button>
-                {komentar.length > 0 && (
+                {komentari.length > 0 && (
                   <div className="mt-6 space-y-3">
                     {komentari.map((kom, index) => (
                       <p key={index} className="bg-gray-100 p-3 rounded-md text-gray-600">
@@ -399,7 +385,8 @@ const ZdraviReceptiPage = () => {
                 )}
               </div>
             </div>
-          </div>  </div>
+          </div>
+        </div>
       )}
     </main>
   );
@@ -412,3 +399,4 @@ export default function Page() {
     </Suspense>
   );
 }
+

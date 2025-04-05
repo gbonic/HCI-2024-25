@@ -53,18 +53,8 @@ const mapEntryToRecept = (entry: Entry<Recept>): Recept => {
 
   return {
     contentTypeId: entry.sys.contentType.sys.id,
-    sys: {
-      id: entry.sys.id,
-    },
-    fields: {
-      nazivRecepta,
-      sastojci,
-      uputeZaPripremu,
-      opisRecepta,
-      kategorija,
-      podkategorija,
-      slikaRecepta,
-    },
+    sys: { id: entry.sys.id },
+    fields: { nazivRecepta, sastojci, uputeZaPripremu, opisRecepta, kategorija, podkategorija, slikaRecepta },
   };
 };
 
@@ -75,74 +65,83 @@ const fetchRecipes = async (): Promise<Recept[]> => {
 
 const TradicionalnaJelaPage = () => {
   const { userEmail } = useUserContext();
-  const [recipes, setRecipes] = useState<Recept[]>([]);
+  const [allRecipes, setAllRecipes] = useState<Recept[]>([]);
+  const [filteredRecipes, setFilteredRecipes] = useState<Recept[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRecipe, setSelectedRecipe] = useState<Recept | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const searchParams = useSearchParams();
-  const selectedCategory = searchParams.get('category') || '';
-  const selectedSubcategory = searchParams.get('subcategory') || '';
   const [komentar, setKomentar] = useState("");
   const [komentari, setKomentari] = useState<string[]>([]);
+  const [subcategories, setSubcategories] = useState<string[]>([]);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string>("");
+
 
   useEffect(() => {
-    setLoading(true);
-
-    const fetchAllRecipes = async () => {
+    const fetchAllData = async () => {
+      setLoading(true);
       try {
         const contentfulRecipes = await fetchRecipes();
-
-        const filteredContentfulRecipes = contentfulRecipes.filter((item) => {
-          return Array.isArray(item.fields.kategorija) && item.fields.kategorija.some((kat) => kat === 'Tradicionalna jela') &&
-            (!selectedSubcategory || (Array.isArray(item.fields.podkategorija) && item.fields.podkategorija.includes(selectedSubcategory)));
-        });
-
-        const localStorageRecipes = localStorage.getItem('recipes');
-        let combinedRecipes = filteredContentfulRecipes;
+        const podkategorijeResponse = await client.getEntries({ content_type: "podkategorije", include: 2 });
+        const localStorageRecipes = localStorage.getItem("recipes");
+        let combinedRecipes = contentfulRecipes;
 
         if (localStorageRecipes) {
           try {
             const parsedRecipes = JSON.parse(localStorageRecipes);
-
             const formattedRecipes = parsedRecipes.map((recipe: any) => ({
-              contentTypeId: 'recept',
+              contentTypeId: "recept",
               sys: { id: recipe.id.toString() },
               fields: {
-                nazivRecepta: recipe.title || 'Nepoznato ime',
-                sastojci: recipe.ingredients || 'Nema sastojaka',
-                uputeZaPripremu: recipe.steps || 'Nema uputa',
-                opisRecepta: recipe.description || '',
-                kategorija: [recipe.category || ''],
-                podkategorija: [recipe.subCategory || ''],
+                nazivRecepta: recipe.title || "Nepoznato ime",
+                sastojci: recipe.ingredients || "Nema sastojaka",
+                uputeZaPripremu: recipe.steps || "Nema uputa",
+                opisRecepta: recipe.description || "",
+                kategorija: [recipe.category || ""],
+                podkategorija: [recipe.subCategory || ""],
                 slikaRecepta: recipe.image || undefined,
                 isPublic: recipe.isPublic || "public",
               },
             }));
-
-            const filteredLocalStorageRecipes = formattedRecipes.filter((recipe: any) => {
-              return recipe.fields.kategorija.includes('Tradicionalna jela') &&
-                (!selectedSubcategory || recipe.fields.podkategorija.includes(selectedSubcategory));
-            });
-
-            combinedRecipes = [...filteredContentfulRecipes, ...filteredLocalStorageRecipes];
-            console.log("Combined recipes:", combinedRecipes);
-
+            combinedRecipes = [...contentfulRecipes, ...formattedRecipes];
           } catch (error) {
             console.error("Error parsing recipes from localStorage", error);
           }
         }
 
-        setRecipes(combinedRecipes);
+        // Filtriraj recepte samo za kategoriju "Zdravi recepti"
+        const zdravRecepti = combinedRecipes.filter((recipe) =>
+          recipe.fields.kategorija?.includes("Tradicionalna jela")
+        );
+
+        // Dohvati podkategorije samo za "Zdravi recepti" kao niz stringova
+        const zdravSubcategories = podkategorijeResponse.items
+          .filter((podkat: any) => podkat.fields.kategorija?.fields.nazivKategorije === "Tradicionalna jela")
+          .map((podkat: any) => podkat.fields.nazivPodkategorije || "");
+
+        setAllRecipes(zdravRecepti);
+        setFilteredRecipes(zdravRecepti);
+        setSubcategories(zdravSubcategories);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching content from Contentful', error);
+        console.error("Error fetching content from Contentful", error);
         setLoading(false);
       }
     };
 
-    fetchAllRecipes();
-  }, [selectedCategory, selectedSubcategory]);
+    fetchAllData();
+  }, []);
 
+  useEffect(() => {
+    const filtered = allRecipes.filter((recipe) => {
+      const matchesSubcategory = !selectedSubcategory || recipe.fields.podkategorija?.includes(selectedSubcategory);
+      return matchesSubcategory;
+    });
+    setFilteredRecipes(filtered);
+  }, [selectedSubcategory, allRecipes]);
+
+  const handleSubcategoryClick = (subcategory: string) => {
+    setSelectedSubcategory(subcategory);
+  };
   const clearFilters = () => {
     window.location.href = '/recipes/tradicionalna-jela';
   };
@@ -223,20 +222,24 @@ const TradicionalnaJelaPage = () => {
       </div>
 
       {/* Filter Buttons */}
-      <div className="mt-8 w-full max-w-6xl flex flex-wrap justify-center gap-4">
-        <Link href="/recipes/tradicionalna-jela?subcategory=Blagdanska jela">
-          <button className="px-6 py-2 bg-gray-200 rounded-full text-gray-800 hover:bg-gray-300">Blagdanska jela</button>
-        </Link>
-        <Link href="/recipes/tradicionalna-jela?subcategory=Sezonska jela">
-          <button className="px-6 py-2 bg-gray-200 rounded-full text-gray-800 hover:bg-gray-300">Sezonska jela</button>
-        </Link>
-        <Link href="/recipes/tradicionalna-jela?subcategory=Zimnica">
-          <button className="px-6 py-2 bg-gray-200 rounded-full text-gray-800 hover:bg-gray-300">Zimnica</button>
-        </Link>
-
-        {/* Clear Filters Button */}
-        <button onClick={clearFilters} className="px-6 py-2 bg-red-200 rounded-full text-red-800 hover:bg-red-300">
-          Ukloni filtriranje
+      <div className="mt-8 max-w-6xl w-full flex flex-wrap gap-3 justify-center">
+        {subcategories.map((subcategory) => (
+          <button
+            key={subcategory}
+            onClick={() => handleSubcategoryClick(subcategory)}
+            className={`font-medium px-6 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 ${selectedSubcategory === subcategory
+              ? "bg-[#dcb794] text-[#8b5e34]"
+              : "bg-[#f5e8d9] text-[#8b5e34] hover:bg-[#dcb794]"
+              }`}
+          >
+            {subcategory}
+          </button>
+        ))}
+        <button
+          onClick={clearFilters}
+          className="font-medium py-2 px-5 rounded-full bg-red-200 text-red-800 hover:bg-red-300 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1"
+        >
+          Poništi filter
         </button>
       </div>
       {/* Recipes Grid */}
@@ -246,7 +249,7 @@ const TradicionalnaJelaPage = () => {
             <div key={index} className="bg-gray-200 animate-pulse h-48 rounded-xl" />
           ))
         ) : (
-          recipes.map((recipe) => {
+          filteredRecipes.map((recipe) => {
             if (
               recipe.contentTypeId === "recept" ||
               (recipe.contentTypeId === "local" && recipe.fields.isPublic === "private" && isLoggedIn)
