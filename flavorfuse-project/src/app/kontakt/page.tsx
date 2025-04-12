@@ -11,7 +11,7 @@ const ContactPage: React.FC = () => {
         {/* Left side - Image with overlay */}
         <div className="md:w-1/2 hidden md:block relative group">
           <Image 
-            src="/images/slika.jpg" 
+            src="/images/backgroundprijava.jpg" 
             alt="Kontaktirajte nas"
             layout="fill"
             objectFit="cover"

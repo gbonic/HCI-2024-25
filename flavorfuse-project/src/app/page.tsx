@@ -53,7 +53,7 @@ const Testimonials = () => {
   ];
 
   return (
-    <div className="my-20 py-16 rounded-3xl">
+    <div className="my-10 py-16 rounded-3xl">
       <h1 className="text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md mb-12">
         ŠTO KAŽU NAŠI KORISNICI
       </h1>
@@ -82,7 +82,7 @@ const NewsletterSignup = () => {
   };
 
   return (
-    <div className="my-20 py-12 rounded-3xl">
+    <div className="my-10 py-12 rounded-3xl">
       <h1 className="text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md mb-6">
         PRETPLATITE SE NA NEWSLETTER
       </h1>
@@ -134,14 +134,14 @@ export default function Home() {
     }
   }, [setUserInitials, setUserName]);
 
-  const handleLogout = () => {
-    Cookies.remove("auth_token");
-    localStorage.removeItem("user_name");
-    setUserInitials(null);
-    setUserName(null);
-    setIsLoggedIn(false);
-    router.push("/");
-  };
+  // const handleLogout = () => {
+  //   Cookies.remove("auth_token");
+  //   localStorage.removeItem("user_name");
+  //   setUserInitials(null);
+  //   setUserName(null);
+  //   setIsLoggedIn(false);
+  //   router.push("/");
+  // };
 
   return (
     <main className="grid grid-rows-[auto_auto_auto] min-h-screen text-[#2E6431] max-w-7xl mx-auto px-4 sm:px-8 md:px-12">
@@ -150,17 +150,16 @@ export default function Home() {
         {/* Slike sa strane */}
         <Image
           src="/images/list.png"
-          alt="cvijet"
+          alt="List"
           className="absolute top-[60px] left-[10px] hidden lg:block"
           width={96}
           height={50}
         />
         <Image
           src="/images/naranca.png"
-          alt="Naranča"
           className="absolute top-[-30px] left-[150px] hidden lg:block"
           width={96}
-          height={50}
+          height={50} alt={""}
         />
         <Image
           src="/images/cvijet.png"
@@ -221,6 +220,9 @@ export default function Home() {
       <CookingTips />
 
       {/* SurpriseButton */}
+      <h1 className="text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md my-10">
+        ŠTO DANAS KUHATI?
+      </h1>
       <div className="flex justify-center">
         <SurpriseButton />
       </div>

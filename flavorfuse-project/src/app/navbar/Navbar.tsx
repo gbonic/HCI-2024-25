@@ -104,6 +104,7 @@ const Navbar = () => {
       <nav className="relative grid grid-cols-[0.5fr,auto,0.5fr] items-center px-4 sm:px-6 lg:px-2 py-1 gap-0">
         {/* Lijeva strana */}
         <button
+          id="hamburger-button"
           onClick={toggleMenu}
           className="lg:hidden focus:outline-none text-gray-800 "
         >

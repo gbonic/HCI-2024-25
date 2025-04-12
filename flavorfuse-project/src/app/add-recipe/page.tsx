@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useUserContext } from "../context/UserContext";
+import { useRouter } from "next/navigation";
 
 const categories = {
   "Prema vrsti obroka": ["Doručak", "Ručak", "Večera"],
@@ -15,6 +16,7 @@ const categories = {
 
 const AddRecipePage = () => {
   const { userEmail, setUserEmail } = useUserContext();
+  const router = useRouter();
   const [recipes, setRecipes] = useState(() => {
     if (typeof window !== "undefined") {
       return JSON.parse(localStorage.getItem("recipes")) || [];
@@ -34,7 +36,7 @@ const AddRecipePage = () => {
   useEffect(() => {
     const email = localStorage.getItem("user_email");
     if (email) setUserEmail(email);
-  }, [setUserEmail]);
+  }, [setUserEmail, router]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -47,6 +49,8 @@ const AddRecipePage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!userEmail) return; // Ne dopusti slanje ako nije prijavljen
+
     const newRecipe = {
       id: Date.now(),
       title,
@@ -63,11 +67,9 @@ const AddRecipePage = () => {
     setRecipes(updatedRecipes);
     localStorage.setItem("recipes", JSON.stringify(updatedRecipes));
 
-    // Trigger notification
     setShowNotification(true);
     setTimeout(() => setShowNotification(false), 3000);
 
-    // Reset form
     setTitle("");
     setCategory("");
     setSubCategory("");
@@ -78,9 +80,16 @@ const AddRecipePage = () => {
     setImage(null);
   };
 
+  if (!userEmail) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-[#5A4A3B] text-lg">Molimo prijavite se za dodavanje recepta.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 relative">
-      {/* Improved Notification */}
       {showNotification && (
         <div className="fixed top-16 right-6 z-50 bg-amber-100 border-l-4 border-amber-600 text-amber-900 px-6 py-4 rounded-r-lg shadow-lg max-w-sm animate-slide-in">
           <div className="flex items-center space-x-3">
@@ -209,7 +218,7 @@ const AddRecipePage = () => {
           />
           <label
             htmlFor="file-upload"
-            className="cursor-pointer inline-block bg-[#F28C38] text-white py-2 px-6 rounded-full font-semibold hover:bg-[#E07B30] transition duration-300"
+            className="cursor-pointer inline-block bg-[#F28C38] text-white py-2 px-6 rounded-full font-semibold hover:bg-[#E07B30] transition duration-200"
           >
             Priložite fotografiju
           </label>

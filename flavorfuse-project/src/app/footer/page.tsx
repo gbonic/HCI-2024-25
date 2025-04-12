@@ -13,24 +13,24 @@ export default function FooterComponent() {
           </Link>
         </div>
         <div className="text-zinc-900 text-center md:text-left md:mt-0 flex-1">
-          <Link href="/">
+          <Link href="/404-page">
             info@flavorfuse.com
           </Link>
         </div>
         <div className="flex items-center space-x-4 mt-4 md:mt-0">
-          <Link href="/">
+          <Link href="/404.page">
             <i className="fab fa-facebook-f text-gray-700 hover:text-black"></i>
           </Link>
-          <Link href="/">
+          <Link href="/404-page">
             <i className="fab fa-instagram text-gray-700 hover:text-black"></i>
           </Link>
-          <Link href="/">
+          <Link href="/404-page">
             <i className="fab fa-twitter text-gray-700 hover:text-black"></i>
           </Link>
-          <Link href="/">
+          <Link href="/404-page">
             <i className="fab fa-linkedin text-gray-700 hover:text-black"></i>
           </Link>
-          <Link href="/">
+          <Link href="/404-page">
             <i className="fab fa-youtube text-gray-700 hover:text-black"></i>
           </Link>
         </div>
@@ -39,9 +39,9 @@ export default function FooterComponent() {
       <div className="container mx-auto text-center text-sm text-gray-600">
         <p className='text-zinc-900'>© 2024 FlavorFuse. All rights reserved.</p>
         <div className="text-zinc-900 flex justify-center space-x-4 mt-2">
-          <Link href="/">Privacy Policy</Link>
-          <Link href="/">Terms of Service</Link>
-          <Link href="/">Cookies Settings</Link>
+          <Link href="/404-page">Privacy Policy</Link>
+          <Link href="/404-page">Terms of Service</Link>
+          <Link href="/404-page">Cookies Settings</Link>
         </div>
       </div>
     </footer>
