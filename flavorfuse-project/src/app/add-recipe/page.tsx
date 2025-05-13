@@ -59,9 +59,10 @@ const AddRecipePage = () => {
       ingredients,
       steps,
       description,
-      isPublic,
+      isPrivate: isPublic === "private", // Mapiranje na boolean (true za private, false za public)
       image,
       userEmail,
+      createdAt: new Date().toISOString(), // Automatski dodan trenutni datum i vrijeme
     };
     const updatedRecipes = [...recipes, newRecipe];
     setRecipes(updatedRecipes);

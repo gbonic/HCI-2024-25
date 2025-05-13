@@ -150,7 +150,7 @@ const TradicionalnaJelaPage = () => {
     setSelectedSubcategory(subcategory);
   };
   const clearFilters = () => {
-    window.location.href = '/recipes/tradicionalna-jela';
+    setSelectedSubcategory("");
   };
 
   const openModal = (recipe: Recept) => {
@@ -225,20 +225,49 @@ const TradicionalnaJelaPage = () => {
         </p>
       </div>
 
-      {/* Filter Buttons */}
-      <div className="mt-8 max-w-6xl w-full flex flex-wrap justify-center gap-4">
+      {/* Filter Buttons - Mobile Sliding Version */}
+      <section className="lg:hidden w-full max-w-[90vw] overflow-hidden px-4">
+        <div className="flex justify-start items-center overflow-x-auto gap-2 pb-4 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+          {subcategories.map((subcategory, index) => (
+            <button
+              key={index}
+              onClick={() => handleSubcategoryClick(subcategory)}
+              className={`flex-shrink-0 snap-start w-[150px] h-[50px] rounded-full font-semibold text-sm flex items-center justify-center shadow-md ${
+                selectedSubcategory === subcategory
+                  ? "bg-[#8b5e34] text-white"
+                  : "bg-[#f5e8d9] text-[#8b5e34] hover:bg-[#dcb794]"
+              }`}
+            >
+              <span className="text-center px-2">{subcategory}</span>
+            </button>
+          ))}
+          <button
+            onClick={clearFilters}
+            className="flex-shrink-0 snap-start w-[150px] h-[50px] rounded-full font-semibold text-sm flex items-center justify-center bg-red-200 text-red-800 hover:bg-red-300 shadow-md"
+          >
+            <span className="text-center px-2">Poništi filter</span>
+          </button>
+        </div>
+      </section>
+
+      {/* Filter Buttons - Desktop Version */}
+      <div className="hidden lg:flex mt-8 max-w-6xl w-full flex-wrap justify-center gap-4">
         {subcategories.map((subcategory) => (
           <button
             key={subcategory}
             onClick={() => handleSubcategoryClick(subcategory)}
-            className="font-semibold text-sm px-6 py-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 w-[210px] h-[50px] flex items-center justify-center bg-[#f5e8d9] text-[#8b5e34] hover:bg-[#dcb794] whitespace-normal"
+            className={`font-semibold text-sm px-6 py-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 w-[210px] h-[50px] flex items-center justify-center whitespace-normal ${
+              selectedSubcategory === subcategory
+                ? "bg-[#8b5e34] text-white"
+                : "bg-[#f5e8d9] text-[#8b5e34] hover:bg-[#dcb794]"
+            }`}
           >
             {subcategory}
           </button>
         ))}
         <button
           onClick={clearFilters}
-          className="font-semibold text-sm px-4 py-2 rounded-full bg-red-200 text-red-800 hover:bg-red-300 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 w-[190px] h-[50px] flex items-center justify-center whitespace-normal"
+          className="font-semibold text-sm px-4 py-2 rounded-full bg-red-200 text-red-800 hover:bg-red-300 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 w-[200px] h-[50px] flex items-center justify-center whitespace-normal"
         >
           Poništi filter
         </button>
@@ -288,17 +317,16 @@ const TradicionalnaJelaPage = () => {
       {/* Modern Modal with Title Below Image */}
       {isModalOpen && selectedRecipe && (
         <div
-          className="fixed inset-0 bg-gray-900/70 flex items-center justify-center z-50 px-4"
+          className="fixed inset-0 bg-gray-900/80 flex items-center justify-center z-50 px-4"
           onClick={closeModal}
         >
           <div
-            className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto relative transform transition-all duration-300 scale-95"
+            className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative transform transition-all duration-500 scale-100 sm:scale-95"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Image Header */}
             <div className="relative">
               {selectedRecipe.fields.slikaRecepta && (
-                <div className="w-full h-64 relative">
+                <div className="w-full h-80 relative">
                   <Image
                     src={
                       typeof selectedRecipe.fields.slikaRecepta === "string"
@@ -308,86 +336,95 @@ const TradicionalnaJelaPage = () => {
                     alt={selectedRecipe.fields.nazivRecepta}
                     layout="fill"
                     objectFit="cover"
-                    className="rounded-t-2xl"
+                    className="rounded-t-3xl"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-t-3xl" />
                 </div>
               )}
               <button
                 onClick={closeModal}
-                className="absolute top-4 right-4 text-white bg-gray-800/80 p-2 rounded-full hover:bg-gray-800 transition"
+                className="absolute top-6 right-6 text-white bg-gray-900/70 p-3 rounded-full hover:bg-gray-900/90 transition-all duration-200"
                 aria-label="Zatvori modal"
               >
-                <FaTimes size={20} />
+                <FaTimes size={22} />
               </button>
             </div>
-
-            {/* Content */}
-            <div className="p-6 space-y-6">
-              {/* Recipe Title */}
-              <h2 className="text-2xl font-bold text-gray-800 text-center">{selectedRecipe.fields.nazivRecepta}</h2>
-
-              {/* Recipe Details */}
-              <div className="grid grid-cols-1 gap-6">
+            <div className="p-8 space-y-8 bg-gradient-to-b from-white to-gray-50">
+              <div>
+                <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+                  {selectedRecipe.fields.nazivRecepta}
+                </h2>
+                <div className="mt-4 flex flex-wrap gap-4">
+                  <div className="inline-flex items-center text-[#8b5e34] text-base font-medium px-4 py-2 rounded-full shadow-sm">
+                    <span className="mr-2 font-semibold">Kategorija:</span>
+                    <span>{selectedRecipe.fields.kategorija?.join(", ") || "Nema kategorije"}</span>
+                  </div>
+                  <div className="inline-flex items-center text-[#8b5e34] text-base font-medium px-4 py-2 rounded-full shadow-sm">
+                    <span className="mr-2 font-semibold">Podkategorija:</span>
+                    <span>{selectedRecipe.fields.podkategorija?.join(", ") || "Nema podkategorije"}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 gap-8">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center space-x-2">
-                    <FaUtensils className="text-[#8b5e34]" />
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center space-x-3">
+                    <FaUtensils className="text-[#8b5e34] text-2xl" />
                     <span>Opis</span>
                   </h3>
-                  <p className="text-gray-600 leading-relaxed max-w-md">
-                    {selectedRecipe.fields.opisRecepta
-                      ? selectedRecipe.fields.opisRecepta
-                      : "Nema opisa."}
+                  <p className="text-gray-600 leading-relaxed text-base">
+                    {selectedRecipe.fields.opisRecepta || "Nema opisa."}
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center space-x-2">
-                    <FaListUl className="text-[#8b5e34]" />
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center space-x-3">
+                    <FaListUl className="text-[#8b5e34] text-2xl" />
                     <span>Sastojci</span>
                   </h3>
-                  <ul className="list-disc pl-5 text-gray-600 space-y-1">
+                  <ul className="list-disc pl-6 text-gray-600 text-base space-y-2">
                     {selectedRecipe.fields.sastojci.split("\n").map((item, index) => (
                       <li key={index}>{item.replace(/^[•-]\s?/, "")}</li>
                     ))}
                   </ul>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center space-x-2">
-                    <FaListUl className="text-[#8b5e34]" />
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center space-x-3">
+                    <FaListUl className="text-[#8b5e34] text-2xl" />
                     <span>Upute za pripremu</span>
                   </h3>
-                  <ol className="list-decimal pl-5 text-gray-600 space-y-1 max-w-md">
+                  <ol className="list-decimal pl-6 text-gray-600 text-base space-y-2">
                     {selectedRecipe.fields.uputeZaPripremu.split("\n").map((step, index) => (
                       <li key={index}>{step.replace(/^[•-]\s?/, "")}</li>
                     ))}
                   </ol>
                 </div>
               </div>
-
-              {/* Comments Section */}
-              <div className="border-t pt-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
-                  <FaComment className="text-[#8b5e34]" />
+              <div className="border-t border-gray-200 pt-8">
+                <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center space-x-3">
+                  <FaComment className="text-[#8b5e34] text-2xl" />
                   <span>Komentari</span>
                 </h3>
                 <textarea
-                  className="w-full border border-gray-300 rounded-md p-3 text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#8b5e34] resize-none"
-                  rows={4}
+                  className="w-full border border-gray-200 rounded-xl p-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#f4c78c] transition-all duration-200 bg-white shadow-sm resize-none"
+                  rows={5}
                   placeholder="Napiši svoj komentar..."
                   value={komentar}
                   onChange={(e) => setKomentar(e.target.value)}
                 />
                 <button
-                  className="mt-4 bg-[#8b5e34] text-white py-2 px-6 rounded-md hover:bg-[#6b4727] transition w-full sm:w-auto sm:self-end"
+                  className="mt-4 bg-[#8b5e34] text-white py-3 px-8 rounded-xl hover:bg-[#6b4727] transition-all duration-200 shadow-md font-medium w-full sm:w-auto"
                   onClick={handleKomentarSubmit}
                 >
                   Objavi komentar
                 </button>
-                {komentar.length > 0 && (
-                  <div className="mt-6 space-y-3">
+                {komentari.length > 0 && (
+                  <div className="mt-8 space-y-4">
                     {komentari.map((kom, index) => (
-                      <p key={index} className="bg-gray-100 p-3 rounded-md text-gray-600">
+                      <div
+                        key={index}
+                        className="bg-gray-100 p-4 rounded-xl text-gray-700 shadow-sm transition-all duration-200 hover:shadow-md"
+                      >
                         {kom}
-                      </p>
+                      </div>
                     ))}
                   </div>
                 )}

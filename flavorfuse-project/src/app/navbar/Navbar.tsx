@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUserContext } from "../context/UserContext";
@@ -6,7 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Cookies from "js-cookie";
 import { BiSearch } from "react-icons/bi";
-import { FaUser, FaPlus, FaSignOutAlt } from 'react-icons/fa';
+import { FaUser, FaPlus, FaSignOutAlt } from "react-icons/fa";
 
 type Page = {
   title: string;
@@ -106,7 +107,7 @@ const Navbar = () => {
         <button
           id="hamburger-button"
           onClick={toggleMenu}
-          className="lg:hidden focus:outline-none text-gray-800 "
+          className="lg:hidden focus:outline-none text-gray-800"
         >
           <svg
             className="w-6 h-6"
@@ -126,7 +127,10 @@ const Navbar = () => {
         <div className="flex items-center">
           <ul className="hidden lg:flex justify-evenly items-center w-full">
             <li>
-              <button onClick={handleSearchClick} className="flex items-center text-gray-700 px-6 py-2 rounded-full shadow-lg hover:text-gray-500 transition duration-300">
+              <button
+                onClick={handleSearchClick}
+                className="flex items-center text-gray-700 bg-slate-50 px-6 py-2 rounded-full shadow-lg hover:text-gray-500 transition duration-300"
+              >
                 <BiSearch className="w-7 h-7 mr-1" />
                 <span className="hidden lg:inline">Pretraži</span>
               </button>
@@ -203,12 +207,12 @@ const Navbar = () => {
                 userInitials ? (
                   <div
                     key={index}
-                    className="relative flex items-center ml-4 cursor-pointer border border-gray-300 rounded-full p-2"
+                    className="relative flex items-center ml-4 cursor-pointer"
                     onMouseEnter={handleUserMouseEnter}
                     onMouseLeave={handleUserMouseLeave}
                   >
-                    <p className='mr-2 text-gray-800'>Pozdrav, {userName ? userName.split(' ')[0] : ''}</p>
-                    <div className="w-8 h-8 bg-[#fde4b5] text-gray-800 font-bold flex items-center justify-center rounded-full shadow-lg">
+                    <p className="mr-2 text-gray-800">Pozdrav, {userName ? userName.split(" ")[0] : ""}</p>
+                    <div className="w-8 h-8 bg-[#ffbe46] text-gray-800 font-bold flex items-center justify-center rounded-full shadow-lg">
                       {userInitials}
                     </div>
                     {userDropdownOpen && (
@@ -218,7 +222,7 @@ const Navbar = () => {
                         onMouseLeave={handleUserMouseLeave}
                       >
                         <div className="flex flex-col items-center p-4">
-                          <div className="w-12 h-12 bg-[#fde4b5] text-gray-800 font-bold flex items-center justify-center rounded-full shadow-lg">
+                          <div className="w-12 h-12 bg-[#ffbe46] text-gray-800 font-bold flex items-center justify-center rounded-full shadow-lg">
                             {userInitials}
                           </div>
                           <span className="mt-2 text-gray-800 font-bold">{userName}</span>
@@ -241,7 +245,6 @@ const Navbar = () => {
                           Odjava
                         </li>
                       </ul>
-
                     )}
                   </div>
                 ) : (
@@ -263,103 +266,105 @@ const Navbar = () => {
             ))}
           </ul>
         </div>
-      </nav >
+      </nav>
 
-      {/* Mobile dropdown menu */}
-      {
-        menuOpen && (
-          <ul className="lg:hidden bg-white w-full py-3 px-4 space-y-3">
-            {pages.map((page, index) => (
-              <li key={index} className="text-gray-900 font-bold hover:text-[#2E6431]">
-                {page.title === "RECEPTI" ? (
-                  <>
-                    <div className="flex justify-between items-center" onClick={toggleMobileRecipesDropdown}>
-                      <span>{page.title}</span>
-                      <svg
-                        className={`w-4 h-4 ml-1 transform ${mobileRecipesDropdownOpen ? 'rotate-180' : ''}`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                    </div>
-                    {mobileRecipesDropdownOpen && (
-                      <ul className="pl-4 mt-2 space-y-2">
-                        {categories.map((category, i) => (
-                          <li key={i} className="text-gray-800 hover:text-[#2E6431]">
-                            <Link href={category.path} onClick={() => setMenuOpen(false)}>
-                              {category.title}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </>
-                ) : (
-                  userInitials && page.title === "PRIJAVA" ? (
-                    <>
-                      <div className="flex justify-between items-center" onClick={toggleMobileUserDropdown}>
-                        <span className="text-gray-900 font-bold">{userName}</span>
-                        <svg
-                          className={`w-4 h-4 ml-1 transform ${mobileUserDropdownOpen ? 'rotate-180' : ''}`}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
-                      </div>
-                      {mobileUserDropdownOpen && (
-                        <ul className="pl-4 mt-2 space-y-2">
-                          <li className="text-gray-800 hover:text-[#2E6431]">
-                            <Link href="/profile" onClick={() => setMenuOpen(false)}>
-                              <FaUser className="w-3 h-3 inline-block mr-2" />
-                              Moj profil
-                            </Link>
-                          </li>
-                          <li className="text-gray-800 hover:text-[#2E6431]">
-                            <Link href="/add-recipe" onClick={() => setMenuOpen(false)}>
-                              <FaPlus className="w-3 h-3 inline-block mr-2" />
-                              Dodaj recept
-                            </Link>
-                          </li>
-                          <li className="text-gray-800 hover:text-[#2E6431] cursor-pointer" onClick={() => { handleLogout(); setMenuOpen(false); }}>
-                            <FaSignOutAlt className="w-3 h-3 inline-block mr-2" />
-                            Odjava
-                          </li>
-                        </ul>
-                      )}
-                    </>
-                  ) : (
-                    <Link href={page.path} onClick={() => setMenuOpen(false)}>
-                      {page.title}
-                    </Link>
-                  )
-                )}
-              </li>
-            ))}
-            <li>
-              <button onClick={handleSearchClick} className="hidden lg:block text-gray-700 p-2 rounded-full shadow-lg hover:text-gray-500 transition duration-300">
-                <BiSearch className="w-6 h-6" />
-              </button>
+      {menuOpen && (
+        <ul className="lg:hidden w-full py-3 px-4 space-y-3">
+          {pages.map((page, index) => (
+            <li key={index} className="text-gray-900 font-bold hover:text-[#2E6431]">
+              {page.title === "RECEPTI" ? (
+                <>
+                  <div className="flex justify-between items-center" onClick={toggleMobileRecipesDropdown}>
+                    <span>{page.title}</span>
+                    <svg
+                      className={`w-4 h-4 ml-1 transform ${mobileRecipesDropdownOpen ? "rotate-180" : ""}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
+                  {mobileRecipesDropdownOpen && (
+                    <ul className="pl-4 mt-2 space-y-2">
+                      {categories.map((category, i) => (
+                        <li key={i} className="text-gray-800 hover:text-[#2E6431]">
+                          <Link href={category.path} onClick={() => setMenuOpen(false)}>
+                            {category.title}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </>
+              ) : userInitials && page.title === "PRIJAVA" ? (
+                <>
+                  <div className="flex justify-between items-center" onClick={toggleMobileUserDropdown}>
+                    <span className="text-gray-900 font-bold">{userName}</span>
+                    <svg
+                      className={`w-4 h-4 ml-1 transform ${mobileUserDropdownOpen ? "rotate-180" : ""}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
+                  {mobileUserDropdownOpen && (
+                    <ul className="pl-4 mt-2 space-y-2">
+                      <li className="text-gray-800 hover:text-[#2E6431]">
+                        <Link href="/profile" onClick={() => setMenuOpen(false)}>
+                          <FaUser className="w-3 h-3 inline-block mr-2" />
+                          Moj profil
+                        </Link>
+                      </li>
+                      <li className="text-gray-800 hover:text-[#2E6431]">
+                        <Link href="/add-recipe" onClick={() => setMenuOpen(false)}>
+                          <FaPlus className="w-3 h-3 inline-block mr-2" />
+                          Dodaj recept
+                        </Link>
+                      </li>
+                      <li className="text-gray-800 hover:text-[#2E6431] cursor-pointer" onClick={() => { handleLogout(); setMenuOpen(false); }}>
+                        <FaSignOutAlt className="w-3 h-3 inline-block mr-2" />
+                        Odjava
+                      </li>
+                    </ul>
+                  )}
+                </>
+              ) : (
+                <Link href={page.path} onClick={() => setMenuOpen(false)}>
+                  {page.title}
+                </Link>
+              )}
             </li>
-          </ul>
-        )
-      }
-    </header >
+          ))}
+          <li>
+            <button
+              onClick={() => {
+                handleSearchClick();
+                setMenuOpen(false); // Zatvara meni prije navigacije
+              }}
+              className="flex items-center text-gray-900 font-bold hover:text-[#2E6431] w-full"
+            >
+              <BiSearch className="w-5 h-5 mr-2" />
+              <span>Pretraži</span>
+            </button>
+          </li>
+        </ul>
+      )}
+    </header>
   );
 };
 

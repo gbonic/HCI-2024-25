@@ -224,18 +224,22 @@ const BlogPage = () => {
         </p>
       </div>
 
-      <div className="mt-8 max-w-6xl w-full flex flex-wrap gap-4 justify-center items-center px-4">
+      <div className="mt-10 max-w-6xl w-full flex flex-wrap gap-4 justify-center items-center px-4">
         <select
           value={selectedCategory}
           onChange={(e) => {
             setSelectedCategory(e.target.value);
             setSelectedSubcategory("");
           }}
-          className="px-4 py-2 rounded-md border border-gray-300 text-[#8b5e34] bg-[#f5e8d9] shadow-sm focus:outline-none focus:ring-2 focus:ring-[#dcb794]"
+          className="px-5 py-3 rounded-lg border border-gray-200 text-[#6b4e31] bg-white shadow-md focus:outline-none focus:ring-2 focus:ring-[#f4c78c] transition-all duration-200 hover:border-[#f4c78c] text-base font-medium"
         >
-          <option value="">Odaberi kategoriju</option>
+          <option value="" disabled>
+            Odaberi kategoriju
+          </option>
           {categories.map((cat) => (
-            <option key={cat} value={cat}>{cat}</option>
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
           ))}
         </select>
 
@@ -243,9 +247,11 @@ const BlogPage = () => {
           <select
             value={selectedSubcategory}
             onChange={(e) => setSelectedSubcategory(e.target.value)}
-            className="px-4 py-2 rounded-md border border-gray-300 text-[#8b5e34] bg-[#f5e8d9] shadow-sm focus:outline-none focus:ring-2 focus:ring-[#dcb794]"
+            className="px-5 py-3 rounded-lg border border-gray-200 text-[#6b4e31] bg-white shadow-md focus:outline-none focus:ring-2 focus:ring-[#f4c78c] transition-all duration-200 hover:border-[#f4c78c] text-base font-medium"
           >
-            <option value="">Sve podkategorije</option>
+            <option value="">
+              Sve podkategorije
+            </option>
             {subcategories
               .filter((sub) => sub.kategorija === selectedCategory)
               .map((sub) => (
@@ -258,12 +264,11 @@ const BlogPage = () => {
 
         <button
           onClick={clearFilters}
-          className="py-2 px-4 rounded-md bg-red-200 text-red-800 hover:bg-red-300 transition-all shadow-sm"
+          className="py-3 px-6 rounded-lg bg-[#ffe6e6] text-[#9b2c2c] hover:bg-[#ffcccc] transition-all duration-200 shadow-md text-base font-medium"
         >
           Poništi filter
         </button>
       </div>
-
       <div className="mt-10 grid p-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
         {loading ? (
           Array.from({ length: 6 }).map((_, index) => (
@@ -314,16 +319,16 @@ const BlogPage = () => {
 
       {isModalOpen && selectedRecipe && (
         <div
-          className="fixed inset-0 bg-gray-900/70 flex items-center justify-center z-50 px-4"
+          className="fixed inset-0 bg-gray-900/80 flex items-center justify-center z-50 px-4"
           onClick={closeModal}
         >
           <div
-            className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto relative transform transition-all duration-300 scale-95"
+            className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative transform transition-all duration-500 scale-100 sm:scale-95"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative">
               {selectedRecipe.fields.slikaRecepta && (
-                <div className="w-full h-64 relative">
+                <div className="w-full h-80 relative">
                   <Image
                     src={
                       typeof selectedRecipe.fields.slikaRecepta === "string"
@@ -333,86 +338,95 @@ const BlogPage = () => {
                     alt={selectedRecipe.fields.nazivRecepta}
                     layout="fill"
                     objectFit="cover"
-                    className="rounded-t-2xl"
+                    className="rounded-t-3xl"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-t-3xl" />
                 </div>
               )}
               <button
                 onClick={closeModal}
-                className="absolute top-4 right-4 text-white bg-gray-800/80 p-2 rounded-full hover:bg-gray-800 transition"
+                className="absolute top-6 right-6 text-white bg-gray-900/70 p-3 rounded-full hover:bg-gray-900/90 transition-all duration-200"
                 aria-label="Zatvori modal"
               >
-                <FaTimes size={20} />
+                <FaTimes size={22} />
               </button>
             </div>
-            <div className="p-6 space-y-6">
-              <div className="text-center">
-                <h2 className="text-2xl font-bold text-gray-800">{selectedRecipe.fields.nazivRecepta}</h2>
-                <div className="mt-2 text-sm text-gray-600">
-                  <span className="font-semibold">Kategorija: </span>
-                  {selectedRecipe.fields.kategorija?.join(", ") || "Nema kategorije"}
-                  <br />
-                  <span className="font-semibold">Podkategorija: </span>
-                  {selectedRecipe.fields.podkategorija?.join(", ") || "Nema podkategorije"}
+            <div className="p-8 space-y-8 bg-gradient-to-b from-white to-gray-50">
+              <div>
+                <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+                  {selectedRecipe.fields.nazivRecepta}
+                </h2>
+                <div className="mt-4 flex flex-wrap gap-4">
+                  <div className="inline-flex items-center text-[#8b5e34] text-base font-medium px-4 py-2 rounded-full shadow-sm">
+                    <span className="mr-2 font-semibold">Kategorija:</span>
+                    <span>{selectedRecipe.fields.kategorija?.join(", ") || "Nema kategorije"}</span>
+                  </div>
+                  <div className="inline-flex items-center text-[#8b5e34] text-base font-medium px-4 py-2 rounded-full shadow-sm">
+                    <span className="mr-2 font-semibold">Podkategorija:</span>
+                    <span>{selectedRecipe.fields.podkategorija?.join(", ") || "Nema podkategorije"}</span>
+                  </div>
                 </div>
               </div>
-              <div className="grid grid-cols-1 gap-6">
+              <div className="grid grid-cols-1 gap-8">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center space-x-2">
-                    <FaUtensils className="text-[#8b5e34]" />
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center space-x-3">
+                    <FaUtensils className="text-[#8b5e34] text-2xl" />
                     <span>Opis</span>
                   </h3>
-                  <p className="text-gray-600 leading-relaxed max-w-md">
+                  <p className="text-gray-600 leading-relaxed text-base">
                     {selectedRecipe.fields.opisRecepta || "Nema opisa."}
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center space-x-2">
-                    <FaListUl className="text-[#8b5e34]" />
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center space-x-3">
+                    <FaListUl className="text-[#8b5e34] text-2xl" />
                     <span>Sastojci</span>
                   </h3>
-                  <ul className="list-disc pl-5 text-gray-600 space-y-1">
+                  <ul className="list-disc pl-6 text-gray-600 text-base space-y-2">
                     {selectedRecipe.fields.sastojci.split("\n").map((item, index) => (
                       <li key={index}>{item.replace(/^[•-]\s?/, "")}</li>
                     ))}
                   </ul>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center space-x-2">
-                    <FaListUl className="text-[#8b5e34]" />
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center space-x-3">
+                    <FaListUl className="text-[#8b5e34] text-2xl" />
                     <span>Upute za pripremu</span>
                   </h3>
-                  <ol className="list-decimal pl-5 text-gray-600 space-y-1 max-w-md">
+                  <ol className="list-decimal pl-6 text-gray-600 text-base space-y-2">
                     {selectedRecipe.fields.uputeZaPripremu.split("\n").map((step, index) => (
                       <li key={index}>{step.replace(/^[•-]\s?/, "")}</li>
                     ))}
                   </ol>
                 </div>
               </div>
-              <div className="border-t pt-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
-                  <FaComment className="text-[#8b5e34]" />
+              <div className="border-t border-gray-200 pt-8">
+                <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center space-x-3">
+                  <FaComment className="text-[#8b5e34] text-2xl" />
                   <span>Komentari</span>
                 </h3>
                 <textarea
-                  className="w-full border border-gray-300 rounded-md p-3 text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#8b5e34] resize-none"
-                  rows={4}
+                  className="w-full border border-gray-200 rounded-xl p-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#f4c78c] transition-all duration-200 bg-white shadow-sm resize-none"
+                  rows={5}
                   placeholder="Napiši svoj komentar..."
                   value={komentar}
                   onChange={(e) => setKomentar(e.target.value)}
                 />
                 <button
-                  className="mt-4 bg-[#8b5e34] text-white py-2 px-6 rounded-md hover:bg-[#6b4727] transition w-full sm:w-auto sm:self-end"
+                  className="mt-4 bg-[#8b5e34] text-white py-3 px-8 rounded-xl hover:bg-[#6b4727] transition-all duration-200 shadow-md font-medium w-full sm:w-auto"
                   onClick={handleKomentarSubmit}
                 >
                   Objavi komentar
                 </button>
                 {komentari.length > 0 && (
-                  <div className="mt-6 space-y-3">
+                  <div className="mt-8 space-y-4">
                     {komentari.map((kom, index) => (
-                      <p key={index} className="bg-gray-100 p-3 rounded-md text-gray-600">
+                      <div
+                        key={index}
+                        className="bg-gray-100 p-4 rounded-xl text-gray-700 shadow-sm transition-all duration-200 hover:shadow-md"
+                      >
                         {kom}
-                      </p>
+                      </div>
                     ))}
                   </div>
                 )}

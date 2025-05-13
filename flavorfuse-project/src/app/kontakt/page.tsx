@@ -7,7 +7,7 @@ const ContactPage: React.FC = () => {
   return (
     <div className="relative min-h-screen flex items-center justify-center py-12 px-4">
       {/* Main container with subtle animation */}
-      <div className="w-full max-w-5xl flex flex-col md:flex-row bg-white shadow-xl rounded-2xl overflow-hidden transform transition-all hover:shadow-2xl">
+      <div className="w-full max-w-5xl flex flex-col md:flex-row bg-[#ffedcf] shadow-xl rounded-2xl overflow-hidden transform transition-all hover:shadow-2xl">
         {/* Left side - Image with overlay */}
         <div className="md:w-1/2 hidden md:block relative group">
           <Image 

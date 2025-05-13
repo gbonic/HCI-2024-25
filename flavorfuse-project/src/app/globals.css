@@ -32,9 +32,9 @@ html {
   overflow-y: auto;
   overflow-x: hidden;
   height: 100%;
-  background-color: #ffedcf;
   scroll-behavior: smooth;
-  @apply min-h-screen bg-amber-50 text-[#2E6431] font-serif flex flex-col;
+  background-color:#fff4ce;
+  @apply min-h-screen text-[#2E6431] font-serif flex flex-col;
 }
 
 img {

@@ -7,15 +7,14 @@ const ProfilePage = () => {
   const { userName, userEmail } = useUserContext();
   const [activeTab, setActiveTab] = useState("moji-recepti");
   const [userRecipes, setUserRecipes] = useState([]);
-  const [aboutMe, setAboutMe] = useState(""); // Novo stanje za dodatni tekst
-  const [isEditing, setIsEditing] = useState(false); // Stanje za uređivanje
+  const [aboutMe, setAboutMe] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     const recipes = JSON.parse(localStorage.getItem("recipes") || "[]");
     const filteredRecipes = recipes.filter((recipe) => recipe.userEmail === userEmail);
     setUserRecipes(filteredRecipes);
 
-    // Učitavanje sačuvanog "O meni" teksta iz localStorage
     const savedAboutMe = localStorage.getItem("aboutMe");
     if (savedAboutMe) setAboutMe(savedAboutMe);
   }, [userEmail]);
@@ -29,8 +28,20 @@ const ProfilePage = () => {
   };
 
   const handleAboutMeSave = () => {
-    localStorage.setItem("aboutMe", aboutMe); // Spremanje u localStorage
-    setIsEditing(false); // Izlaz iz moda uređivanja
+    localStorage.setItem("aboutMe", aboutMe);
+    setIsEditing(false);
+  };
+
+  // Funkcija za formatiranje datuma i vremena
+  const formatDateTime = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleString("hr-HR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   const tabs = [
@@ -113,32 +124,42 @@ const ProfilePage = () => {
                   {userRecipes.map((recipe) => (
                     <div
                       key={recipe.id}
-                      className="bg-amber-50 p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-amber-100 flex justify-between items-start"
+                      className="bg-[#f5e8d9] p-5 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-[#f4c78c] flex flex-col"
                     >
-                      <div>
-                        <h4 className="text-lg font-semibold text-amber-700">{recipe.title}</h4>
-                        <p className="text-gray-600 mt-1 line-clamp-2">{recipe.description}</p>
-                      </div>
-                      <button
-                        onClick={() => handleDelete(recipe.id)}
-                        className="ml-4 p-2 text-red-600 hover:text-red-800 transition-colors"
-                        title="Obriši recept"
-                      >
-                        <svg
-                          className="w-5 h-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
+                      <div className="flex justify-between items-start">
+                        <h4 className="text-lg font-semibold text-[#6b4e31]">{recipe.title}</h4>
+                        <button
+                          onClick={() => handleDelete(recipe.id)}
+                          className="p-2 text-red-600 hover:text-red-800 transition-colors"
+                          title="Obriši recept"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4M3 7h18"
-                          />
-                        </svg>
-                      </button>
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4M3 7h18"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                      <p className="text-gray-700 mt-2 line-clamp-2">{recipe.description}</p>
+                      <div className="mt-3 text-sm text-gray-500">
+                        <span>Objavljeno: {recipe.createdAt ? formatDateTime(recipe.createdAt) : "Nema datuma"}</span>
+                        <span
+                          className={`inline-flex items-center mt-1 px-2 py-1 rounded-full text-xs font-medium ${
+                            recipe.isPrivate ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"
+                          }`}
+                        >
+                          {recipe.isPrivate ? "Privatan" : "Javan"}
+                        </span>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -204,7 +225,7 @@ const ProfilePage = () => {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h2011a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
                         />
                       </svg>
                     </button>
