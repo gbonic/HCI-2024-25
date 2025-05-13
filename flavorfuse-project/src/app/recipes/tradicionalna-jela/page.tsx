@@ -217,7 +217,7 @@ const TradicionalnaJelaPage = () => {
           height={60}
         />
         <h1 className="text-[#2E6431] font-scintilla font-extrabold text-2xl sm:text-3xl md:text-4xl mb-2 drop-shadow-lg">Tradicionalna jela</h1>
-        <p className="text-base sm:text-lg md:text-xl font-sans m-6 text-gray-900 max-w-[90%] md:max-w-[700px]">
+        <p className="text-base sm:text-lg md:text-xl font-serif m-6 text-gray-900 max-w-[90%] md:max-w-[700px]">
           Tradicionalna jela donose recepte koji slave bogatstvo kulinarske baštine i običaja različitih kultura.
           Ova jela često koriste sastojke i tehnike pripreme koje su se prenosile generacijama, zadržavajući autentične okuse i mirise.
           Bilo da se radi o domaćim specijalitetima ili klasičnim jelima s nekog specifičnog područja, tradicionalna jela nude osjećaj povezanosti s prošlim vremenima.
@@ -226,68 +226,65 @@ const TradicionalnaJelaPage = () => {
       </div>
 
       {/* Filter Buttons */}
-      <div className="mt-8 max-w-6xl w-full flex flex-wrap gap-3 justify-center">
+      <div className="mt-8 max-w-6xl w-full flex flex-wrap justify-center gap-4">
         {subcategories.map((subcategory) => (
           <button
             key={subcategory}
             onClick={() => handleSubcategoryClick(subcategory)}
-            className={`font-medium px-6 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 ${selectedSubcategory === subcategory
-              ? "bg-[#dcb794] text-[#8b5e34]"
-              : "bg-[#f5e8d9] text-[#8b5e34] hover:bg-[#dcb794]"
-              }`}
+            className="font-semibold text-sm px-6 py-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 w-[210px] h-[50px] flex items-center justify-center bg-[#f5e8d9] text-[#8b5e34] hover:bg-[#dcb794] whitespace-normal"
           >
             {subcategory}
           </button>
         ))}
         <button
           onClick={clearFilters}
-          className="font-medium py-2 px-5 rounded-full bg-red-200 text-red-800 hover:bg-red-300 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1"
+          className="font-semibold text-sm px-4 py-2 rounded-full bg-red-200 text-red-800 hover:bg-red-300 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 w-[190px] h-[50px] flex items-center justify-center whitespace-normal"
         >
           Poništi filter
         </button>
       </div>
+
       {/* Recipes Grid */}
       <div className="mt-10 grid p-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
         {loading ? (
           Array.from({ length: 6 }).map((_, index) => (
-            <div key={index} className="bg-gray-200 animate-pulse h-48 rounded-xl" />
+            <div key={index} className="bg-gray-200 animate-pulse h-[350px] rounded-xl" />
           ))
         ) : filteredRecipes.length === 0 ? (
-          <p className="text-gray-600 text-center col-span-full">Nema dostupnih recepata.</p>
+          <p className="text-gray-900 text-center text-xl col-span-full">Nema dostupnih recepata.</p>
         ) : (
           filteredRecipes.map((recipe) => (
             <div
               key={recipe.sys.id}
-              className="bg-white shadow-lg rounded-xl overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl cursor-pointer"
+              className="bg-white shadow-lg rounded-xl overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl cursor-pointer flex flex-col w-[350px] h-[350px] min-h-[350px]"
               onClick={() => openModal(recipe)}
             >
-              {recipe.fields.slikaRecepta && (
-                <div className="w-full h-48 relative">
-                  <Image
-                    src={
-                      typeof recipe.fields.slikaRecepta === "string"
+              <div className="w-full h-48 relative flex-shrink-0">
+                <Image
+                  src={
+                    recipe.fields.slikaRecepta
+                      ? typeof recipe.fields.slikaRecepta === "string"
                         ? recipe.fields.slikaRecepta
                         : `https:${recipe.fields.slikaRecepta?.fields?.file?.url}`
-                    }
-                    alt={recipe.fields.nazivRecepta}
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-t-xl"
-                    loading="lazy"
-                  />
-                </div>
-              )}
-              <div className="p-4">
-                <h2 className="text-lg font-semibold text-gray-900">{recipe.fields.nazivRecepta}</h2>
-                <p className="text-gray-600 mt-2 line-clamp-2">
-                  {recipe.fields.opisRecepta ? recipe.fields.opisRecepta.slice(0, 100) + "..." : "Kliknite za više."}
+                      : "/images/placeholder-recept.jpg"
+                  }
+                  alt={recipe.fields.nazivRecepta}
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-t-xl"
+                  loading="lazy"
+                />
+              </div>
+              <div className="p-4 flex flex-col flex-1 justify-between">
+                <h2 className="text-lg font-semibold text-gray-900">{recipe.fields.nazivRecepta || "Nepoznati recept"}</h2>
+                <p className="text-gray-600 mt-2 line-clamp-3 min-h-[60px] flex-1">
+                  {recipe.fields.opisRecepta ? recipe.fields.opisRecepta.slice(0, 100) + "..." : "Kliknite za više informacija o receptu."}
                 </p>
               </div>
             </div>
           ))
         )}
       </div>
-
       {/* Modern Modal with Title Below Image */}
       {isModalOpen && selectedRecipe && (
         <div
@@ -295,7 +292,7 @@ const TradicionalnaJelaPage = () => {
           onClick={closeModal}
         >
           <div
-            className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto relative transform transition-all duration-300 scale-95 hover:scale-100"
+            className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto relative transform transition-all duration-300 scale-95"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Image Header */}

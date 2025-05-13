@@ -12,15 +12,15 @@ export default function FaqComponent() {
   };
 
   return (
-    <section className="flex flex-col lg:flex-row text-gray-900 mt-16 mx-auto font-sans max-w-7xl px-6 py-12">
+    <section className="flex flex-col lg:flex-row text-gray-900 mt-16 mx-auto font-serif max-w-7xl px-6 py-12">
       {/* FAQ naslov i gumb */}
       <div className="lg:w-1/3 w-full mb-10 flex flex-col justify-start items-start text-left">
-        <h1 className="text-3xl sm:text-4xl font-bold font-sans text-[#8B5E34]">Česta pitanja</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold font-serif text-[#8B5E34]">Česta pitanja</h1>
         <p className="text-base sm:text-xl text-gray-800 mt-4 leading-relaxed">
           Ako imate dodatnih pitanja, slobodno nas kontaktirajte i uskoro ćete dobiti odgovor!
         </p>
         <button
-          className="mt-8 px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-lg bg-[#8B5E34] text-white font-semibold rounded-full shadow-md hover:bg-[#B2823B] transition-transform duration-300 hover:scale-105"
+          className="mt-8 px-6 py-3 sm:px-6 sm:py-3 text-sm sm:text-lg bg-[#8B5E34] text-white font-semibold rounded-full shadow-md hover:bg-[#B2823B]"
           onClick={() => router.push('/kontakt')}
         >
           Kontaktirajte nas
@@ -53,7 +53,7 @@ export default function FaqComponent() {
           >
             {/* Pitanje */}
             <div className="flex justify-between items-center">
-              <h3 className="text-lg sm:text-xl md:text-2xl font-semibold font-sans text-[#8B5E34] mb-2">
+              <h3 className="text-lg sm:text-xl md:text-2xl font-semibold font-serif text-[#8B5E34] mb-2">
                 {faq.question}
               </h3>
 
@@ -67,7 +67,7 @@ export default function FaqComponent() {
 
             {/* Odgovor */}
             <p
-              className={`text-sm sm:text-base text-stone-900 leading-relaxed transition-all duration-300 ${
+              className={`text-sm sm:text-lg text-stone-900 leading-relaxed transition-all duration-300 ${
                 expandedIndex === index ? 'max-h-full' : 'max-h-0 overflow-hidden'
               } lg:max-h-full lg:overflow-visible`}
             >

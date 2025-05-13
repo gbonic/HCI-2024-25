@@ -116,7 +116,7 @@ const AddRecipePage = () => {
       )}
 
       <form onSubmit={handleSubmit} className="w-full max-w-4xl space-y-8">
-        <h1 className="text-4xl md:text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 font-sans bg-clip-text text-transparent">
+        <h1 className="text-4xl md:text-3xl font-bold font-serif bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
           Dodaj novi recept
         </h1>
 

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import '@fortawesome/fontawesome-free';
 import Image from 'next/image';
+import NotFound from '../404-page/page';
 
 
 export default function FooterComponent() {
@@ -18,7 +19,7 @@ export default function FooterComponent() {
           </Link>
         </div>
         <div className="flex items-center space-x-4 mt-4 md:mt-0">
-          <Link href="/404.page">
+          <Link href="/404-page">
             <i className="fab fa-facebook-f text-gray-700 hover:text-black"></i>
           </Link>
           <Link href="/404-page">

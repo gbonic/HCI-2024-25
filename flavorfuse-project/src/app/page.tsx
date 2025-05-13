@@ -20,7 +20,7 @@ const CookingTips = () => {
 
   return (
     <div className="my-20">
-      <h1 className="text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md mb-12">
+      <h1 className="text-center font-serif text-[#b2823b] text-4xl font-bold drop-shadow-md mb-12">
         BRZI SAVJETI ZA KUHANJE
       </h1>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-5xl mx-auto px-4">
@@ -30,9 +30,9 @@ const CookingTips = () => {
             className="relative bg-amber-100 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-[#e0e0d5]"
           >
             <div className="absolute top-[-20px] left-1/2 transform -translate-x-1/2 bg-[#8b5e34] rounded-full p-3">
-              <span className="text-white font-bold text-lg">{index + 1}</span>
+              <span className="text-white font-bold font-serif text-lg">{index + 1}</span>
             </div>
-            <p className="text-gray-900 text-center font-sans text-lg leading-relaxed mt-6">{tip}</p>
+            <p className="text-gray-900 text-center font-serif text-lg leading-relaxed mt-6">{tip}</p>
           </div>
         ))}
       </div>
@@ -54,7 +54,7 @@ const Testimonials = () => {
 
   return (
     <div className="my-10 py-16 rounded-3xl">
-      <h1 className="text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md mb-12">
+      <h1 className="text-center font-serif text-[#b2823b] text-4xl font-bold drop-shadow-md mb-12">
         ŠTO KAŽU NAŠI KORISNICI
       </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 max-w-5xl mx-auto px-4">
@@ -63,8 +63,8 @@ const Testimonials = () => {
             key={index}
             className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-[#e0e0d5]"
           >
-            <p className="text-gray-900 text-lg font-sans italic mb-6 leading-relaxed">"{testimonial.text}"</p>
-            <p className="bottom-8 right-4 text-[#8b5e34] font-semibold text-xl">{testimonial.name}</p>
+            <p className="text-gray-900 text-lg font-serif italic mb-6 leading-relaxed">"{testimonial.text}"</p>
+            <p className="bottom-8 right-4 text-[#8b5e34] font-serif font-semibold text-xl">{testimonial.name}</p>
           </div>
         ))}
       </div>
@@ -83,7 +83,7 @@ const NewsletterSignup = () => {
 
   return (
     <div className="my-10 py-12 rounded-3xl">
-      <h1 className="text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md mb-6">
+      <h1 className="text-center text-[#b2823b] text-4xl font-bold drop-shadow-md mb-6">
         PRETPLATITE SE NA NEWSLETTER
       </h1>
       <p className="text-center text-gray-900 text-lg mb-8 max-w-md mx-auto">
@@ -101,7 +101,7 @@ const NewsletterSignup = () => {
           />
           <button
             type="submit"
-            className="px-6 py-2 bg-[#8b5e34] text-white font-semibold rounded-r-full hover:bg-[#b2823b] transition-colors duration-300"
+            className="px-6 py-3 bg-[#8b5e34] text-white font-semibold rounded-r-full hover:bg-[#b2823b] transition-colors duration-300"
           >
             Pretplati se
           </button>
@@ -134,14 +134,6 @@ export default function Home() {
     }
   }, [setUserInitials, setUserName]);
 
-  // const handleLogout = () => {
-  //   Cookies.remove("auth_token");
-  //   localStorage.removeItem("user_name");
-  //   setUserInitials(null);
-  //   setUserName(null);
-  //   setIsLoggedIn(false);
-  //   router.push("/");
-  // };
 
   return (
     <main className="grid grid-rows-[auto_auto_auto] min-h-screen text-[#2E6431] max-w-7xl mx-auto px-4 sm:px-8 md:px-12">
@@ -198,7 +190,7 @@ export default function Home() {
         {!isLoggedIn && (
           <div className="text-center mt-8">
             <button
-              className="px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-lg bg-[#8b5e34] text-white font-semibold rounded-full shadow-md hover:bg-[#b2823b] transition-colors duration-300"
+              className="px-6 py-3 sm:px-6 sm:py-3 text-sm sm:text-lg bg-[#8b5e34] text-white font-semibold rounded-full shadow-md hover:bg-[#b2823b] transition-colors duration-300"
               onClick={() => router.push('/prijava')}
             >
               Prijavi se
@@ -209,7 +201,7 @@ export default function Home() {
 
 
       {/* Popular Recipes */}
-      <h1 className="text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md my-20">
+      <h1 className="text-center font-serif text-[#b2823b] text-4xl font-bold drop-shadow-md my-20">
         POZNATI RECEPTI
       </h1>
       <section className="flex flex-wrap justify-center items-center gap-4 px-4 sm:px-8">
@@ -220,7 +212,7 @@ export default function Home() {
       <CookingTips />
 
       {/* SurpriseButton */}
-      <h1 className="text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md my-10">
+      <h1 className="text-center font-serif text-[#b2823b] text-4xl font-bold drop-shadow-md my-10">
         ŠTO DANAS KUHATI?
       </h1>
       <div className="flex justify-center">
@@ -235,7 +227,7 @@ export default function Home() {
       )}
 
       {/* Kategorije recepata */}
-      <h1 className="text-center font-italianno text-[#b2823b] text-4xl font-bold drop-shadow-md my-20">KATEGORIJE</h1>
+      <h1 className="text-center font-serif text-[#b2823b] text-4xl font-bold drop-shadow-md my-20">KATEGORIJE</h1>
       <Recipes />
 
       {/* Testimoniali */}

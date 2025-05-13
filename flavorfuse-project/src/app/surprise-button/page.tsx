@@ -172,7 +172,7 @@ const SurpriseButton = () => {
           onClick={closeModal}
         >
           <div
-            className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto relative transform transition-all duration-300 scale-95 hover:scale-100"
+            className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto relative transform transition-all duration-300 scale-95"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Image Header */}
@@ -213,7 +213,7 @@ const SurpriseButton = () => {
                     <FaUtensils className="text-[#8b5e34]" />
                     <span>Opis</span>
                   </h3>
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="text-gray-600 leading-relaxed max-w-md">
                     {selectedRecipe.fields.opisRecepta ? selectedRecipe.fields.opisRecepta : "Nema opisa."}
                   </p>
                 </div>

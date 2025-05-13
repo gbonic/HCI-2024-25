@@ -106,19 +106,14 @@ const DesertiPage = () => {
           }
         }
 
-        // Filtriraj recepte samo za kategoriju "Zdravi recepti"
         const zdravRecepti = combinedRecipes.filter((recipe) =>
           recipe.fields.kategorija?.includes("Deserti")
         );
 
-        // Primijeni pravila vidljivosti
         const visibleRecipes = zdravRecepti.filter((recipe) => {
-          // Contentful recepti su uvijek javni jer nemaju isPublic
           if (!recipe.fields.hasOwnProperty("isPublic")) return true;
-          // Za LocalStorage recepte: prijavljeni vide sve, neprijavljeni samo javne
           return userEmail ? true : recipe.fields.isPublic === "public";
         });
-
 
         const zdravSubcategories = podkategorijeResponse.items
           .filter((podkat: any) => podkat.fields.kategorija?.fields.nazivKategorije === "Deserti")
@@ -172,9 +167,7 @@ const DesertiPage = () => {
 
   return (
     <main className="grid grid-rows-[auto_auto_auto] min-h-screen text-[#2E6431] justify-center">
-      {/* Header Section */}
       <div className="relative flex flex-col items-center justify-center text-center my-16 px-4 sm:px-8">
-        {/* Slike sa strane */}
         <Image
           src="/images/list.png"
           alt="cvijet"
@@ -218,7 +211,7 @@ const DesertiPage = () => {
           height={60}
         />
         <h1 className="text-[#2E6431] font-scintilla font-extrabold text-2xl sm:text-3xl md:text-4xl mb-2 drop-shadow-lg">Deserti</h1>
-        <p className="text-base sm:text-lg md:text-xl font-sans m-6 text-gray-900 max-w-[90%] md:max-w-[700px]">
+        <p className="text-base sm:text-lg md:text-xl font-serif m-6 text-gray-900 max-w-[90%] md:max-w-[700px]">
           Deserti su slatki ili bogati obroci koji se obično poslužuju nakon glavnog jela.
           Često uključuju sastojke poput čokolade, voća, mlijeka, jaja i brašna, a mogu biti pečeni ili hladni.
           Popularni deserti uključuju kolače, torte, pudinge, voćne salate i sladolede.
@@ -228,22 +221,19 @@ const DesertiPage = () => {
       </div>
 
       {/* Filter Buttons */}
-      <div className="mt-8 max-w-6xl w-full flex flex-wrap gap-3 justify-center">
+      <div className="mt-8 max-w-6xl w-full flex flex-wrap justify-center gap-4">
         {subcategories.map((subcategory) => (
           <button
             key={subcategory}
             onClick={() => handleSubcategoryClick(subcategory)}
-            className={`font-medium px-6 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 ${selectedSubcategory === subcategory
-              ? "bg-[#dcb794] text-[#8b5e34]"
-              : "bg-[#f5e8d9] text-[#8b5e34] hover:bg-[#dcb794]"
-              }`}
+            className="font-semibold text-sm px-6 py-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 w-[210px] h-[50px] flex items-center justify-center bg-[#f5e8d9] text-[#8b5e34] hover:bg-[#dcb794] whitespace-normal"
           >
             {subcategory}
           </button>
         ))}
         <button
           onClick={clearFilters}
-          className="font-medium py-2 px-5 rounded-full bg-red-200 text-red-800 hover:bg-red-300 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1"
+          className="font-semibold text-sm px-4 py-2 rounded-full bg-red-200 text-red-800 hover:bg-red-300 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 w-[190px] h-[50px] flex items-center justify-center whitespace-normal"
         >
           Poništi filter
         </button>
@@ -253,54 +243,52 @@ const DesertiPage = () => {
       <div className="mt-10 grid p-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
         {loading ? (
           Array.from({ length: 6 }).map((_, index) => (
-            <div key={index} className="bg-gray-200 animate-pulse h-48 rounded-xl" />
+            <div key={index} className="bg-gray-200 animate-pulse h-[350px] rounded-xl" />
           ))
         ) : filteredRecipes.length === 0 ? (
-          <p className="text-gray-600 text-center col-span-full">Nema dostupnih recepata.</p>
+          <p className="text-gray-900 text-center text-xl col-span-full">Nema dostupnih recepata.</p>
         ) : (
           filteredRecipes.map((recipe) => (
             <div
               key={recipe.sys.id}
-              className="bg-white shadow-lg rounded-xl overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl cursor-pointer"
+              className="bg-white shadow-lg rounded-xl overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl cursor-pointer flex flex-col w-[350px] h-[350px] min-h-[350px]"
               onClick={() => openModal(recipe)}
             >
-              {recipe.fields.slikaRecepta && (
-                <div className="w-full h-48 relative">
-                  <Image
-                    src={
-                      typeof recipe.fields.slikaRecepta === "string"
+              <div className="w-full h-48 relative flex-shrink-0">
+                <Image
+                  src={
+                    recipe.fields.slikaRecepta
+                      ? typeof recipe.fields.slikaRecepta === "string"
                         ? recipe.fields.slikaRecepta
                         : `https:${recipe.fields.slikaRecepta?.fields?.file?.url}`
-                    }
-                    alt={recipe.fields.nazivRecepta}
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-t-xl"
-                    loading="lazy"
-                  />
-                </div>
-              )}
-              <div className="p-4">
-                <h2 className="text-lg font-semibold text-gray-900">{recipe.fields.nazivRecepta}</h2>
-                <p className="text-gray-600 mt-2 line-clamp-2">
-                  {recipe.fields.opisRecepta ? recipe.fields.opisRecepta.slice(0, 100) + "..." : "Kliknite za više."}
+                      : "/images/placeholder-recept.jpg"
+                  }
+                  alt={recipe.fields.nazivRecepta}
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-t-xl"
+                  loading="lazy"
+                />
+              </div>
+              <div className="p-4 flex flex-col flex-1 justify-between">
+                <h2 className="text-lg font-semibold text-gray-900">{recipe.fields.nazivRecepta || "Nepoznati recept"}</h2>
+                <p className="text-gray-600 mt-2 line-clamp-3 min-h-[60px] flex-1">
+                  {recipe.fields.opisRecepta ? recipe.fields.opisRecepta.slice(0, 100) + "..." : "Kliknite za više informacija o receptu."}
                 </p>
               </div>
             </div>
           ))
         )}
       </div>
-
       {isModalOpen && selectedRecipe && (
         <div
           className="fixed inset-0 bg-gray-900/70 flex items-center justify-center z-50 px-4"
           onClick={closeModal}
         >
           <div
-            className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto relative transform transition-all duration-300 scale-95 hover:scale-100"
+            className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto relative transform transition-all duration-300 scale-95"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Image Header */}
             <div className="relative">
               {selectedRecipe.fields.slikaRecepta && (
                 <div className="w-full h-64 relative">
@@ -325,13 +313,8 @@ const DesertiPage = () => {
                 <FaTimes size={20} />
               </button>
             </div>
-
-            {/* Content */}
             <div className="p-6 space-y-6">
-              {/* Recipe Title */}
               <h2 className="text-2xl font-bold text-gray-800 text-center">{selectedRecipe.fields.nazivRecepta}</h2>
-
-              {/* Recipe Details */}
               <div className="grid grid-cols-1 gap-6">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center space-x-2">
@@ -367,8 +350,6 @@ const DesertiPage = () => {
                   </ol>
                 </div>
               </div>
-
-              {/* Comments Section */}
               <div className="border-t pt-6">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
                   <FaComment className="text-[#8b5e34]" />
@@ -405,7 +386,6 @@ const DesertiPage = () => {
   );
 };
 
-// Wrap in Suspense to handle async logic correctly
 export default function Page() {
   return (
     <Suspense fallback={<div>Učitavanje...</div>}>

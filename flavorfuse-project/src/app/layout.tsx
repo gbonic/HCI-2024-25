@@ -32,7 +32,7 @@ export default function RootLayout({
       <head />
       
       <body
-         className="grid grid-rows-[auto_1fr_auto] min-h-screen sm:grid-rows-[auto_1fr_auto] bg-gradient-to-br from-amber-50 to-slate-50 text-gray-900" 
+         className="grid grid-rows-[auto_1fr_auto] min-h-screen sm:grid-rows-[auto_1fr_auto] text-gray-900" 
       >
         <UserProvider>
         <div>

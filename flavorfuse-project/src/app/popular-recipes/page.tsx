@@ -19,18 +19,11 @@ export default function PopularRecipes() {
     return (
         <main>
             <section className="relative grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 px-4">
-                {/* Strelica lijevo */}
-                <div className="absolute left-[-80px] top-1/2 transform -translate-y-1/2 z-10 hidden lg:block">
-                    <button className=" text-gray-700 p-2 rounded-full shadow-lg hover:text-gray-500 transition duration-300">
-                        <AiOutlineArrowLeft className="w-9 h-9" />
-                    </button>
-                </div>
-
                 {popularRecipes.map((recipe, index) => (
                     <Link
                         key={index}
                         href={recipe.path}
-                        className="text-center text-xl font-bold drop-shadow-md text-[#fde4b5] uppercase"
+                        className="text-center text-lg font-bold drop-shadow-md text-[#fde4b5] uppercase"
                     >
                         <div
                             key={index}
@@ -53,12 +46,6 @@ export default function PopularRecipes() {
                         </div>
                     </Link>
                 ))}
-                {/* Strelica desno */}
-                <div className="absolute right-[-80px] top-1/2 transform -translate-y-1/2 z-10 hidden lg:block">
-                    <button className=" text-gray-700 p-2 rounded-full shadow-lg hover:text-gray-500 transition duration-300">
-                        <AiOutlineArrowRight className="w-9 h-9" />
-                    </button>
-                </div>
             </section>
         </main>
     );

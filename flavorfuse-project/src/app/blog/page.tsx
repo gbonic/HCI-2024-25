@@ -38,10 +38,10 @@ const mapEntryToRecept = (entry: Entry<any>): Recept => {
     ? entry.fields.podkategorija.map((podkat) => (typeof podkat === "string" ? podkat : podkat.fields?.nazivPodkategorije || ""))
     : [];
   const slikaRecepta = typeof entry.fields.slikaRecepta === "object" && "sys" in entry.fields.slikaRecepta && "fields" in entry.fields.slikaRecepta
-  ? entry.fields.slikaRecepta as Asset
-  : typeof entry.fields.slikaRecepta === "string"
-  ? entry.fields.slikaRecepta
-  : undefined;
+    ? entry.fields.slikaRecepta as Asset
+    : typeof entry.fields.slikaRecepta === "string"
+      ? entry.fields.slikaRecepta
+      : undefined;
 
 
   return {
@@ -224,41 +224,41 @@ const BlogPage = () => {
         </p>
       </div>
 
-      <div className="mt-8 max-w-6xl w-full flex flex-wrap gap-3 justify-center">
-        {categories.map((category) => (
-          <div key={category} className="relative group">
-            <button
-              onClick={() => handleCategoryClick(category)}
-              className={`font-medium px-6 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 ${
-                selectedCategory === category ? "bg-[#dcb794] text-[#8b5e34]" : "bg-[#f5e8d9] text-[#8b5e34] hover:bg-[#dcb794]"
-              }`}
-            >
-              {category}
-            </button>
-            {subcategories.filter((sub) => sub.kategorija === category).length > 0 && (
-              <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-56 bg-white shadow-xl rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 pointer-events-none group-hover:pointer-events-auto scale-95 group-hover:scale-100">
-                <div className="py-2">
-                  {subcategories
-                    .filter((sub) => sub.kategorija === category)
-                    .map((subcategory) => (
-                      <button
-                        key={subcategory.nazivPodkategorije}
-                        onClick={() => handleSubcategoryClick(subcategory.nazivPodkategorije)}
-                        className={`block w-full text-left px-4 py-2 text-gray-800 hover:bg-[#f5e8d9] hover:text-[#8b5e34] transition-colors duration-200 text-sm font-medium ${
-                          selectedSubcategory === subcategory.nazivPodkategorije ? "bg-[#f5e8d9] text-[#8b5e34]" : ""
-                        }`}
-                      >
-                        {subcategory.nazivPodkategorije}
-                      </button>
-                    ))}
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
+      <div className="mt-8 max-w-6xl w-full flex flex-wrap gap-4 justify-center items-center px-4">
+        <select
+          value={selectedCategory}
+          onChange={(e) => {
+            setSelectedCategory(e.target.value);
+            setSelectedSubcategory("");
+          }}
+          className="px-4 py-2 rounded-md border border-gray-300 text-[#8b5e34] bg-[#f5e8d9] shadow-sm focus:outline-none focus:ring-2 focus:ring-[#dcb794]"
+        >
+          <option value="">Odaberi kategoriju</option>
+          {categories.map((cat) => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
+
+        {selectedCategory && (
+          <select
+            value={selectedSubcategory}
+            onChange={(e) => setSelectedSubcategory(e.target.value)}
+            className="px-4 py-2 rounded-md border border-gray-300 text-[#8b5e34] bg-[#f5e8d9] shadow-sm focus:outline-none focus:ring-2 focus:ring-[#dcb794]"
+          >
+            <option value="">Sve podkategorije</option>
+            {subcategories
+              .filter((sub) => sub.kategorija === selectedCategory)
+              .map((sub) => (
+                <option key={sub.nazivPodkategorije} value={sub.nazivPodkategorije}>
+                  {sub.nazivPodkategorije}
+                </option>
+              ))}
+          </select>
+        )}
+
         <button
           onClick={clearFilters}
-          className="font-medium py-2 px-5 rounded-full bg-red-200 text-red-800 hover:bg-red-300 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1"
+          className="py-2 px-4 rounded-md bg-red-200 text-red-800 hover:bg-red-300 transition-all shadow-sm"
         >
           Poništi filter
         </button>
@@ -318,7 +318,7 @@ const BlogPage = () => {
           onClick={closeModal}
         >
           <div
-            className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto relative transform transition-all duration-300 scale-95 hover:scale-100"
+            className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto relative transform transition-all duration-300 scale-95"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative">
