@@ -48,7 +48,7 @@ export default function FaqComponent() {
         ].map((faq, index) => (
           <div
             key={index}
-            className="w-full text-left p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+            className="w-full text-left bg-amber-50 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer"
             onClick={() => toggleExpand(index)}
           >
             {/* Pitanje */}

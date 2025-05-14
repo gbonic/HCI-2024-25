@@ -27,7 +27,7 @@ const CookingTips = () => {
         {tips.map((tip, index) => (
           <div
             key={index}
-            className="relative bg-amber-100 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-[#e0e0d5]"
+            className="relative bg-amber-50 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-amber-200"
           >
             <div className="absolute top-[-20px] left-1/2 transform -translate-x-1/2 bg-[#8b5e34] rounded-full p-3">
               <span className="text-white font-bold font-serif text-lg">{index + 1}</span>
@@ -61,7 +61,7 @@ const Testimonials = () => {
         {testimonials.map((testimonial, index) => (
           <div
             key={index}
-            className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-[#e0e0d5]"
+            className="bg-amber-50 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-amber-200"
           >
             <p className="text-gray-900 text-lg font-serif italic mb-6 leading-relaxed">"{testimonial.text}"</p>
             <p className="bottom-8 right-4 text-[#8b5e34] font-serif font-semibold text-xl">{testimonial.name}</p>

@@ -157,7 +157,7 @@ const SurpriseButton = () => {
                 />
               </div>
             )}
-            <div className="p-4">
+            <div className="p-4 bg-amber-50">
               <h2 className="text-lg font-semibold text-gray-900">{selectedRecipe.fields.nazivRecepta}</h2>
               <p className="text-gray-600 mt-2">Kliknite za više...</p>
             </div>

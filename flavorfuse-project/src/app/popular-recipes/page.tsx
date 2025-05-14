@@ -9,10 +9,10 @@ type Page = {
 };
 
 const popularRecipes: Page[] = [
-    { title: "Salata s piletinom", path: "/", image: "/images/salata-piletina.jpg" },
-    { title: "Torta od čokolade", path: "/", image: "/images/cokoladna-torta.jpg" },
-    { title: "Lazanje", path: "/", image: "/images/lazanje.jpg" },
-    { title: "Margherita", path: "/", image: "/images/pizza-margherita.jpg" },
+    { title: "Salata s piletinom", path: "/404-page", image: "/images/salata-piletina.jpg" },
+    { title: "Torta od čokolade", path: "/404-page", image: "/images/cokoladna-torta.jpg" },
+    { title: "Lazanje", path: "/404-page", image: "/images/lazanje.jpg" },
+    { title: "Margherita", path: "/404-page", image: "/images/pizza-margherita.jpg" },
 ];
 
 export default function PopularRecipes() {
