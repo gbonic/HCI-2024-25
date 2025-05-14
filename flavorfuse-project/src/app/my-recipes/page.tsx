@@ -22,7 +22,7 @@ const MyRecipes = () => {
       {recipes.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 justify-center items-center ">
           {recipes.map(recipe => (
-            <div key={recipe.id} className="flex flex-col shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl cursor-pointer">
+            <div key={recipe.id} className="bg-amber-50 flex flex-col shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl cursor-pointer">
               {recipe.image && (
                 <div className="w-72 h-48 relative">
                   <Image
@@ -51,7 +51,7 @@ const MyRecipes = () => {
       )}
       <div className="text-center mt-8">
         <button
-          className="px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-lg bg-[#8b5e34] text-white font-semibold rounded-full shadow-md hover:bg-[#b2823b] transition-colors duration-300"
+          className="px-6 py-3 text-sm sm:text-lg bg-[#8b5e34] text-white font-semibold rounded-full shadow-md hover:bg-[#b2823b] transition-colors duration-300"
           onClick={() => router.push('/add-recipe')}
         >
           Dodaj recept
