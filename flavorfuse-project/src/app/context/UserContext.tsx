@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 
 interface UserContextProps {
   userInitials: string | null;
@@ -13,20 +13,64 @@ interface UserContextProps {
 const UserContext = createContext<UserContextProps | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [userInitials, setUserInitials] = useState<string | null>(null);
-  const [userName, setUserName] = useState<string | null>(null);
-  const [userEmail, setUserEmail] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Dohvaćanje e-maila korisnika iz localStorage pri pokretanju
-    const email = localStorage.getItem("user_email");
-    if (email) {
-      setUserEmail(email);
+  const [userInitials, setUserInitials] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("user_initials") || null;
     }
-  }, []);
+    return null;
+  });
+  const [userName, setUserName] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("user_name") || null;
+    }
+    return null;
+  });
+  const [userEmail, setUserEmail] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("user_email") || null;
+    }
+    return null;
+  });
+
+  // Sinkronizacija localStorage prilikom promjene stanja
+  const setUserInitialsAndStore = (initials: string | null) => {
+    setUserInitials(initials);
+    if (initials) {
+      localStorage.setItem("user_initials", initials);
+    } else {
+      localStorage.removeItem("user_initials");
+    }
+  };
+
+  const setUserNameAndStore = (name: string | null) => {
+    setUserName(name);
+    if (name) {
+      localStorage.setItem("user_name", name);
+    } else {
+      localStorage.removeItem("user_name");
+    }
+  };
+
+  const setUserEmailAndStore = (email: string | null) => {
+    setUserEmail(email);
+    if (email) {
+      localStorage.setItem("user_email", email);
+    } else {
+      localStorage.removeItem("user_email");
+    }
+  };
 
   return (
-    <UserContext.Provider value={{ userInitials, userName, userEmail, setUserInitials, setUserName, setUserEmail }}>
+    <UserContext.Provider
+      value={{
+        userInitials,
+        userName,
+        userEmail,
+        setUserInitials: setUserInitialsAndStore,
+        setUserName: setUserNameAndStore,
+        setUserEmail: setUserEmailAndStore,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

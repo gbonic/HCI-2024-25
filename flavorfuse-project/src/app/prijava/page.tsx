@@ -18,13 +18,25 @@ export default function Prijava() {
   const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   let logoutTimer: NodeJS.Timeout;
 
   const resetLogoutTimer = () => {
     if (logoutTimer) clearTimeout(logoutTimer);
-    logoutTimer = setTimeout(() => handleLogout(), 20 * 60 * 1000);
+    logoutTimer = setTimeout(() => handleLogout(), 10 * 60 * 1000); // 10 minuta
+  };
+
+  const handleLogout = () => {
+    Cookies.remove("auth_token");
+    localStorage.removeItem("user_name");
+    localStorage.removeItem("user_email");
+    localStorage.removeItem("user_initials");
+    setUserInitials(null);
+    setUserName(null);
+    setUserEmail(null);
+    router.push("/prijava");
   };
 
   useEffect(() => {
@@ -41,22 +53,19 @@ export default function Prijava() {
 
   useEffect(() => {
     const userToken = Cookies.get("auth_token");
+    const userEmail = localStorage.getItem("user_email");
     const userName = localStorage.getItem("user_name");
-    if (userToken && userName) router.push("/");
-  }, [router]);
-
-  const handleLogout = () => {
-    Cookies.remove("auth_token");
-    localStorage.removeItem("user_name");
-    localStorage.removeItem("user_email");
-    setUserInitials("");
-    setUserName("");
-    setUserEmail("");
-    router.push("/prijava");
-  };
+    const userInitials = localStorage.getItem("user_initials");
+    if (userToken && userEmail && userName && userInitials) {
+      setUserEmail(userEmail);
+      setUserName(userName);
+      setUserInitials(userInitials);
+      router.push("/");
+    }
+    setIsLoading(false);
+  }, [router, setUserEmail, setUserName, setUserInitials]);
 
   const handleSubmit = (e) => {
-    // Your existing handleSubmit logic remains unchanged
     e.preventDefault();
     setError("");
     if (isRegistering) {
@@ -86,9 +95,7 @@ export default function Prijava() {
       users.push(newUser);
       localStorage.setItem("users", JSON.stringify(users));
       const userToken = "exampleAuthToken";
-      Cookies.set("auth_token", userToken, { expires: 7, path: "/" });
-      localStorage.setItem("user_name", name);
-      localStorage.setItem("user_email", email);
+      Cookies.set("auth_token", userToken, { path: "/" }); // Session cookie, briše se kad se zatvori preglednik
       const nameParts = name.split(' ');
       const initials = nameParts[0].charAt(0).toUpperCase() + (nameParts[1]?.charAt(0).toUpperCase() || '');
       setUserInitials(initials);
@@ -112,8 +119,7 @@ export default function Prijava() {
         return;
       }
       const userToken = "exampleAuthToken";
-      Cookies.set("auth_token", userToken, { expires: 7, path: "/" });
-      localStorage.setItem("user_name", user.name);
+      Cookies.set("auth_token", userToken, { path: "/" }); // Session cookie
       const nameParts = user.name.split(' ');
       const initials = nameParts[0].charAt(0).toUpperCase() + (nameParts[1]?.charAt(0).toUpperCase() || '');
       setUserInitials(initials);
@@ -126,12 +132,18 @@ export default function Prijava() {
 
   const validateEmail = (email: string) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
   const validatePassword = (password: string) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]).{8,}$/.test(password);
-  const handleBackToLogin = () => setIsRegistering(false);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-600 text-lg">Učitavanje...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-5xl flex flex-col md:flex-row bg-white shadow-lg">
-        {/* Left side - Image */}
         <div className="md:w-1/2 hidden md:block relative group">
           <Image
             src="/images/backgroundprijava.jpg"
@@ -140,12 +152,10 @@ export default function Prijava() {
             objectFit="cover"
             className="brightness-75 transition-all duration-300 group-hover:brightness-100"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent flex items-center justify-center">
+          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 MGM to-transparent flex items-center justify-center">
             <h2 className="text-white text-3xl font-bold px-6 text-center">Pridruži se FlavorFuse zajednici!</h2>
           </div>
         </div>
-
-        {/* Right side - Form */}
         <div className="md:w-1/2 w-full p-8 md:p-10 flex flex-col justify-center">
           <div className="text-center mb-6">
             <h1 className="text-4xl md:text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 font-sans bg-clip-text text-transparent">
@@ -155,10 +165,8 @@ export default function Prijava() {
               {isRegistering ? "Pridruži se" : "Dobrodošli natrag"} u FlavorFuse!
             </p>
           </div>
-
           {success && <p className="text-green-600 bg-green-50 p-3 rounded-xl mb-4 text-center">{success}</p>}
           {error && <p className="text-red-600 bg-red-50 p-3 rounded-xl mb-4 text-center">{error}</p>}
-
           <form onSubmit={handleSubmit} className="space-y-5">
             {isRegistering && (
               <div>
@@ -219,8 +227,6 @@ export default function Prijava() {
               {isRegistering ? "Registriraj se" : "Prijavi se"}
             </button>
           </form>
-
-          {/* Toggle between login and register */}
           <p className="text-center mt-4">
             {isRegistering ? "Već imaš račun?" : "Nemaš račun?"}{" "}
             <button
@@ -230,8 +236,6 @@ export default function Prijava() {
               {isRegistering ? "Prijavi se" : "Registriraj se"}
             </button>
           </p>
-
-          {/* Social Login */}
           <div className="mt-6">
             <div className="flex items-center justify-center space-x-2">
               <hr className="w-1/4 border-gray-300" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUserContext } from "../context/UserContext";
 import Link from "next/link";
@@ -41,7 +41,20 @@ const Navbar = () => {
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
   const [mobileRecipesDropdownOpen, setMobileRecipesDropdownOpen] = useState(false);
   const [mobileUserDropdownOpen, setMobileUserDropdownOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const userToken = Cookies.get("auth_token");
+    const userEmail = localStorage.getItem("user_email");
+    const userName = localStorage.getItem("user_name");
+    const userInitials = localStorage.getItem("user_initials");
+    if (userToken && userEmail && userName && userInitials && !userEmail) {
+      setUserEmail(userEmail);
+      setUserName(userName);
+      setUserInitials(userInitials);
+    }
+    setIsLoading(false);
+  }, [setUserEmail, setUserName, setUserInitials]);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -89,9 +102,9 @@ const Navbar = () => {
     Cookies.remove("auth_token");
     localStorage.removeItem("user_name");
     localStorage.removeItem("user_email");
+    localStorage.removeItem("user_initials");
     setUserInitials(null);
     setUserName(null);
-    setIsLoggedIn(false);
     setUserEmail(null);
     router.push("/");
   };
@@ -103,7 +116,6 @@ const Navbar = () => {
   return (
     <header className="border-b border-gray-950">
       <nav className="relative grid grid-cols-[0.5fr,auto,0.5fr] items-center px-4 sm:px-6 lg:px-2 py-1 gap-0">
-        {/* Lijeva strana */}
         <button
           id="hamburger-button"
           onClick={toggleMenu}
@@ -185,8 +197,6 @@ const Navbar = () => {
             )}
           </ul>
         </div>
-
-        {/* Središnji logo */}
         <div className="flex justify-start lg:justify-center items-center -ml-3 sm:-ml-4">
           <Link href="/">
             <Image
@@ -198,63 +208,62 @@ const Navbar = () => {
             />
           </Link>
         </div>
-
-        {/* Desna strana */}
         <div className="flex justify-center">
           <ul className="hidden lg:flex justify-evenly w-full items-center">
             {pages.slice(2).map((page, index) => (
               page.title === "PRIJAVA" ? (
-                userInitials ? (
-                  <div
-                    key={index}
-                    className="relative flex items-center ml-4 cursor-pointer"
-                    onMouseEnter={handleUserMouseEnter}
-                    onMouseLeave={handleUserMouseLeave}
-                  >
-                    <p className="mr-2 text-gray-800">Pozdrav, {userName ? userName.split(" ")[0] : ""}</p>
-                    <div className="w-8 h-8 bg-[#ffbe46] text-gray-800 font-bold flex items-center justify-center rounded-full shadow-lg">
-                      {userInitials}
-                    </div>
-                    {userDropdownOpen && (
-                      <ul
-                        className="absolute z-50 right-0 top-full bg-white shadow-lg border mt-2 rounded-lg w-56"
-                        onMouseEnter={handleUserMouseEnter}
-                        onMouseLeave={handleUserMouseLeave}
-                      >
-                        <div className="flex flex-col items-center p-4">
-                          <div className="w-12 h-12 bg-[#ffbe46] text-gray-800 font-bold flex items-center justify-center rounded-full shadow-lg">
-                            {userInitials}
+                <li
+                  key={index}
+                  className="relative text-black font-bold hover:text-[#2E6431] cursor-pointer"
+                >
+                  {isLoading ? (
+                    <span>Učitavanje...</span>
+                  ) : userEmail ? (
+                    <div
+                      className="flex items-center ml-4"
+                      onMouseEnter={handleUserMouseEnter}
+                      onMouseLeave={handleUserMouseLeave}
+                    >
+                      <p className="mr-2 text-gray-800">Pozdrav, {userName ? userName.split(" ")[0] : ""}</p>
+                      <div className="w-8 h-8 bg-[#ffbe46] text-gray-800 font-bold flex items-center justify-center rounded-full shadow-lg">
+                        {userInitials}
+                      </div>
+                      {userDropdownOpen && (
+                        <ul
+                          className="absolute z-50 right-0 top-full bg-white shadow-lg border mt-2 rounded-lg w-56"
+                          onMouseEnter={handleUserMouseEnter}
+                          onMouseLeave={handleUserMouseLeave}
+                        >
+                          <div className="flex flex-col items-center p-4">
+                            <div className="w-14 h-14 bg-[#ffbe46] text-gray-800 font-bold flex items-center justify-center rounded-full shadow-lg">
+                              {userInitials}
+                            </div>
+                            <span className="mt-2 text-gray-800 font-medium">{userName}</span>
+                            <span className="text-gray-600 font-medium">{userEmail}</span>
                           </div>
-                          <span className="mt-2 text-gray-800 font-bold">{userName}</span>
-                          <span className="text-gray-600">{localStorage.getItem("email")}</span>
-                        </div>
-                        <Link href="/profile">
-                          <li className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer">
-                            <FaUser className="w-5 h-5 inline-block mr-2" />
-                            Moj profil
+                          <Link href="/profile">
+                            <li className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer">
+                              <FaUser className="w-5 h-5 inline-block mr-2" />
+                              Moj profil
+                            </li>
+                          </Link>
+                          <Link href="/add-recipe">
+                            <li className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer">
+                              <FaPlus className="w-5 h-5 inline-block mr-2" />
+                              Dodaj recept
+                            </li>
+                          </Link>
+                          <li className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer" onClick={handleLogout}>
+                            <FaSignOutAlt className="w-5 h-5 inline-block mr-2" />
+                            Odjava
                           </li>
-                        </Link>
-                        <Link href="/add-recipe">
-                          <li className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer">
-                            <FaPlus className="w-5 h-5 inline-block mr-2" />
-                            Dodaj recept
-                          </li>
-                        </Link>
-                        <li className="px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer" onClick={handleLogout}>
-                          <FaSignOutAlt className="w-5 h-5 inline-block mr-2" />
-                          Odjava
-                        </li>
-                      </ul>
-                    )}
-                  </div>
-                ) : (
-                  <li
-                    key={index}
-                    className="relative text-black font-bold hover:text-[#2E6431] cursor-pointer"
-                  >
+                        </ul>
+                      )}
+                    </div>
+                  ) : (
                     <Link href={page.path}>{page.title}</Link>
-                  </li>
-                )
+                  )}
+                </li>
               ) : (
                 <li
                   key={index}
@@ -267,7 +276,6 @@ const Navbar = () => {
           </ul>
         </div>
       </nav>
-
       {menuOpen && (
         <ul className="lg:hidden w-full py-3 px-4 space-y-3">
           {pages.map((page, index) => (
@@ -303,7 +311,9 @@ const Navbar = () => {
                     </ul>
                   )}
                 </>
-              ) : userInitials && page.title === "PRIJAVA" ? (
+              ) : isLoading ? (
+                <span>Učitavanje...</span>
+              ) : userEmail && page.title === "PRIJAVA" ? (
                 <>
                   <div className="flex justify-between items-center" onClick={toggleMobileUserDropdown}>
                     <span className="text-gray-900 font-bold">{userName}</span>
@@ -354,9 +364,9 @@ const Navbar = () => {
             <button
               onClick={() => {
                 handleSearchClick();
-                setMenuOpen(false); // Zatvara meni prije navigacije
+                setMenuOpen(false);
               }}
-              className="flex items-center text-gray-900 font-bold hover:text-[#2E6431] w-full"
+              className="flex items-center text-gray-900 font-medium hover:text-[#2E6431] w-full"
             >
               <BiSearch className="w-5 h-5 mr-2" />
               <span>Pretraži</span>

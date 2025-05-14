@@ -15,7 +15,7 @@ const categories = {
 };
 
 const AddRecipePage = () => {
-  const { userEmail, setUserEmail } = useUserContext();
+  const { userEmail } = useUserContext();
   const router = useRouter();
   const [recipes, setRecipes] = useState(() => {
     if (typeof window !== "undefined") {
@@ -32,11 +32,13 @@ const AddRecipePage = () => {
   const [subCategory, setSubCategory] = useState("");
   const [image, setImage] = useState(null);
   const [showNotification, setShowNotification] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const email = localStorage.getItem("user_email");
-    if (email) setUserEmail(email);
-  }, [setUserEmail, router]);
+    if (userEmail !== undefined) {
+      setIsLoading(false);
+    }
+  }, [userEmail]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -49,7 +51,7 @@ const AddRecipePage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!userEmail) return; // Ne dopusti slanje ako nije prijavljen
+    if (!userEmail) return;
 
     const newRecipe = {
       id: Date.now(),
@@ -59,10 +61,10 @@ const AddRecipePage = () => {
       ingredients,
       steps,
       description,
-      isPrivate: isPublic === "private", // Mapiranje na boolean (true za private, false za public)
+      isPrivate: isPublic === "private",
       image,
       userEmail,
-      createdAt: new Date().toISOString(), // Automatski dodan trenutni datum i vrijeme
+      createdAt: new Date().toISOString(),
     };
     const updatedRecipes = [...recipes, newRecipe];
     setRecipes(updatedRecipes);
@@ -80,6 +82,14 @@ const AddRecipePage = () => {
     setIsPublic("public");
     setImage(null);
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-[#5A4A3B] text-lg">Učitavanje...</p>
+      </div>
+    );
+  }
 
   if (!userEmail) {
     return (
@@ -219,7 +229,7 @@ const AddRecipePage = () => {
           />
           <label
             htmlFor="file-upload"
-            className="cursor-pointer inline-block bg-[#F28C38] text-white py-2 px-6 rounded-full font-semibold hover:bg-[#E07B30] transition duration-200"
+            className="cursor-pointer inline-block bg-[#F28C38] text-white py-2 px-6 rounded-full font-semibold hover:bg E07B30] transition duration-200"
           >
             Priložite fotografiju
           </label>
