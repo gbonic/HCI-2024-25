@@ -36,7 +36,7 @@ export default function RootLayout({
       >
         <UserProvider>
         <div>
-            <Navbar />
+            <Navbar/>
            <main>{children}</main>
             <Footer />
         </div>

@@ -226,7 +226,7 @@ const TradicionalnaJelaPage = () => {
       </div>
 
       {/* Filter Buttons - Mobile Sliding Version */}
-      <section className="lg:hidden w-full max-w-[90vw] mx-auto overflow-hidden px-4 relative">
+      <section className="md:hidden w-full max-w-[90vw] mx-auto overflow-hidden px-4 relative">
         <div className="flex justify-start items-center overflow-x-auto gap-3 pb-4 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-[#8b5e34] scrollbar-track-[#f5e8d9]">
           {subcategories.map((subcategory) => (
             <button
@@ -249,7 +249,7 @@ const TradicionalnaJelaPage = () => {
         </div>
       </section>
       {/* Filter Buttons - Desktop Version */}
-      <div className="hidden lg:flex mt-8 max-w-6xl w-full flex-wrap justify-center gap-4">
+      <div className="hidden md:flex mt-8 max-w-6xl w-full flex-wrap justify-center gap-4 md:justify-center">
         {subcategories.map((subcategory) => (
           <button
             key={subcategory}

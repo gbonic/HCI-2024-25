@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useUserContext } from "../context/UserContext";
 import Link from "next/link";
@@ -42,6 +42,7 @@ const Navbar = () => {
   const [mobileRecipesDropdownOpen, setMobileRecipesDropdownOpen] = useState(false);
   const [mobileUserDropdownOpen, setMobileUserDropdownOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const menuRef = useRef<HTMLUListElement>(null); // Referenca za hamburger meni
 
   useEffect(() => {
     const userToken = Cookies.get("auth_token");
@@ -55,6 +56,25 @@ const Navbar = () => {
     }
     setIsLoading(false);
   }, [setUserEmail, setUserName, setUserInitials]);
+
+  // Event listener za klikove izvan hamburger menija
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuOpen && menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+        setMobileRecipesDropdownOpen(false); // Zatvori podmenije ako su otvoreni
+        setMobileUserDropdownOpen(false);
+      }
+    };
+
+    if (menuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuOpen]);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -115,7 +135,7 @@ const Navbar = () => {
 
   return (
     <header className="border-b border-gray-950">
-      <nav className="relative grid grid-cols-[0.5fr,auto,0.5fr] items-center px-4 sm:px-6 lg:px-2 py-1 gap-0">
+      <nav className="navbar grid grid-cols-[0.5fr,auto,0.5fr] items-center px-4 sm:px-6 lg:px-2 py-1 gap-0">
         <button
           id="hamburger-button"
           onClick={toggleMenu}
@@ -172,7 +192,7 @@ const Navbar = () => {
                   </svg>
                   {recipesDropdownOpen && (
                     <ul
-                      className="absolute z-50 left-0 top-full bg-white shadow-lg border mt-2 rounded-lg w-56"
+                      className="absolute z-[1001] left-0 top-full bg-white shadow-lg border mt-2 rounded-lg w-56"
                       onMouseEnter={handleRecipesMouseEnter}
                       onMouseLeave={handleRecipesMouseLeave}
                     >
@@ -230,7 +250,7 @@ const Navbar = () => {
                       </div>
                       {userDropdownOpen && (
                         <ul
-                          className="absolute z-50 right-0 top-full bg-white shadow-lg border mt-2 rounded-lg w-56"
+                          className="absolute z-[1001] right-0 top-full bg-white shadow-lg border mt-2 rounded-lg w-56"
                           onMouseEnter={handleUserMouseEnter}
                           onMouseLeave={handleUserMouseLeave}
                         >
@@ -277,7 +297,7 @@ const Navbar = () => {
         </div>
       </nav>
       {menuOpen && (
-        <ul className="lg:hidden w-full py-3 px-4 space-y-3">
+        <ul ref={menuRef} className="lg:hidden mobile-menu w-full py-3 px-4 space-y-3 mt-14">
           {pages.map((page, index) => (
             <li key={index} className="text-gray-900 font-bold hover:text-[#2E6431]">
               {page.title === "RECEPTI" ? (
@@ -300,7 +320,7 @@ const Navbar = () => {
                     </svg>
                   </div>
                   {mobileRecipesDropdownOpen && (
-                    <ul className="pl-4 mt-2 space-y-2">
+                    <ul className="pl-4 mt-2 space-y-2 z-[1002]">
                       {categories.map((category, i) => (
                         <li key={i} className="text-gray-800 hover:text-[#2E6431]">
                           <Link href={category.path} onClick={() => setMenuOpen(false)}>
@@ -333,7 +353,7 @@ const Navbar = () => {
                     </svg>
                   </div>
                   {mobileUserDropdownOpen && (
-                    <ul className="pl-4 mt-2 space-y-2">
+                    <ul className="pl-4 mt-2 space-y-2 z-[1002]">
                       <li className="text-gray-800 hover:text-[#2E6431]">
                         <Link href="/profile" onClick={() => setMenuOpen(false)}>
                           <FaUser className="w-3 h-3 inline-block mr-2" />
