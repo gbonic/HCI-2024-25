@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useUserContext } from "../context/UserContext";
 import Link from "next/link";
 import Image from "next/image";
@@ -34,6 +34,7 @@ const categories: Page[] = [
 
 const Navbar = () => {
   const router = useRouter();
+  const pathname = usePathname();
   const { userInitials, userName, userEmail, setUserEmail, setUserInitials, setUserName } = useUserContext();
   const [recipesDropdownOpen, setRecipesDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
@@ -171,7 +172,7 @@ const Navbar = () => {
               page.title === "RECEPTI" ? (
                 <li
                   key={index}
-                  className="relative text-black font-bold hover:text-[#2E6431] cursor-pointer"
+                  className={`relative font-bold cursor-pointer ${pathname === page.path ? "text-[#a49655]" : "text-black hover:text-[#a49655]"}`}
                   onMouseEnter={handleRecipesMouseEnter}
                   onMouseLeave={handleRecipesMouseLeave}
                 >
@@ -209,7 +210,7 @@ const Navbar = () => {
               ) : (
                 <li
                   key={index}
-                  className="relative text-black font-bold hover:text-[#2E6431] cursor-pointer"
+                  className="relative text-black font-bold hover:text-[#a49655] cursor-pointer"
                 >
                   <Link href={page.path}>{page.title}</Link>
                 </li>
@@ -234,7 +235,7 @@ const Navbar = () => {
               page.title === "PRIJAVA" ? (
                 <li
                   key={index}
-                  className="relative text-black font-bold hover:text-[#2E6431] cursor-pointer"
+                  className={`relative font-bold cursor-pointer ${pathname === page.path ? "text-[#a49655]" : "text-black hover:text-[#a49655]"}`}
                 >
                   {isLoading ? (
                     <span>Učitavanje...</span>
@@ -287,7 +288,7 @@ const Navbar = () => {
               ) : (
                 <li
                   key={index}
-                  className="relative text-black font-bold hover:text-[#2E6431] cursor-pointer"
+                  className={`relative font-bold cursor-pointer ${pathname === page.path ? "text-[#a49655]" : "text-black hover:text-[#a49655]"}`}
                 >
                   <Link href={page.path}>{page.title}</Link>
                 </li>
@@ -299,7 +300,7 @@ const Navbar = () => {
       {menuOpen && (
         <ul ref={menuRef} className="lg:hidden mobile-menu w-full py-3 px-4 space-y-3 mt-14">
           {pages.map((page, index) => (
-            <li key={index} className="text-gray-900 font-bold hover:text-[#2E6431]">
+            <li key={index} className="text-gray-900 font-bold hover:text-[#a49655]">
               {page.title === "RECEPTI" ? (
                 <>
                   <div className="flex justify-between items-center" onClick={toggleMobileRecipesDropdown}>
@@ -322,7 +323,7 @@ const Navbar = () => {
                   {mobileRecipesDropdownOpen && (
                     <ul className="pl-4 mt-2 space-y-2 z-[1002]">
                       {categories.map((category, i) => (
-                        <li key={i} className="text-gray-800 hover:text-[#2E6431]">
+                        <li key={i} className="text-gray-800 hover:text-[#a49655]">
                           <Link href={category.path} onClick={() => setMenuOpen(false)}>
                             {category.title}
                           </Link>
@@ -354,19 +355,19 @@ const Navbar = () => {
                   </div>
                   {mobileUserDropdownOpen && (
                     <ul className="pl-4 mt-2 space-y-2 z-[1002]">
-                      <li className="text-gray-800 hover:text-[#2E6431]">
+                      <li className="text-gray-800 hover:text-[#a49655]">
                         <Link href="/profile" onClick={() => setMenuOpen(false)}>
                           <FaUser className="w-3 h-3 inline-block mr-2" />
                           Moj profil
                         </Link>
                       </li>
-                      <li className="text-gray-800 hover:text-[#2E6431]">
+                      <li className="text-gray-800 hover:text-[#a49655]">
                         <Link href="/add-recipe" onClick={() => setMenuOpen(false)}>
                           <FaPlus className="w-3 h-3 inline-block mr-2" />
                           Dodaj recept
                         </Link>
                       </li>
-                      <li className="text-gray-800 hover:text-[#2E6431] cursor-pointer" onClick={() => { handleLogout(); setMenuOpen(false); }}>
+                      <li className="text-gray-800 hover:text-[#a49655] cursor-pointer" onClick={() => { handleLogout(); setMenuOpen(false); }}>
                         <FaSignOutAlt className="w-3 h-3 inline-block mr-2" />
                         Odjava
                       </li>
@@ -386,7 +387,7 @@ const Navbar = () => {
                 handleSearchClick();
                 setMenuOpen(false);
               }}
-              className="flex items-center text-gray-900 font-medium hover:text-[#2E6431] w-full"
+              className="flex items-center text-gray-900 font-medium hover:text-[#a49655] w-full"
             >
               <BiSearch className="w-5 h-5 mr-2" />
               <span>Pretraži</span>
