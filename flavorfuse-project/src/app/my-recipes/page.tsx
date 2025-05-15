@@ -18,7 +18,7 @@ const MyRecipes = () => {
 
   return (
     <section className="my-16 px-4 sm:px-8 max-w-6xl mx-auto">
-      <h1 className="text-center font-serif text-[#b2823b] text-4xl font-bold drop-shadow-md mb-8">MOJI RECEPTI</h1>
+      <h1 className="text-center font-serif text-[#b2823b] text-2xl sm:text-3xl md:text-4xl font-bold drop-shadow-md mb-8">MOJI RECEPTI</h1>
       {recipes.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 justify-center items-center ">
           {recipes.map(recipe => (
