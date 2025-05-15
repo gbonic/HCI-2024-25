@@ -112,7 +112,7 @@ const NewsletterSignup = () => {
 };
 
 export default function Home() {
-  const { userInitials, userName, setUserInitials, setUserName } = useUserContext();
+  const { userInitials, userName, userEmail, setUserEmail, setUserInitials, setUserName } = useUserContext();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
 
@@ -220,7 +220,7 @@ export default function Home() {
       </div>
 
       {/* My Recipes (samo za prijavljene) */}
-      {isLoggedIn && (
+      {userEmail && (
         <>
           <MyRecipes />
         </>

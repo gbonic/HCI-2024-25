@@ -124,7 +124,7 @@ const ProfilePage = () => {
                   {userRecipes.map((recipe) => (
                     <div
                       key={recipe.id}
-                      className="bg-[#f5e8d9] p-5 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-[#f4c78c] flex flex-col"
+                      className="bg-amber-50 p-5 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-[#f4c78c] flex flex-col"
                     >
                       <div className="flex justify-between items-start">
                         <h4 className="text-lg font-semibold text-[#6b4e31]">{recipe.title}</h4>
