@@ -30,16 +30,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head />
-      
+
       <body
-         className="grid grid-rows-[auto_1fr_auto] min-h-screen sm:grid-rows-[auto_1fr_auto] text-gray-900" 
+        className="grid grid-rows-[auto_1fr_auto] min-h-screen sm:grid-rows-[auto_1fr_auto] text-gray-900"
       >
         <UserProvider>
-        <div>
-            <Navbar/>
-           <main>{children}</main>
+          <div>
+            <Navbar />
+            <main>{children}</main>
             <Footer />
-        </div>
+          </div>
         </UserProvider>
       </body>
     </html>
