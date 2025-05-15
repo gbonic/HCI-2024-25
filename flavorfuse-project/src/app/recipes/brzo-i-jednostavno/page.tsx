@@ -352,12 +352,12 @@ const BrzoIJednostavnoPage = () => {
                 <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
                   {selectedRecipe.fields.nazivRecepta}
                 </h2>
-                <div className="mt-3 sm:mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                  <div className="flex items-baseline text-[#8b5e34] text-sm sm:text-base font-medium min-w-0">
+                <div className="mt-3 sm:mt-4 grid grid-cols-1 gap-3 sm:gap-4">
+                  <div className="flex items-baseline text-gray-800 text-sm sm:text-base font-medium min-w-0">
                     <span className="mr-1 sm:mr-2 font-semibold whitespace-nowrap">Kategorija:</span>
                     <span className="flex-1">{selectedRecipe.fields.kategorija?.join(", ") || "Nema kategorije"}</span>
                   </div>
-                  <div className="flex items-baseline text-[#8b5e34] text-sm sm:text-base font-medium min-w-0">
+                  <div className="flex items-baseline text-gray-800 text-sm sm:text-base font-medium min-w-0">
                     <span className="mr-1 sm:mr-2 font-semibold whitespace-nowrap">Podkategorija:</span>
                     <span className="flex-1">{selectedRecipe.fields.podkategorija?.join(", ") || "Nema podkategorije"}</span>
                   </div>
