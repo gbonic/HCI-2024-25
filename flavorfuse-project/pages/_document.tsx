@@ -13,6 +13,8 @@ export default function Document() {
         <link
           rel="icon" type="image/png" href="/public/FlavorFuse-dark-logo.png" sizes='32x32'
         />
+        <title>FlavorFuse</title>
+        <link rel="icon" href="/favicon.ico" />
       </Head>
       <body>
         <Main />
