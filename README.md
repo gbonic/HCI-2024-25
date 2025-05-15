@@ -16,12 +16,12 @@
 
 ## My Project Links
 
-<!--
+
 ### Semester Project
 
-- Link to your production version: [**Production Version**](URL_TO_PRODUCTION_VERSION)  Replace with actual URL
-- Link to your final report: [**Final Report**](URL_TO_FINAL_REPORT) <!-- Replace with actual URL -->
-<!-- Add more as necessary -->
+- Link to your production version: [**Production Version**](https://flavor-fuse.vercel.app/)
+- Link to your final report: [**Final Report**](https://www.notion.so/FlavorFuse-1c868e1e8fb28011b572da7efe2440c4)
+
 
 ### Semester Assignments
 
